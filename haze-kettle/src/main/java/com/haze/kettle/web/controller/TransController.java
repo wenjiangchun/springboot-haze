@@ -3,6 +3,7 @@ package com.haze.kettle.web.controller;
 import com.haze.kettle.KLog;
 import com.haze.kettle.KettleParams;
 import com.haze.kettle.StepWrapper;
+import com.haze.kettle.service.KettleRepositoryService;
 import com.haze.kettle.utils.KettleUtils;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.repository.RepositoryElementMetaInterface;
@@ -25,22 +26,26 @@ public class TransController {
     private final KettleUtils kettleRunner;
 
     @Autowired
+    private KettleRepositoryService kettleRepositoryService;
+
+    @Autowired
     public TransController(KettleUtils kettleRunner) {
         this.kettleRunner = kettleRunner;
     }
 
-    @RequestMapping("/view")
+  /*  @RequestMapping("/view")
     public String index(Model model) {
         try {
             List<RepositoryElementMetaInterface> elementList = kettleRunner.getAllTrans("/");
             //List<Trans> transList = new ArrayList<>();
             model.addAttribute("transList", elementList);
+            kettleRepositoryService.getDatabaseTypes();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "kettle/trans/index";
     }
-
+*/
     @RequestMapping("/getElementInfo/{objectId}/{type}")
     public String getElementInfo(@PathVariable String objectId, @PathVariable RepositoryObjectType type,  Model model) {
         String page = "kettle/trans/";

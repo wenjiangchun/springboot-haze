@@ -28,6 +28,7 @@ import org.pentaho.di.trans.steps.switchcase.SwitchCaseMeta;
 import org.pentaho.di.trans.steps.switchcase.SwitchCaseTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class KettleUtils {
+public class KettleUtils implements InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KettleUtils.class);
 
@@ -53,7 +54,6 @@ public class KettleUtils {
         if (repository == null || !repository.isConnected()) {
             //链接资源库
             try {
-                KettleEnvironment.init();
                 //数据库连接元对象
                 DatabaseMeta dataMeta = new DatabaseMeta("ETL", kettleConfig.getRepository().getType(), "Native(JDBC)", kettleConfig.getRepository().getUrl(), kettleConfig.getRepository().getSchema(), kettleConfig.getRepository().getPort(), kettleConfig.getRepository().getUsername(), kettleConfig.getRepository().getPassword());
                 dataMeta.setUsingConnectionPool(false);
@@ -318,5 +318,12 @@ public class KettleUtils {
             stepWrapper.getStepFlowList().add(stepFlow);
         }
         return stepWrapper;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        LOGGER.debug("初始化kettle运行环境...");
+        KettleEnvironment.init();
+        LOGGER.debug("kettle运行环境初始化完毕.");
     }
 }

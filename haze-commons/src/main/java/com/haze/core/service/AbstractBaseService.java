@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 业务处理类抽象类   系统中所有业务处理类继承该类
@@ -53,7 +54,8 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @return T 对象
      */
     public T findById(PK id) {
-        return this.dao.getOne(id);
+        Optional<T> t = this.dao.findById(id);
+        return t.orElse(null);
     }
 
     /**

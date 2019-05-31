@@ -2,15 +2,13 @@
 <html>
 <head>
   <#include "../../common/head.ftl"/>
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 <#include "../../common/nav.ftl"/>
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
                 转换管理
@@ -26,7 +24,31 @@
         <!-- Main content -->
         <section class="content">
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-2">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">可用资源库</h3>
+
+                            <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body no-padding" style="">
+                            <ul class="nav nav-pills nav-stacked">
+                                <#list repositoryList as repo>
+                                    <#if repositoryId==repo.id>
+                                        <li class="active"><a href="${ctx.contextPath}/kettle/trans/view?repositoryId=${repo.id!}"><i class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
+                                    <#else>
+                                        <li><a href="${ctx.contextPath}/kettle/trans/view?repositoryId=${repo.id!}"><i class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
+                                    </#if>
+                                </#list>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <div class="col-xs-10">
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">转换列表</h3>
@@ -87,12 +109,12 @@
 <#include "../../common/foot.ftl"/>
 <#include "../../common/left.ftl"/>
 </div>
-<script src="${ctx.contextPath}/resources/adminLTE/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${ctx.contextPath}/resources/adminLTE/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- SlimScroll -->
-<script src="${ctx.contextPath}/resources/adminLTE/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${ctx.contextPath}/resources/adminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
-<script src="${ctx.contextPath}/resources/adminLTE/fastclick/lib/fastclick.js"></script>
+<script src="${ctx.contextPath}/resources/adminLTE/bower_components/fastclick/lib/fastclick.js"></script>
 <script>
     $(function () {
         initMenu();
