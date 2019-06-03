@@ -19,7 +19,6 @@ public class KettleTask {
 
     private Logger logger = LoggerFactory.getLogger(KettleTask.class);
 
-    @Autowired
     private KettleUtils kettleUtils;
 
     @Autowired
@@ -47,7 +46,7 @@ public class KettleTask {
                 params.put("endDate", endDate);
                 try {
                     logger.debug("当前执行时间" + new Date());
-                    kettleUtils.runJob(jobObjectId, params);
+                    //kettleUtils.runJob(jobObjectId, params);
                     kettleLog.setLastDay(endDate);
                     logger.debug("id=" + jobObjectId + "执行成功");
                 } catch (Exception e) {
@@ -55,7 +54,7 @@ public class KettleTask {
                     kettleLog.setErrorCount(kettleLog.getErrorCount() + 1);
                     logger.error("id=[" + jobObjectId + "]任务执行异常", e);
                 } finally {
-                    kettleUtils.close();
+                    //kettleUtils.close();
                     try {
                         kettleLogService.save(kettleLog);
                     } catch (Exception e) {

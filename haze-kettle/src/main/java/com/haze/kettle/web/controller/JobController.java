@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/kettle/job")
 public class JobController {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobController.class);
-    //String uploadPath = "/home/sofar/下载";
+    /*//String uploadPath = "/home/sofar/下载";
 
     @Autowired
     private KettleUtils kettleUtils;
@@ -142,9 +142,9 @@ public class JobController {
         }
     }
 
-   /* *//**
+   *//* *//**//**
      * 上传文件
-     *//*
+     *//**//*
     @RequestMapping(value = "/uploadFile")
     public void uploadFile(MultipartHttpServletRequest request,
                            HttpServletResponse response) {
@@ -180,11 +180,11 @@ public class JobController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    }*//*
 
     @RequestMapping("/refreshRepository")
     public String refreshRepository() {
         return "redirect:/kettle/job/view";
-    }
+    }*/
 
 }

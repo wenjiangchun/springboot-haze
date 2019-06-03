@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/kettle/trans")
 public class TransController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransController.class);
-    //String uploadPath = "/home/sofar/下载";
+    /*//String uploadPath = "/home/sofar/下载";
 
     private final KettleUtils kettleRunner;
 
@@ -33,7 +33,7 @@ public class TransController {
         this.kettleRunner = kettleRunner;
     }
 
-  /*  @RequestMapping("/view")
+  *//*  @RequestMapping("/view")
     public String index(Model model) {
         try {
             List<RepositoryElementMetaInterface> elementList = kettleRunner.getAllTrans("/");
@@ -45,7 +45,7 @@ public class TransController {
         }
         return "kettle/trans/index";
     }
-*/
+*//*
     @RequestMapping("/getElementInfo/{objectId}/{type}")
     public String getElementInfo(@PathVariable String objectId, @PathVariable RepositoryObjectType type,  Model model) {
         String page = "kettle/trans/";
@@ -149,9 +149,9 @@ public class TransController {
         }
     }
 
-   /* *//**
+   *//* *//**//**
      * 上传文件
-     *//*
+     *//**//*
     @RequestMapping(value = "/uploadFile")
     public void uploadFile(MultipartHttpServletRequest request,
                            HttpServletResponse response) {
@@ -187,7 +187,7 @@ public class TransController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    }*//*
 
     @RequestMapping("/refreshRepository")
     public String refreshRepository() {
@@ -211,5 +211,5 @@ public class TransController {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 }

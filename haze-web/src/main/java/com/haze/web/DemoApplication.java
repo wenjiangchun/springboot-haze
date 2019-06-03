@@ -17,17 +17,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(repositoryBaseClass = com.haze.core.jpa.SimpleBaseRepository.class, basePackages= "com.haze")
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DemoApplication {
-
 	public static void main(String[] args) {
 
 		SpringApplication.run(DemoApplication.class, args);
-		Class<?> c = null;
 		try {
-			c = Class.forName("org.pentaho.di.core.database.MySQLDatabaseMeta");
+			Class<?> c = Class.forName("org.pentaho.di.core.database.MySQLDatabaseMeta");
 			System.out.println(c.getProtectionDomain().getCodeSource().getLocation());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-
 }
