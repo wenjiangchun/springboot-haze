@@ -126,7 +126,6 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @return  {@code List<T>}
      */
     public List<T> findByProperty(String propertyName, Object value, Sort... sorts) {
-        logger.debug(this.getClass().getName() + "执行查询操作");
         return this.dao.findByProperty(propertyName, value, sorts);
     }
 

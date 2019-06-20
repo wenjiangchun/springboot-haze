@@ -34,7 +34,7 @@ public class KettleTask {
             KettleLog kettleLog = kettleLogService.getKettleLog(jobObjectId);
             if (kettleLog == null) {
                 kettleLog = new KettleLog();
-                kettleLog.setJobId(jobObjectId);
+               // kettleLog.setJobId(jobObjectId);
                 kettleLog.setErrorCount(0);
                 kettleLog.setLastDay("20181119");
             }
@@ -50,7 +50,7 @@ public class KettleTask {
                     kettleLog.setLastDay(endDate);
                     logger.debug("id=" + jobObjectId + "执行成功");
                 } catch (Exception e) {
-                    kettleLog.setLastError(e.getMessage());
+                  //  kettleLog.setLastError(e.getMessage());
                     kettleLog.setErrorCount(kettleLog.getErrorCount() + 1);
                     logger.error("id=[" + jobObjectId + "]任务执行异常", e);
                 } finally {

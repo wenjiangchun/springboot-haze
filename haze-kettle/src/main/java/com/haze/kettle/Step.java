@@ -1,6 +1,7 @@
 package com.haze.kettle;
 
 public class Step {
+
     private String name;
 
     private int x;

@@ -1,11 +1,13 @@
 package com.haze.kettle.web.controller;
 
+import com.haze.kettle.KettleParams;
+import com.haze.kettle.entity.KettleLog;
 import com.haze.web.BaseController;
 import com.haze.kettle.entity.KettleRepository;
 import com.haze.kettle.service.KettleRepositoryService;
-import com.haze.web.utils.AlertType;
 import com.haze.web.utils.WebMessage;
 import org.pentaho.database.model.IDatabaseType;
+import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.repository.RepositoryElementMetaInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,7 +60,6 @@ public class KettleController extends BaseController {
         try {
             //kettleRepositoryService.testConnection(id);
             WebMessage webMessage = new WebMessage();
-            webMessage.setAlertType(AlertType.SUCCESS);
             webMessage.setContent("");
             return webMessage;
         } catch (Exception e) {
@@ -72,7 +73,6 @@ public class KettleController extends BaseController {
     public WebMessage createSchema(Model model, @PathVariable  Long id) {
         try {
             WebMessage webMessage = new WebMessage();
-            webMessage.setAlertType(AlertType.SUCCESS);
             if (kettleRepositoryService.isInit(id)) {
                 webMessage.setContent("资源库表已存在");
             } else {
@@ -87,9 +87,12 @@ public class KettleController extends BaseController {
     }
 
 
+    //---------------------------------------------------------------------
+    // trans相关
+    //---------------------------------------------------------------------
 
     @RequestMapping("/trans/view")
-    public String index(Model model, Long repositoryId) {
+    public String listTrans(Model model, Long repositoryId) {
         try {
             List<KettleRepository> repositoryList = kettleRepositoryService.getConnectedRepository();
             List<RepositoryElementMetaInterface> elementList = new ArrayList<>();
@@ -98,8 +101,6 @@ public class KettleController extends BaseController {
                     repositoryId = repositoryList.get(0).getId();
                 }
                 elementList = kettleRepositoryService.getAllTrans(repositoryId, "/");
-            } else {
-                model.addAttribute("error", "已连接资源库为空");
             }
             model.addAttribute("repositoryId", repositoryId);
             model.addAttribute("repositoryList", repositoryList);
@@ -109,4 +110,42 @@ public class KettleController extends BaseController {
         }
         return "kettle/trans/index";
     }
+
+
+    //---------------------------------------------------------------------
+    // Job相关
+    //---------------------------------------------------------------------
+
+    @RequestMapping("/job/view")
+    public String listJobs(Model model, Long repositoryId) {
+        try {
+            List<KettleRepository> repositoryList = kettleRepositoryService.getConnectedRepository();
+            List<RepositoryElementMetaInterface> elementList = new ArrayList<>();
+            if (!repositoryList.isEmpty()) {
+                if (repositoryId == null) {
+                    repositoryId = repositoryList.get(0).getId();
+                }
+                elementList = kettleRepositoryService.getAllJobs(repositoryId, "/");
+            }
+            model.addAttribute("repositoryId", repositoryId);
+            model.addAttribute("repositoryList", repositoryList);
+            model.addAttribute("transList", elementList);
+        } catch (Exception e) {
+            model.addAttribute("error", "获取资源库信息失败！");
+        }
+        return "kettle/job/index";
+    }
+
+    @RequestMapping("/job/run")
+    @ResponseBody
+    public KettleLog runJob(Long repositoryId, String objectId, KettleParams params) {
+        try {
+            return kettleRepositoryService.runJob(repositoryId, objectId, params.getKettleParams());
+        } catch (KettleException e) {
+            return KettleLog.createErrorLog(repositoryId, objectId, e.getMessage());
+        } catch(Exception e) {
+            return KettleLog.createErrorLog(repositoryId, objectId, "执行失败:" + e.getMessage());
+        }
+    }
+
 }

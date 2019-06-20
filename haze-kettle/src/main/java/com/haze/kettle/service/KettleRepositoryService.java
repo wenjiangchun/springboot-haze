@@ -1,25 +1,32 @@
 package com.haze.kettle.service;
 
 import com.haze.core.service.AbstractBaseService;
-import com.haze.kettle.config.KettleConfig;
+import com.haze.kettle.dao.KettleLogDao;
 import com.haze.kettle.dao.KettleRepositoryDao;
+import com.haze.kettle.entity.KettleLog;
 import com.haze.kettle.entity.KettleRepository;
 import org.pentaho.database.model.IDatabaseType;
 import org.pentaho.database.service.DatabaseDialectService;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.logging.LogLevel;
+import org.pentaho.di.core.parameters.UnknownParamException;
+import org.pentaho.di.job.Job;
+import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryElementMetaInterface;
+import org.pentaho.di.repository.StringObjectId;
 import org.pentaho.di.repository.kdr.KettleDatabaseRepository;
 import org.pentaho.di.repository.kdr.KettleDatabaseRepositoryMeta;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,18 +35,20 @@ import java.util.concurrent.ConcurrentHashMap;
 @Transactional
 public class KettleRepositoryService extends AbstractBaseService<KettleRepository, Long> implements InitializingBean, DisposableBean {
 
-    private KettleRepositoryDao kettleRepositoryDao;
+    private final KettleRepositoryDao kettleRepositoryDao;
 
-    @Autowired
-    private KettleConfig kettleConfig;
+    private final KettleLogDao kettleLogDao;
 
     private DatabaseDialectService databaseDialectService = new DatabaseDialectService(false);
 
-    private Map<Long, KettleDatabaseRepository> repositoryCache = new ConcurrentHashMap<>();
+    /**
+     * 资源库连接缓存存放对象，当资源库链接成功时将链接成功的KettleDatabaseRepository对象存放进来，使用KettleRepository的id作为key.
+     */
+    private final Map<Long, KettleDatabaseRepository> repositoryCache = new ConcurrentHashMap<>();
 
-    @Autowired
-    public void setKettleRepositoryDao(KettleRepositoryDao kettleRepositoryDao) {
+    public KettleRepositoryService(KettleRepositoryDao kettleRepositoryDao, KettleLogDao kettleLogDao) {
         this.kettleRepositoryDao = kettleRepositoryDao;
+        this.kettleLogDao = kettleLogDao;
         super.setDao(kettleRepositoryDao);
     }
 
@@ -81,7 +90,8 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
     @Transactional(readOnly = true)
     public void createSchema(Long id) throws Exception {
         if (isInit(id)) {
-            logger.warn("资源库【{}】表已存在", id);
+            logger.error("资源库【{}】表已存在", id);
+            throw new KettleException("资源库已存在");
         } else {
             logger.debug("开始创建资源库【{}】表", id);
             KettleRepository repository = this.findById(id);
@@ -134,7 +144,7 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
     }
 
 
-    public synchronized void connectionRepository(Long id) throws Exception {
+    public synchronized void connectionRepository(Long id) throws KettleException {
         if (!repositoryCache.containsKey(id)) {
             KettleRepository repository = this.findById(id);
             DatabaseMeta dataMeta = new DatabaseMeta(repository.getName(), repository.getDbType(), "Native(JDBC)", repository.getHost(), repository.getSchemaName(), repository.getPort(), repository.getUserName(), repository.getPassword());
@@ -151,7 +161,7 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
                 repositoryCache.put(id, dbRepository);
             } else {
                 logger.error("资源库【{}】连接失败", dbRepository.getName());
-                throw new Exception("资源库" + dbRepository.getName() + "连接失败");
+                throw new KettleException("资源库" + dbRepository.getName() + "连接失败");
             }
         }
     }
@@ -176,6 +186,93 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
             }
         }
         return elements;
+    }
+
+
+    public List<RepositoryElementMetaInterface> getAllJobs(Long repositoryId, String directory) throws KettleException {
+        if (!repositoryCache.containsKey(repositoryId)) {
+            connectionRepository(repositoryId);
+        }
+        KettleDatabaseRepository dbRepository = getKettleDatabaseRepository(repositoryId);
+        List<RepositoryElementMetaInterface> elements = new ArrayList<>();
+        if (directory == null) {
+            directory = "/";
+        }
+        RepositoryDirectoryInterface rootDirectory = dbRepository.findDirectory(directory);
+        if (directory.equals("/")) {
+            elements.addAll(dbRepository.getJobObjects(rootDirectory.getObjectId(), true));
+        }
+        for (RepositoryDirectoryInterface f : rootDirectory.getChildren()) {
+            elements.addAll(dbRepository.getJobObjects(f.getObjectId(), true));
+            if (!f.getChildren().isEmpty()) {
+                elements.addAll(getAllJobs(repositoryId, f.getName()));
+            }
+        }
+        return elements;
+    }
+
+    /**
+     * 执行Job作业
+     * @param repositoryId 资源库ID
+     * @param jobObjectId 作业ID
+     * @param parameters 参数值
+     */
+    public KettleLog runJob(Long repositoryId, String jobObjectId, Map<String, String> parameters) throws KettleException {
+        Assert.notNull(repositoryId, "资源库ID不能为空");
+        Assert.notNull(jobObjectId, "作业ID不能为空");
+        String errorMessage;
+        if (!repositoryCache.containsKey(repositoryId)) {
+            errorMessage = String.format("获取资源库对象出错，资源库【id=%d】不存在或无法连接", repositoryId);
+            logger.error(errorMessage);
+            throw new KettleException(errorMessage);
+        } else {
+            KettleDatabaseRepository repository = repositoryCache.get(repositoryId);
+            JobMeta jobMeta;
+            try {
+                jobMeta = repository.loadJob(new StringObjectId(jobObjectId), null);
+            } catch (KettleException e) {
+                errorMessage = String.format("作业对象不存在，作业【id=%s】,资源库【id=%d】",jobObjectId, repositoryId);
+                logger.error(errorMessage);
+                throw new KettleException(errorMessage);
+            }
+            Job job = new Job(repository, jobMeta);
+            for (String param : parameters.keySet()) {
+                try {
+                    jobMeta.setParameterValue(param, parameters.get(param));
+                } catch (UnknownParamException e) {
+                    errorMessage = String.format("设置参数出错，参数name=%s,value=%s",param, parameters.get(param));
+                    logger.error(errorMessage);
+                    throw new KettleException(errorMessage);
+                }
+            }
+            logger.debug("开始执行作业,【资源库={},作业={}】...", repository.getName(), jobMeta.getName());
+            Date startTime = new Date();
+            job.setLogLevel(LogLevel.ERROR);
+            job.run();
+            job.waitUntilFinished();
+            job.setFinished(true);
+            Date endTime = new Date();
+            //执行结果处理-写日志
+            KettleLog kettleLog = new KettleLog(jobObjectId, KettleLog.ObjectType.JOB, jobMeta.getName(), this.findById(repositoryId));
+            kettleLog.setStartTime(startTime);
+            kettleLog.setEndTime(endTime);
+            kettleLog.setTaskId(String.valueOf(job.getBatchId()));
+            kettleLog.setParams(KettleLog.getParams(parameters));
+            if (job.getErrors() > 0) {
+                int errors = job.getErrors();
+                String errorContent = job.getResult().getLogText();
+                kettleLog.setSuccess(false);
+                kettleLog.setErrorCount(errors);
+                kettleLog.setErrorText(errorContent);
+                logger.warn("作业执行完毕,出现【{}】个错误", errors);
+            } else {
+                kettleLog.setSuccess(true);
+                kettleLog.setErrorCount(0);
+                logger.debug("作业执行成功");
+            }
+            kettleLogDao.save(kettleLog);
+            return kettleLog;
+        }
     }
 
     @Transactional(readOnly = true)
@@ -205,7 +302,6 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
                 connectionRepository(r.getId());
             } catch (Exception e) {
                 //TODO
-                e.printStackTrace();
             }
         });
 

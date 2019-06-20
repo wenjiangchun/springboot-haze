@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>haze-web</artifactId>
-
     <dependencies>
         <dependency>
             <groupId>com.haze</groupId>
@@ -36,6 +35,11 @@
             <version>5.1.47</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>3.8.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -44,7 +48,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>

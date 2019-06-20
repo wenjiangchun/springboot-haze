@@ -35,7 +35,6 @@ public final class SpringContextUtils implements ApplicationContextAware {
         } else {
             ctx = applicationContext;
         }
-        //getDriverClassNames();
     }
 
     /**

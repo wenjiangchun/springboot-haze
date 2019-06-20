@@ -31,6 +31,13 @@ public class KettleRepository extends SimpleBaseEntity<Long> {
 
 	private Boolean enabled;
 
+	public KettleRepository() {
+	}
+
+	public KettleRepository(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}

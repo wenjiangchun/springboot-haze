@@ -27,15 +27,15 @@ public class WebMessage implements Serializable {
 	/**
 	 * 信息类型
 	 */
-	private AlertType alertType;
+	private String messageType;
 
 
     public WebMessage() {
 		
 	}
-	public WebMessage(String content, AlertType alertType) {
+	public WebMessage(String content, String messageType) {
 		this.content = content;
-		this.alertType = alertType;
+		this.messageType = messageType;
 	}
 
 
@@ -45,20 +45,22 @@ public class WebMessage implements Serializable {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public AlertType getAlertType() {
-		return alertType;
+
+
+	public String getMessageType() {
+		return messageType;
 	}
 
-    public void setAlertType(AlertType alertType) {
-		this.alertType = alertType;
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
 	}
 
-    /**
+	/**
      * 创建操作成功信息提示
      * @return WebMessage
      */
     public static WebMessage createSuccessWebMessage() {
-        return new WebMessage(ACTION_SUCCESS_MESSAGE, AlertType.SUCCESS);
+        return new WebMessage(ACTION_SUCCESS_MESSAGE, ACTION_SUCCESS_MESSAGE);
     }
 
 
@@ -68,7 +70,7 @@ public class WebMessage implements Serializable {
      * @return WebMessage
      */
     public static WebMessage createErrorWebMessage(String errorMessage) {
-        return new WebMessage(ACTION_ERROR_MESSAGE + errorMessage, AlertType.ERROR);
+        return new WebMessage(ACTION_ERROR_MESSAGE + errorMessage, ACTION_ERROR_MESSAGE);
     }
 
     /**
@@ -77,7 +79,7 @@ public class WebMessage implements Serializable {
      */
     public static WebMessage createLocaleSuccessWebMessage(Locale locale) {
         String message = SpringContextUtils.getMessage(ACTION_SUCCESS_MESSAGE, null, locale);
-        return new WebMessage(message, AlertType.SUCCESS);
+        return new WebMessage(message, ACTION_ERROR_MESSAGE);
     }
 
     /**
@@ -87,6 +89,6 @@ public class WebMessage implements Serializable {
      */
     public static WebMessage createErrorWebMessage(String errorMessage, Locale locale) {
         String message = SpringContextUtils.getMessage(ACTION_ERROR_MESSAGE, new String[]{errorMessage}, locale);
-        return new WebMessage(message, AlertType.ERROR);
+        return new WebMessage(message, ACTION_ERROR_MESSAGE);
     }
 }
