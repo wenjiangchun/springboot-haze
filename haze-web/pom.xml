@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>com.haze</groupId>
-            <artifactId>haze-commons</artifactId>
+            <artifactId>haze-spatial</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -39,6 +39,11 @@
             <groupId>p6spy</groupId>
             <artifactId>p6spy</artifactId>
             <version>3.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5</version>
         </dependency>
     </dependencies>
     <build>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
@@ -147,5 +148,9 @@ public class KettleController extends BaseController {
             return KettleLog.createErrorLog(repositoryId, objectId, "执行失败:" + e.getMessage());
         }
     }
+
+
+
+
 
 }

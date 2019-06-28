@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Entity
-@Table(name="K_LOG")
+@Table(name="k_log")
 @JsonIgnoreProperties(value = {"kettleRepository"})
 public class KettleLog extends SimpleBaseEntity<Long> {
 
