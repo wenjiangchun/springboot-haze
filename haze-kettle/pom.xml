@@ -234,10 +234,10 @@
                     <artifactId>*</artifactId>
                     <groupId>org.apache.xmlbeans</groupId>
                 </exclusion>
-                <!--<exclusion>
+                <exclusion>
                     <artifactId>*</artifactId>
                     <groupId>com.google.guava</groupId>
-                </exclusion>-->
+                </exclusion>
                 <exclusion>
                     <artifactId>*</artifactId>
                     <groupId>net.sf.saxon</groupId>

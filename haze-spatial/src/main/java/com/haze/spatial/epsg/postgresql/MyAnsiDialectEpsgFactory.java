@@ -1,7 +1,6 @@
 package com.haze.spatial.epsg.postgresql;
 
 import org.geotools.referencing.factory.epsg.AbstractEpsgFactory;
-import org.geotools.referencing.factory.epsg.AnsiDialectEpsgFactory;
 import org.geotools.util.factory.Hints;
 import org.opengis.referencing.FactoryException;
 
@@ -142,7 +141,10 @@ public class MyAnsiDialectEpsgFactory extends AbstractEpsgFactory {
            /* if (tableName.startsWith(prefix)) {
                 entry.setValue(schema + tableName.substring(prefix.length()));
             }*/
-            entry.setValue(schema + tableName);
+            if (!tableName.equalsIgnoreCase("coord_axis_order")) {
+                entry.setValue(schema + tableName);
+            }
+
         }
         prefix = schema;
     }
@@ -172,4 +174,5 @@ public class MyAnsiDialectEpsgFactory extends AbstractEpsgFactory {
         }
         return modified.toString();
     }
+
 }

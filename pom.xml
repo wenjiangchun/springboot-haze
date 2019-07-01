@@ -8,7 +8,8 @@
         <module>haze-web</module>
         <module>haze-commons</module>
 		<module>haze-spatial</module>
-	</modules>
+        <module>haze-swagger</module>
+    </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

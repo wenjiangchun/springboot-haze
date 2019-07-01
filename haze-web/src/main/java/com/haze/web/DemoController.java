@@ -1,18 +1,27 @@
 package com.haze.web;
 
 import com.haze.demo.service.TowerService;
+import com.haze.spatial.epsg.crs.CRSUtils;
 import com.haze.spatial.shapefile.ShapeFileUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.geotools.metadata.iso.citation.Citations;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@Api(value = "铁塔接口 ")
+@RestController
 @RequestMapping("/demo")
 public class DemoController {
 
@@ -23,14 +32,17 @@ public class DemoController {
         this.towerService = towerService;
     }
 
-    @RequestMapping("/saveTower")
+    @ApiOperation(value = "保存铁塔")
+    @ApiImplicitParams({@ApiImplicitParam(name = "siteNum", value = "站址编号", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "name", value = "站址名称", required = true, dataType = "String")})
+    @PostMapping("/saveTower")
     @ResponseBody
     public String saveTower(Model model, @RequestParam String siteNum, @RequestParam String name, @RequestParam String x, @RequestParam String y) {
         towerService.saveTower(siteNum, name, x, y);
         return "success";
     }
 
-    @RequestMapping("/testShape")
+    @GetMapping("/testShape")
     @ResponseBody
     public String testShape() {
         Map<String, Object> params = new HashMap<>();
@@ -43,9 +55,10 @@ public class DemoController {
         params.put("passwd", "1234");
         //ShapefileUtils.import2Database(params, "d:\\world\\test.shp");
         //ShapeFileUtils.createTable(params);
-        //ShapeFileUtils.importToDatabase(params,"d:\\world1\\world_adm0.shp");
-         ShapeFileUtils.importToDatabase(params,"D:\\world\\jz1\\行政区划\\11.shp");
+        ShapeFileUtils.importToDatabase(params,"D:\\world\\jz1\\基础数据\\湖.shp");
+         //ShapeFileUtils.importToDatabase(params,"D:\\world\\jz1\\行政区划\\11.shp");
         //ShapeFileUtils.exportFromDatabase(params, "world_adm0", "d:\\world1\\");
+        //CRSUtils.getSrid()
         return "success";
     }
 }

@@ -6,6 +6,7 @@ import com.haze.demo.entity.Tower;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ public class TowerService extends AbstractBaseService<Tower, Long>  {
 
     private TowerDao towerDao;
 
+    @Autowired
     public void setTowerDao(TowerDao towerDao) {
         this.towerDao = towerDao;
         super.setDao(towerDao);

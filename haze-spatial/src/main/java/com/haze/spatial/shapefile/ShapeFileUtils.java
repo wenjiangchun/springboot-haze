@@ -1,5 +1,6 @@
 package com.haze.spatial.shapefile;
 
+import com.haze.spatial.epsg.crs.CRSUtils;
 import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
@@ -32,7 +33,6 @@ import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.GenericName;
-import org.opengis.util.ScopedName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +43,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class ShapeFileUtils {
 
@@ -63,7 +60,7 @@ public final class ShapeFileUtils {
             FileDataStoreFactorySpi factory = new ShapefileDataStoreFactory();
             //factory.createDataStore(file.toURI().toURL());
             fileDataStore = (ShapefileDataStore) factory.createDataStore(file.toURI().toURL());
-            ;
+            //;fileDataStore.getSchema().
             fileDataStore.setCharset(Charset.forName("UTF-8"));
             fileDataStore.setNamespaceURI(null);
             String typeName = fileDataStore.getTypeNames()[0];
@@ -72,7 +69,14 @@ public final class ShapeFileUtils {
             ContentFeatureSource source = fileDataStore.getFeatureSource();
             Filter filter = Filter.INCLUDE;
             FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
-            createTable(databaseParams, fileDataStore.getSchema(), collection);
+            //System.out.println(CRSUtils.getSrid(source.getSchema().getCoordinateReferenceSystem()));
+            try {
+                System.out.println(CRS.lookupEpsgCode(source.getSchema().getCoordinateReferenceSystem(), true));
+                //System.out.println(CRS.lookupIdentifier(source.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem(), true));
+            } catch (FactoryException e) {
+                e.printStackTrace();
+            }
+            //createTable(databaseParams, fileDataStore.getSchema(), collection);
             fileDataStore.dispose();
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +101,7 @@ public final class ShapeFileUtils {
             System.out.println(schema.getCoordinateReferenceSystem().toWKT());
             String wkt = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
             try {
-                int srid = getSrid(dataStore, schema.getCoordinateReferenceSystem());
+               // int srid = getSrid(dataStore, schema.getCoordinateReferenceSystem());
                 //int espg = CRS.lookupEpsgCode(schema.getCoordinateReferenceSystem(), true);
                 int espg = CRS.lookupEpsgCode(DefaultGeographicCRS.WGS84, true);
                 CoordinateReferenceSystem referenceSystem = schema.getCoordinateReferenceSystem();
@@ -337,169 +341,6 @@ public final class ShapeFileUtils {
             dataStore.createSchema(location);
         } catch (IOException e) {
             logger.error("创建失败【{}】", e.getCause().getMessage());
-            //e.printStackTrace();
         }
-    }
-
-    public static int getSrid(JDBCDataStore dataStore, CoordinateReferenceSystem crs) {
-        PreparedStatement statement = null;
-        try {
-            Integer srid = CRS.lookupEpsgCode(crs, true);
-            if (srid == null) {
-                List<String> queryParams = new ArrayList<>();
-                String sql = "select cfs.coord_ref_sys_code from crs.epsg_coordinatereferencesystem cfs inner join  crs.epsg_coordinatesystem cs on cfs.coord_sys_code=cs.coord_sys_code where cfs.coord_ref_sys_name = ? and cs.dimension=? and cs.coord_sys_type=?";
-                Connection connection = dataStore.getDataSource().getConnection();
-                statement = connection.prepareStatement(sql);
-                String coordSysType = "";
-                int dimension = 0;
-                if (crs instanceof DefaultGeographicCRS) {
-                    DefaultGeographicCRS defaultGeographicCRS = (DefaultGeographicCRS) crs;
-                    GeodeticDatum datum = defaultGeographicCRS.getDatum();
-                    for (GenericName alias : datum.getAlias()) {
-                        queryParams.add(alias.name().toString());
-                    }
-                    EllipsoidalCS cs = defaultGeographicCRS.getCoordinateSystem();
-                    coordSysType = "ellipsoidal";
-                    dimension = cs.getDimension();
-
-                } else if (crs instanceof DefaultProjectedCRS) {
-                    DefaultProjectedCRS defaultCRS = (DefaultProjectedCRS) crs;
-                    GeodeticDatum datum = defaultCRS.getDatum();
-                    for (GenericName alias : datum.getAlias()) {
-                        queryParams.add(alias.name().toString());
-                    }
-                    CartesianCS cs = defaultCRS.getCoordinateSystem();
-                    DefaultCylindricalProjection projection = (DefaultCylindricalProjection) defaultCRS.getConversionFromBase();
-                    coordSysType = "cartesian";
-                    dimension = cs.getDimension();
-
-                    OperationMethod operationMethod = defaultCRS.getConversionFromBase().getMethod();
-                    //首先查詢投影方法code
-                    int methodCode = getMethodCode(connection, operationMethod);
-                    if (methodCode != 0) {
-                        //遍历参数
-                        MapProjection mapProjection = CRS.getMapProjection(defaultCRS);
-                        mapProjection.getParameterValues();
-                        Map<Integer, Object> querys = getMethodParams(connection, mapProjection, methodCode);
-                        //根据method code和对应参数code查询投影code
-                        int projectCode = queryProjectCode(connection, methodCode, querys);
-                        System.out.println("=====================projectCode" + projectCode);
-                    }
-                }
-                for (String params : queryParams) {
-                    statement.setString(1, params);
-                    statement.setInt(2, dimension);
-                    statement.setString(3, coordSysType);
-                    ResultSet rs = statement.executeQuery();
-                    while (rs.next()) {
-                        srid = rs.getInt(1);
-                    }
-                    if (srid != null) {
-                        return srid;
-                    }
-                }
-            }
-        } catch (FactoryException | SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-
-    private static int getMethodCode(Connection connection, OperationMethod operationMethod) {
-        List<String> methodAliasList = new ArrayList<>();
-        for (GenericName alias : operationMethod.getAlias()) {
-            methodAliasList.add(alias.name().toString());
-        }
-        String projectMethodNameSql = "SELECT * FROM crs.epsg_coordoperationmethod WHERE coord_op_method_name=?";
-        int methodCode = 0;
-        try(PreparedStatement statement = connection.prepareStatement(projectMethodNameSql);) {
-            for (String methodAlias : methodAliasList) {
-                statement.setString(1, methodAlias);
-                ResultSet rs = statement.executeQuery();
-                while (rs.next()) {
-                    methodCode = rs.getInt(1);
-                }
-                if (methodCode != 0) {
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return methodCode;
-    }
-
-    private static Map<Integer, Object> getMethodParams(Connection connection, MapProjection operationMethod, int methodCode) {
-        Map<Integer, Object> methodParams = new HashMap<>();
-        ParameterValueGroup valueGroup = operationMethod.getParameterValues();
-        Map<Integer, String> params = getMethodParamsCode(connection, methodCode);
-        for (GeneralParameterValue parameterValue : valueGroup.values()) {
-            //parameterValue.
-            if (parameterValue instanceof org.geotools.parameter.Parameter) {
-                org.geotools.parameter.Parameter parameter = (org.geotools.parameter.Parameter) parameterValue;
-                double value = parameter.doubleValue();
-                //查询对应code
-                //int paramCode = getMethodParamsCode(connection, methodCode);
-                for (GenericName alias : parameterValue.getDescriptor().getAlias()) {
-                    String paramName = alias.name().toString();
-                    for (Integer key : params.keySet()) {
-                        if (params.get(key).equalsIgnoreCase(paramName)) {
-                            methodParams.put(key, value);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return methodParams;
-    }
-
-    private static Map<Integer, String> getMethodParamsCode(Connection connection, int methodCode) {
-        //String projectMethodNameSql = "SELECT parameter_code FROM crs.epsg_coordoperationparam WHERE parameter_name=?";
-        String projectMethodNameSql = "select p.parameter_code, parameter_name from crs.epsg_coordoperationparam p inner join crs.epsg_coordoperationparamusage u on p.parameter_code=u.parameter_code where u.coord_op_method_code=?";
-        Map<Integer, String> params = new HashMap<>();
-        try(PreparedStatement statement = connection.prepareStatement(projectMethodNameSql);) {
-            statement.setInt(1, methodCode);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                params.put(rs.getInt(1), rs.getString(2));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return params;
-    }
-
-    private static int queryProjectCode(Connection connection, int methodCode, Map<Integer, Object> methodParams) {
-        String projectCodeSql = "SELECT coord_op_code,parameter_code, parameter_value FROM crs.epsg_coordoperationparamvalue WHERE coord_op_method_code=?";
-        int code = 0;
-        Map<Integer, Map<Integer, Object>> map = new HashMap<>();
-        try(PreparedStatement statement = connection.prepareStatement(projectCodeSql);) {
-            statement.setInt(1, methodCode);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                int projectCode = rs.getInt(1);
-                if (!map.containsKey(projectCode)) {
-                    Map<Integer, Object> params = new HashMap<>();
-                    map.put(rs.getInt(1), params);
-                    params.put(rs.getInt(2), rs.getDouble(3));
-                } else {
-                    Map<Integer, Object> params = map.get(projectCode);
-                    params.put(rs.getInt(2), rs.getDouble(3));
-                }
-            }
-            //处理map
-            for (Integer key : map.keySet()) {
-                Map<Integer, Object> params = map.get(key);
-                if (params.keySet().containsAll(methodParams.keySet()) && params.values().containsAll(methodParams.values())) {
-                    code = key;
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return code;
     }
 }

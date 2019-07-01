@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DemoApplication {
 	public static void main(String[] args) {
-
 		ConfigurableApplicationContext ctx = SpringApplication.run(DemoApplication.class, args);
 		try {
 			Class<?> c = Class.forName("org.pentaho.di.core.database.MySQLDatabaseMeta");

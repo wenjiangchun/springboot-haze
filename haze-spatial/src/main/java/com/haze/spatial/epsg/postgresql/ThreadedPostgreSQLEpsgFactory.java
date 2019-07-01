@@ -1,8 +1,6 @@
 package com.haze.spatial.epsg.postgresql;
 
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
-import org.geotools.referencing.factory.epsg.AnsiDialectEpsgFactory;
-import org.geotools.referencing.factory.epsg.FactoryUsingAnsiSQL;
 import org.geotools.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotools.util.factory.Hints;
 import org.geotools.util.logging.Logging;
@@ -109,5 +107,9 @@ public class ThreadedPostgreSQLEpsgFactory extends ThreadedEpsgFactory {
             factory.setSchema(schema);
         }
         return factory;
+    }
+
+    public String getSchema() {
+        return this.schema;
     }
 }
