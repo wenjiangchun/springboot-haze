@@ -1,10 +1,11 @@
 package com.haze.spatial.shapefile;
 
-import com.haze.spatial.epsg.crs.CRSUtils;
-import org.geotools.data.*;
+import org.geotools.data.DataStoreFinder;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.FileDataStoreFactorySpi;
+import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.data.store.ContentFeatureSource;
@@ -14,9 +15,6 @@ import org.geotools.jdbc.JDBCDataStore;
 import org.geotools.jdbc.JDBCFeatureStore;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.geotools.referencing.crs.DefaultProjectedCRS;
-import org.geotools.referencing.operation.DefaultCylindricalProjection;
-import org.geotools.referencing.operation.projection.MapProjection;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -25,14 +23,8 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.parameter.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CartesianCS;
-import org.opengis.referencing.cs.EllipsoidalCS;
-import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.util.GenericName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +34,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class ShapeFileUtils {
 
