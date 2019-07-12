@@ -164,7 +164,6 @@ public final class CRSUtils {
                 Map<Integer, Object> querys = getMethodParams(connection, mapProjection, methodCode);
                 //根据method code和对应参数code查询投影code
                 Set<Integer> projectCodes = queryProjectCode(connection, methodCode, querys);
-                //System.out.println("=====================projectCode" + projectCode);
                 //根据projectCodes和geoSrid唯一平面坐标信息
                 String sql = "select coord_ref_sys_code from [Coordinate Reference System] where source_geogcrs_code=? and projection_conv_code=? and deprecated=0";
                 try (PreparedStatement statement = connection.prepareStatement(adaptSQL(sql))) {
