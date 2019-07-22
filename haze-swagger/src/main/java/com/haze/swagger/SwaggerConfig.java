@@ -34,7 +34,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private ApiInfo getApiInfo() {
         Contact contact = new Contact("Haze", "https://www.github.com/wenjiangchun/demo", "haze@hotmail.com");
         return new ApiInfoBuilder()
-                .title("系统接口文档")
+                .title("系统Rest接口文档")
                 .description("接口定义")
                 .version("1.0.0")
                 .license("Apache 2.0")
