@@ -53,12 +53,7 @@ public class DemoController {
         params.put("database", "gis");
         params.put("user", "postgres");
         params.put("passwd", "1234");
-        //ShapefileUtils.import2Database(params, "d:\\world\\test.shp");
-        //ShapeFileUtils.createTable(params);
         ShapeFileUtils.importToDatabase(params,"D:\\world\\jz1\\基础数据\\湖.shp");
-         //ShapeFileUtils.importToDatabase(params,"D:\\world\\jz1\\行政区划\\11.shp");
-        //ShapeFileUtils.exportFromDatabase(params, "world_adm0", "d:\\world1\\");
-        //CRSUtils.getSrid()
         return "success";
     }
 }

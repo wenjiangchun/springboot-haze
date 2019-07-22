@@ -1,7 +1,7 @@
 package com.haze.demo.entity;
 
 import com.haze.core.jpa.entity.SimpleBaseEntity;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,7 +11,7 @@ import javax.persistence.Table;
 public class Tower extends SimpleBaseEntity<Long> {
     private String siteNum;
     private String name;
-    private Point location;
+    private Point geom;
 
     public String getName() {
         return name;
@@ -21,12 +21,12 @@ public class Tower extends SimpleBaseEntity<Long> {
         this.name = name;
     }
 
-    public Point getLocation() {
-        return location;
+    public Point getGeom() {
+        return geom;
     }
 
-    public void setLocation(Point location) {
-        this.location = location;
+    public void setGeom(Point geom) {
+        this.geom = geom;
     }
 
     public String getSiteNum() {
@@ -42,7 +42,7 @@ public class Tower extends SimpleBaseEntity<Long> {
         return "Tower{" +
                 "siteNum='" + siteNum + '\'' +
                 "name='" + name + '\'' +
-                ", location=" + location.toText() +
+                ", geom=" + geom.toText() +
                 '}';
     }
 }

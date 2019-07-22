@@ -6,7 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SpatialProperties {
 
     private String name;
+
     private EPSG epsg;
+
     private RemoteGeoServer geoServer;
 
     public String getName() {

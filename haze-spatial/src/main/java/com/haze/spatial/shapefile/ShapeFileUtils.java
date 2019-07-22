@@ -323,11 +323,11 @@ public final class ShapeFileUtils {
     public static void createTable(Map<String, Object> databaseParams) {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName("Location");
-        builder.setCRS(DefaultGeographicCRS.WGS84); // <- Coordinate reference system
+        builder.setCRS(DefaultGeographicCRS.WGS84);
 
         // add attributes in order
         builder.add("geom", Point.class);
-        builder.length(15).add("name", String.class); // <- 15 chars width for name field
+        builder.length(15).add("name", String.class);
         builder.add("number", Integer.class);
         // build the type
         final SimpleFeatureType location = builder.buildFeatureType();

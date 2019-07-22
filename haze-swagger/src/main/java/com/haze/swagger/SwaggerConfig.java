@@ -1,5 +1,6 @@
 package com.haze.swagger;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -24,7 +25,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(getApiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.haze.web"))
+                //.apis(RequestHandlerSelectors.basePackage("com.haze.web"))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -32,7 +34,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private ApiInfo getApiInfo() {
         Contact contact = new Contact("Haze", "https://www.github.com/wenjiangchun/demo", "haze@hotmail.com");
         return new ApiInfoBuilder()
-                .title("系统Rest接口文档")
+                .title("系统接口文档")
                 .description("接口定义")
                 .version("1.0.0")
                 .license("Apache 2.0")
