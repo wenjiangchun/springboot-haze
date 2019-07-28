@@ -17,7 +17,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.haze</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>springboot-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
