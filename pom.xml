@@ -9,7 +9,10 @@
         <module>haze-commons</module>
 		<module>haze-spatial</module>
         <module>haze-swagger</module>
-    </modules>
+		<module>haze-shiro</module>
+		<module>haze-system</module>
+		<module>haze-test</module>
+	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -44,12 +47,13 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
+
+		<!--<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

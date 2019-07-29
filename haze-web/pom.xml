@@ -12,6 +12,11 @@
     <dependencies>
         <dependency>
             <groupId>com.haze</groupId>
+            <artifactId>haze-system</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.haze</groupId>
             <artifactId>haze-kettle</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -23,6 +28,11 @@
         <dependency>
             <groupId>com.haze</groupId>
             <artifactId>haze-swagger</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.haze</groupId>
+            <artifactId>haze-shiro</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
