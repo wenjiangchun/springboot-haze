@@ -36,7 +36,7 @@ import java.util.Set;
  * @since 11-mrt-2005
  */
 
-public class MySQLDatabaseMeta extends BaseDatabaseMeta implements DatabaseInterface {
+public class MySQLDatabaseMeta11 extends BaseDatabaseMeta implements DatabaseInterface {
 
     private static final Set<String>
             SHORT_MESSAGE_EXCEPTIONS =

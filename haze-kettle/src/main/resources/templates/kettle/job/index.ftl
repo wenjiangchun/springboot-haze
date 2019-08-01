@@ -11,13 +11,13 @@
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-                转换管理
-                <small>转换列表</small>
+                作业管理
+                <small>作业列表</small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
                 <li><a href="#">ETL管理</a></li>
-                <li class="active">转换管理</li>
+                <li class="active">作业管理</li>
             </ol>
         </section>
 
@@ -38,9 +38,9 @@
                             <ul class="nav nav-pills nav-stacked">
                                 <#list repositoryList as repo>
                                     <#if repositoryId==repo.id>
-                                        <li class="active"><a href="${ctx.contextPath}/kettle/trans/view?repositoryId=${repo.id!}"><i class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
+                                        <li class="active"><a href="${ctx.contextPath}/kettle/job/view?repositoryId=${repo.id!}"><i class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
                                     <#else>
-                                        <li><a href="${ctx.contextPath}/kettle/trans/view?repositoryId=${repo.id!}"><i class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
+                                        <li><a href="${ctx.contextPath}/kettle/job/view?repositoryId=${repo.id!}"><i class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
                                     </#if>
                                 </#list>
                         </div>
@@ -51,7 +51,7 @@
                 <div class="col-xs-10">
                     <div class="box">
                         <div class="box-header">
-                            <h3 class="box-title">转换列表</h3>
+                            <h3 class="box-title">作业列表</h3>
                             <div class="box-tools">
                                 <a href="#" id="refreshRepository" class="btn btn-default"><i class="fa fa-repeat"></i>  刷新</a>
                             </div>
@@ -88,7 +88,7 @@
                                                class="btn btn-primary btn-sm"><i class="fa fa-file"></i>  查看日志</a>
                                             <a href="javascript:void(0)"
                                                onclick="previewTrans(${trans.objectId}, '${trans.name!}', '${trans.objectType.name()!}')"
-                                               class="btn btn-primary btn-sm"><i class="fa fa-search"></i>  转换预览</a>
+                                               class="btn btn-primary btn-sm"><i class="fa fa-search"></i>  作业预览</a>
                                         </td>
                                     </tr>
                                 </#list>
@@ -150,7 +150,6 @@
         });
     });
 
-
     function showElementInfo(objectId, title, type) {
         layer.open({
             type: 2,
@@ -158,7 +157,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['800px', '60%'],
-            content: '${ctx.contextPath}/kettle/trans/getElementInfo/' + objectId + '/' + type //iframe的url
+            content: '${ctx.contextPath}/kettle/getElementInfo/${repositoryId}/' + objectId + '/' + type //iframe的url
         });
     }
 
@@ -169,7 +168,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['80%', '60%'],
-            content: '${ctx.contextPath}/kettle/trans/getElementLog/' + objectId + '/' + type //iframe的url
+            content: '${ctx.contextPath}/kettle/getElementLog/${repositoryId}/' + objectId + '/' + type //iframe的url
         });
     }
 

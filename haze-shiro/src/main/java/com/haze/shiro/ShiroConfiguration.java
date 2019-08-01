@@ -21,12 +21,19 @@ public class ShiroConfiguration {
     @Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-        chainDefinition.addPathDefinition("/login", "anon");
+        /*chainDefinition.addPathDefinition("/login", "anon");
         chainDefinition.addPathDefinition("/res/**", "anon");
         chainDefinition.addPathDefinition("/resources/**", "anon");
-        chainDefinition.addPathDefinition("/kettle/**", "authc,perms[mvn:install]");
-        chainDefinition.addPathDefinition("/swagger-ui.html", "authc");
-        chainDefinition.addPathDefinition("/**", "authc");
+        chainDefinition.addPathDefinition("/k/**", "authc,perms[mvn:install]");
+        chainDefinition.addPathDefinition("/kettle/**", "anon");
+        chainDefinition.addPathDefinition("/swagger-ui.html", "anon");
+        chainDefinition.addPathDefinition("/swagger-resources/**", "anon");
+        chainDefinition.addPathDefinition("/swagger-resources", "anon");
+        chainDefinition.addPathDefinition("/v2/**", "anon");
+        chainDefinition.addPathDefinition("/crsf", "anon");
+        chainDefinition.addPathDefinition("/webjars/**", "anon");*/
+        chainDefinition.addPathDefinition("/**", "anon");
+        chainDefinition.addPathDefinition("/", "anon");
         chainDefinition.addPathDefinitions(shiroFilterChainDBDefinition().getFilterChainDefinitions());
         return chainDefinition;
     }

@@ -165,18 +165,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['800px', '60%'],
-            content: '${ctx.contextPath}/kettle/trans/getElementInfo/' + objectId + '/' + type //iframe的url
-        });
-    }
-
-    function showElementLog(objectId, title, type) {
-        layer.open({
-            type: 2,
-            title: title,
-            shadeClose: true,
-            shade: 0.8,
-            area: ['80%', '60%'],
-            content: '${ctx.contextPath}/kettle/trans/getElementLog/' + objectId + '/' + type //iframe的url
+            content: '${ctx.contextPath}/kettle/getElementInfo/${repositoryId}/' + objectId + '/' + type //iframe的url
         });
     }
 
@@ -187,7 +176,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['80%', '70%'],
-            content: '${ctx.contextPath}/kettle/trans/previewTrans/' + objectId + '/' + type //iframe的url
+            content: '${ctx.contextPath}/kettle/previewElementInfo/${repositoryId}/' + objectId + '/' + type //iframe的url
         });
     }
 

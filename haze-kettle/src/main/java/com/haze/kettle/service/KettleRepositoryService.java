@@ -1,30 +1,39 @@
 package com.haze.kettle.service;
 
 import com.haze.core.service.AbstractBaseService;
+import com.haze.kettle.StepWrapper;
 import com.haze.kettle.dao.KettleLogDao;
 import com.haze.kettle.dao.KettleRepositoryDao;
 import com.haze.kettle.entity.KettleLog;
 import com.haze.kettle.entity.KettleRepository;
+import com.haze.kettle.utils.KettleUtils;
 import org.pentaho.database.model.IDatabaseType;
 import org.pentaho.database.service.DatabaseDialectService;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LogLevel;
+import org.pentaho.di.core.logging.TransLogTable;
 import org.pentaho.di.core.parameters.UnknownParamException;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
+import org.pentaho.di.repository.Repository;
 import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.repository.RepositoryElementMetaInterface;
 import org.pentaho.di.repository.StringObjectId;
 import org.pentaho.di.repository.kdr.KettleDatabaseRepository;
 import org.pentaho.di.repository.kdr.KettleDatabaseRepositoryMeta;
+import org.pentaho.di.trans.Trans;
+import org.pentaho.di.trans.TransMeta;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -212,6 +221,91 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
     }
 
     /**
+     * 执行转换
+     * @param repositoryId 资源库ID
+     * @param transObjectId 作业ID
+     * @param parameters 参数值
+     */
+    public KettleLog runTrans(Long repositoryId, String transObjectId, Map<String, String> parameters) throws KettleException {
+        Assert.notNull(repositoryId, "资源库ID不能为空");
+        Assert.notNull(transObjectId, "转换ID不能为空");
+        String errorMessage;
+        if (!repositoryCache.containsKey(repositoryId)) {
+            errorMessage = String.format("获取资源库对象出错，资源库【id=%d】不存在或无法连接", repositoryId);
+            logger.error(errorMessage);
+            throw new KettleException(errorMessage);
+        } else {
+            KettleDatabaseRepository repository = repositoryCache.get(repositoryId);
+            TransMeta transMeta = repository.loadTransformation(new StringObjectId(transObjectId), null);
+            if (transMeta == null) {
+                errorMessage = String.format("转换对象不存在，转换【id=%s】,资源库【id=%d】", transObjectId, repositoryId);
+                logger.error(errorMessage);
+                throw new KettleException(errorMessage);
+            }
+
+            Trans trans = new Trans(transMeta);
+            for (String param : parameters.keySet()) {
+                try {
+                    trans.setParameterValue(param, parameters.get(param));
+                } catch (UnknownParamException e) {
+                    errorMessage = String.format("设置参数出错，参数name=%s,value=%s",param, parameters.get(param));
+                    logger.error(errorMessage);
+                    throw new KettleException(errorMessage);
+                }
+            }
+            setVariables(trans, parameters);
+            Date startTime = new Date();
+            trans.execute(null);//执行trans
+            trans.waitUntilFinished();
+            Date endTime = new Date();
+            KettleLog kettleLog = new KettleLog(transObjectId, KettleLog.ObjectType.JOB, transMeta.getName(), this.findById(repositoryId));
+            kettleLog.setStartTime(startTime);
+            kettleLog.setEndTime(endTime);
+            kettleLog.setTaskId(String.valueOf(trans.getBatchId()));
+            if (trans.getErrors() > 0) {
+                int errors = trans.getErrors();
+                String errorContent = trans.getResult().getLogText();
+                kettleLog.setSuccess(false);
+                kettleLog.setErrorCount(errors);
+                kettleLog.setErrorText(errorContent);
+                logger.warn("转换执行完毕,出现【{}】个错误", errors);
+            } else {
+                kettleLog.setSuccess(true);
+                kettleLog.setErrorCount(0);
+                logger.debug("转换执行成功");
+            }
+            kettleLogDao.save(kettleLog);
+            TransLogTable logTable = transMeta.getTransLogTable();
+            if (logTable != null && logTable.getDatabaseMeta() != null) {
+                DatabaseMeta dataBaseMeta = logTable.getDatabaseMeta();
+                Database dataBase = new Database(transMeta, dataBaseMeta);
+                dataBase.setVariable("db.sid", "orcl");
+                dataBase.setVariable("db.username", "bkht");
+                dataBase.setVariable("db.password", "123456");
+                dataBase.setVariable("db.ip", "188.9.25.151");
+                String tableName = logTable.getTableName();
+                String key = logTable.getKeyField().getFieldName();
+                dataBase.connect();
+                ResultSet result = dataBase.openQuery("select * from " + tableName + " where " + key + "=" + trans.getBatchId());
+                while (true) {
+                    try {
+                        if (!result.next()) {
+                            kettleLog.setId(trans.getBatchId());
+                            //kettleLog.setErrorCount(result.getString(logTable.getLogField().getFieldName()));
+                            kettleLog.setName(result.getString(logTable.getNameField().getFieldName()));
+                        }
+                        ;
+                    } catch (SQLException e) {
+                        logger.error("获取转换");
+                        break;
+                    }
+                }
+                dataBase.disconnect();
+            }
+        return kettleLog;}
+    }
+
+    /**
      * 执行Job作业
      * @param repositoryId 资源库ID
      * @param jobObjectId 作业ID
@@ -289,6 +383,38 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
         return list;
     }
 
+    @Transactional(readOnly = true)
+    public TransMeta getTransMetaByObjectId(Long repositoryId, String objectId) throws KettleException {
+        Assert.notNull(repositoryId, "资源库ID不能为空");
+        Assert.notNull(objectId, "转换ID不能为空");
+        Repository repository = getKettleDatabaseRepository(repositoryId);
+        //TransMeta transMeta = repository.loadTransformation(new StringObjectId(objectId), null);
+        /*for (String stepName : repository.loadTransformation(new StringObjectId(objectId), null).getStepNames()) {
+            LOGGER.debug(stepName);
+        }*/
+        return repository.loadTransformation(new StringObjectId(objectId), null);
+    }
+
+    @Transactional(readOnly = true)
+    public JobMeta getJobMetaByObjectId(Long repositoryId, String objectId) throws KettleException {
+        Assert.notNull(repositoryId, "资源库ID不能为空");
+        Assert.notNull(objectId, "作业ID不能为空");
+        Repository repository = getKettleDatabaseRepository(repositoryId);
+        return repository.loadJob(new StringObjectId(objectId), null);
+    }
+
+    @Transactional(readOnly = true)
+    public StepWrapper getTransStepWrapper(Long repositoryId, String objectId) throws KettleException {
+        Repository repository = getKettleDatabaseRepository(repositoryId);
+        return KettleUtils.getTransStepWrapper(repository, objectId);
+    }
+
+    @Transactional(readOnly = true)
+    public StepWrapper getJobStepWrapper(Long repositoryId, String objectId) throws KettleException {
+        Repository repository = getKettleDatabaseRepository(repositoryId);
+        return KettleUtils.getJobStepWrapper(repository, objectId);
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.debug("初始化kettle运行环境...");
@@ -318,4 +444,10 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
             }
         });
     }
+
+
+    private void setVariables(Trans trans, Map<String, String> variables) {
+        variables.forEach(trans::setVariable);
+    }
+
 }

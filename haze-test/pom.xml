@@ -11,6 +11,7 @@
 
     <artifactId>haze-test</artifactId>
 
+    <description>测试模块，提供了一个spring boot application启动类</description>
     <dependencies>
         <dependency>
             <groupId>com.haze</groupId>
@@ -25,7 +26,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

@@ -162,7 +162,7 @@
     }
 
     $(function () {
-        $.post("${ctx.contextPath}/kettle/trans/preview/${objectId}",function(data){
+        $.post("${ctx.contextPath}/kettle/previewTrans/${repositoryId}/${objectId}",function(data){
             var stepList = data.stepList;
             var flowList = data.stepFlowList;
             $.each(stepList, function(i,el) {
