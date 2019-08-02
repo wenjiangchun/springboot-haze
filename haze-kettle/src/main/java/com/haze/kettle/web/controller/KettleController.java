@@ -184,12 +184,12 @@ public class KettleController extends BaseController {
     @ApiOperation(value = "执行ETL转换")
     @ApiImplicitParams({@ApiImplicitParam(name = "repositoryId", value = "资源库ID", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "objectId", value = "转换ID", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "params", value = "params", required = true, dataType = "Object")})
-    @PostMapping("/job/run")
+            @ApiImplicitParam(name = "params", value = "kettleParams")})
+    @PostMapping("/trans/run")
     @ResponseBody
     public KettleLog runTrans(Long repositoryId, String objectId, KettleParams params){
         try {
-            return kettleRepositoryService.runJob(repositoryId, objectId, params.getKettleParams());
+            return kettleRepositoryService.runTrans(repositoryId, objectId, params.getKettleParams());
         } catch (KettleException e) {
             return KettleLog.createErrorLog(repositoryId, objectId, e.getMessage());
         } catch (Exception e) {
@@ -224,7 +224,7 @@ public class KettleController extends BaseController {
         @ApiOperation(value = "执行ETL作业")
         @ApiImplicitParams({@ApiImplicitParam(name = "repositoryId", value = "资源库ID", required = true, dataType = "Long"),
                 @ApiImplicitParam(name = "objectId", value = "作业ID", required = true, dataType = "String"),
-                @ApiImplicitParam(name = "params", value = "params", required = true, dataType = "Object")})
+                @ApiImplicitParam(name = "params", value = "params")})
         @PostMapping("/job/run")
         @ResponseBody
         public KettleLog runJob (Long repositoryId, String objectId, KettleParams params){

@@ -6,13 +6,23 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
-@ConfigurationProperties(prefix = "kettle", ignoreUnknownFields = true)
-public class KettleConfig {
+@ConfigurationProperties(prefix = "haze.kettle")
+public class KettleProperties {
+
+    //插件文件夹位置
+    private String pluginFolder;
 
     private KettleRepository repository = new KettleRepository();
 
     private Map<String, String> params = new HashMap<>();
+
+    public String getPluginFolder() {
+        return pluginFolder;
+    }
+
+    public void setPluginFolder(String pluginFolder) {
+        this.pluginFolder = pluginFolder;
+    }
 
     public Map<String, String> getParams() {
         return params;

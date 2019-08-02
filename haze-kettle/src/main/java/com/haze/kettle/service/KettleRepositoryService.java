@@ -1,7 +1,9 @@
 package com.haze.kettle.service;
 
+import com.haze.common.HazeStringUtils;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.kettle.StepWrapper;
+import com.haze.kettle.config.KettleProperties;
 import com.haze.kettle.dao.KettleLogDao;
 import com.haze.kettle.dao.KettleRepositoryDao;
 import com.haze.kettle.entity.KettleLog;
@@ -16,6 +18,8 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.logging.TransLogTable;
 import org.pentaho.di.core.parameters.UnknownParamException;
+import org.pentaho.di.core.plugins.PluginFolder;
+import org.pentaho.di.core.plugins.StepPluginType;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.Repository;
@@ -28,16 +32,18 @@ import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -47,6 +53,9 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
     private final KettleRepositoryDao kettleRepositoryDao;
 
     private final KettleLogDao kettleLogDao;
+
+    @Autowired
+    private KettleProperties kettleProperties;
 
     private DatabaseDialectService databaseDialectService = new DatabaseDialectService(false);
 
@@ -255,10 +264,11 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
             }
             setVariables(trans, parameters);
             Date startTime = new Date();
+            trans.setLogLevel(LogLevel.BASIC);
             trans.execute(null);//执行trans
             trans.waitUntilFinished();
             Date endTime = new Date();
-            KettleLog kettleLog = new KettleLog(transObjectId, KettleLog.ObjectType.JOB, transMeta.getName(), this.findById(repositoryId));
+            KettleLog kettleLog = new KettleLog(transObjectId, KettleLog.ObjectType.TRANSFORMATION, transMeta.getName(), this.findById(repositoryId));
             kettleLog.setStartTime(startTime);
             kettleLog.setEndTime(endTime);
             kettleLog.setTaskId(String.valueOf(trans.getBatchId()));
@@ -269,40 +279,38 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
                 kettleLog.setErrorCount(errors);
                 kettleLog.setErrorText(errorContent);
                 logger.warn("转换执行完毕,出现【{}】个错误", errors);
+                TransLogTable logTable = transMeta.getTransLogTable();
+                if (logTable != null && logTable.getDatabaseMeta() != null) {
+                    DatabaseMeta dataBaseMeta = logTable.getDatabaseMeta();
+                    Database dataBase = new Database(transMeta, dataBaseMeta);
+                    String tableName = logTable.getTableName();
+                    String key = logTable.getKeyField().getFieldName();
+                    dataBase.connect();
+                    ResultSet result = dataBase.openQuery("select * from " + tableName + " where " + key + "=" + trans.getBatchId());
+                    while (true) {
+                        try {
+                            if (!result.next()) {
+                                //kettleLog.setId(trans.getBatchId());
+                                //kettleLog.setErrorCount(result.getString(logTable.getLogField().getFieldName()));
+                                kettleLog.setName(result.getString(logTable.getNameField().getFieldName()));
+                            }
+                            ;
+                        } catch (SQLException e) {
+                            logger.warn("获取转换日志出错,忽略本次转换记录");
+                            break;
+                        }
+                    }
+                    dataBase.disconnect();
+                }
             } else {
                 kettleLog.setSuccess(true);
                 kettleLog.setErrorCount(0);
                 logger.debug("转换执行成功");
             }
             kettleLogDao.save(kettleLog);
-            TransLogTable logTable = transMeta.getTransLogTable();
-            if (logTable != null && logTable.getDatabaseMeta() != null) {
-                DatabaseMeta dataBaseMeta = logTable.getDatabaseMeta();
-                Database dataBase = new Database(transMeta, dataBaseMeta);
-                dataBase.setVariable("db.sid", "orcl");
-                dataBase.setVariable("db.username", "bkht");
-                dataBase.setVariable("db.password", "123456");
-                dataBase.setVariable("db.ip", "188.9.25.151");
-                String tableName = logTable.getTableName();
-                String key = logTable.getKeyField().getFieldName();
-                dataBase.connect();
-                ResultSet result = dataBase.openQuery("select * from " + tableName + " where " + key + "=" + trans.getBatchId());
-                while (true) {
-                    try {
-                        if (!result.next()) {
-                            kettleLog.setId(trans.getBatchId());
-                            //kettleLog.setErrorCount(result.getString(logTable.getLogField().getFieldName()));
-                            kettleLog.setName(result.getString(logTable.getNameField().getFieldName()));
-                        }
-                        ;
-                    } catch (SQLException e) {
-                        logger.error("获取转换");
-                        break;
-                    }
-                }
-                dataBase.disconnect();
-            }
-        return kettleLog;}
+
+        return kettleLog;
+        }
     }
 
     /**
@@ -418,6 +426,15 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.debug("初始化kettle运行环境...");
+        String pluginFolder = kettleProperties.getPluginFolder();
+        if (HazeStringUtils.isNotBlank(pluginFolder) && Files.isDirectory(Paths.get(pluginFolder))) {
+            Files.list(Paths.get(pluginFolder)).forEach(path -> {
+                logger.debug("加载kettle插件，{}[{}]", path.getFileName(), path.toString());
+                StepPluginType.getInstance().getPluginFolders().add(new PluginFolder(path.toString(), false, true));
+            });
+        } else {
+            logger.error("插件文件夹不存在,[{}]", pluginFolder);
+        }
         KettleEnvironment.init();
         logger.debug("kettle运行环境初始化完毕.");
         logger.debug("开始连接Kettle系统资源库...");
@@ -427,10 +444,9 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
             try {
                 connectionRepository(r.getId());
             } catch (Exception e) {
-                //TODO
+                logger.error("连接资源库失败", e);
             }
         });
-
     }
 
     @Override
@@ -444,7 +460,6 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
             }
         });
     }
-
 
     private void setVariables(Trans trans, Map<String, String> variables) {
         variables.forEach(trans::setVariable);

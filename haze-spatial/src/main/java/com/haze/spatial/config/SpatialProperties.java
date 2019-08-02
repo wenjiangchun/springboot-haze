@@ -2,7 +2,7 @@ package com.haze.spatial.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "spring.spatial")
+@ConfigurationProperties(prefix = "haze.spatial")
 public class SpatialProperties {
 
     private String name;

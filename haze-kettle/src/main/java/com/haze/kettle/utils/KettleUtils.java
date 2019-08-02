@@ -41,6 +41,7 @@ public class KettleUtils {
         List<StepMeta> stepMetaList = transMeta.getSteps();
         StepWrapper stepWrapper = new StepWrapper();
         List<TransHopMeta> transHopMetaList = transMeta.getTransHops();
+        //List<TransHopMeta> transHopMetaList = null;
         for (StepMeta stepMeta : stepMetaList) {
             Step step = new Step();
             step.setName(stepMeta.getName());
