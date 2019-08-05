@@ -308,7 +308,6 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
                 logger.debug("转换执行成功");
             }
             kettleLogDao.save(kettleLog);
-
         return kettleLog;
         }
     }
