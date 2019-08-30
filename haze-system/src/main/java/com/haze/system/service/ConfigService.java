@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +41,7 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @return 配置对象
 	 */
 	@Cacheable(value="configCache",key="#code")
+	@Transactional(readOnly=true)
 	public Config findByCode(String code) {
         Assert.notNull(code, "配置代码不能为空");
         List<Config> configList = this.configDao.findByProperty("code", code);
@@ -59,15 +61,17 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @throws Exception 当保存配置对象名称已存在时抛出该异常
 	 */
 	@CachePut(value="configCache",key="#config.code")
-	@Transactional
 	public Config saveOrUpdate(Config config) throws Exception {
 		Assert.notNull(config, "配置信息不能为null");
 		Config c = this.findByCode(config.getCode());
+		Date date = new Date();
+		config.setUpdateTime(date);
 		if (c != null && config.isNew()) {
 			logger.error("配置代码{}已存在！",config.getCode());
 			throw new ConfigNameExistException("配置代码" + config.getCode() + "已存在！");
 		} else {
 			if (config.isNew()) { //保存配置对象
+				config.setCreateTime(date);
 				logger.info("添加配置信息，配置信息为：{}", config);
 			} else { //更新配置对象
 				logger.info("更新配置信息，配置信息为：{}", config);
@@ -82,7 +86,6 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @throws Exception
 	 */
     @CacheEvict(value="configCache",allEntries=true)
-	@Transactional(readOnly=false)
 	public Config deleteConfig(Long id) throws Exception {
 		Assert.notNull(id, "配置ID不能为空");
 		Config config = this.findById(id);
@@ -95,7 +98,6 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="configCache",allEntries=true)
-	@Transactional(readOnly=false)
 	public void deleteConfigs(Long[] ids) throws Exception {
 		for (Long id : ids) {
 			this.deleteConfig(id);
@@ -109,7 +111,6 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="configCache",key="#config.code")
-	@Transactional(readOnly=false)
 	public Config deleteConfig(Config config) throws Exception {
 		if (config.getConfigType() == ConfigType.S) {
 			logger.error("配置信息{}为系统配置，不允许被删除", config);
@@ -122,19 +123,16 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
 	public void delete(Config t) throws Exception {
 		this.deleteConfig(t);
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void deleteById(Long id) throws Exception {
 		this.deleteConfig(id);
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void batchDelete(Long[] ids) throws Exception {
 		deleteConfigs(ids);
 	}
@@ -145,7 +143,6 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="configCache",key="#config.code")
-	@Transactional(readOnly=false)
 	public Config updateConfig(Config config) throws Exception {
 		Assert.notNull(config, "配置信息不能为null");
 		Long id = config.getId();
@@ -160,6 +157,7 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @param code 配置名称
 	 * @return true/false
 	 */
+	@Transactional(readOnly = true)
 	public Boolean existCode(String code) {
 		Config config = this.findByCode(code);
 		return config != null;

@@ -1,6 +1,7 @@
 package com.haze.core.jpa.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,14 +16,17 @@ import javax.persistence.MappedSuperclass;
  *<p><b>说明：</b>子类如果需要使用不同ID生成策略，则只需重写getId()方法并在此方法上指定主键生成策略即可.</p>
  * @param <PK> 实体对象主键
  * @author sofar
- *
  */
 @MappedSuperclass
-public abstract class SimpleBaseEntity<PK extends Serializable> implements BaseEntity<PK> {
+public abstract class AbstractBaseEntity<PK extends Serializable> implements BaseEntity<PK> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 唯一标识
+     */
     protected PK id;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +56,7 @@ public abstract class SimpleBaseEntity<PK extends Serializable> implements BaseE
         if (!getClass().equals(obj.getClass())) {
             return false;
         }
-        SimpleBaseEntity<?> that = (SimpleBaseEntity<?>) obj;
+        AbstractBaseEntity<?> that = (AbstractBaseEntity<?>) obj;
         return null != this.getId() && this.getId().equals(that.getId());
     }
 

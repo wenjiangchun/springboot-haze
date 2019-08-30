@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import com.haze.system.entity.Resource;
 import com.haze.system.service.ResourceService;
 import com.haze.system.utils.ResourceType;
@@ -25,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 /**
  * 资源操作Controller
  * @author Sofar
@@ -39,14 +35,14 @@ public class ResourceController {
 	private ResourceService resourceService;
 	
 	@RequestMapping(value = "view")
-	public String list(Model model, ServletRequest request) {
+	public String list(Model model) {
 		model.addAttribute("resourceTypes", ResourceType.values());
 		return "system/resource/resourceList";
 	}
 	
 	@RequestMapping(value = "search")
 	@ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams, ServletRequest request) {
+	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest();
 		Map<String, Object> queryVaribles = dataTableParams.getQueryVairables();
 		if (queryVaribles != null && queryVaribles.get("resourceType") != null) {
@@ -58,7 +54,7 @@ public class ResourceController {
 		return dtp;
 	}
 	@RequestMapping(value = "add", method = RequestMethod.GET)
-	public String add(Model model, ServletRequest request) {
+	public String add(Model model) {
 		model.addAttribute("resourceTypes",ResourceType.values());
 		List<Resource> resources = this.resourceService.findMenuResources();
 		model.addAttribute("resources",resources);
@@ -67,7 +63,7 @@ public class ResourceController {
 	
 	@RequestMapping(value = "save", method = RequestMethod.POST)
 	@ResponseBody
-	public WebMessage save(Resource resource, ServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
+	public WebMessage save(Resource resource) throws Exception {
 		if (resource.getParent() != null && resource.getParent().getId() != null) {
 			resource.setParent(null);
 		}
@@ -82,7 +78,7 @@ public class ResourceController {
 	
 	@RequestMapping(value = "getResources")
 	@ResponseBody
-	public List<TreeNode> getResources(ServletRequest request, ServletResponse response) {
+	public List<TreeNode> getResources() {
 		List<Resource> resourceList = this.resourceService.findAll();
 		List<TreeNode> treeNodeList = new ArrayList<TreeNode>();
 		for (Resource resource : resourceList) {
@@ -95,7 +91,7 @@ public class ResourceController {
 		return treeNodeList;
 	}
 	@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable Long id, Model model, ServletRequest request) {
+	public String edit(@PathVariable Long id, Model model) {
 		model.addAttribute("resourceTypes",ResourceType.values());
 		List<Resource> menuResources = new ArrayList<Resource>();
 		Resource resource = this.resourceService.findById(id);
@@ -108,7 +104,7 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(Resource resource, ServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
+	public String update(Resource resource) throws Exception {
 		if (resource.getParent() != null && resource.getParent().getId() == null) {
 			resource.setParent(null);
 		}
@@ -119,7 +115,7 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(value = "delete/{ids}", method = RequestMethod.GET)
-	public String delete(@PathVariable("ids") Long[] ids, ServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
+	public String delete(@PathVariable("ids") Long[] ids, RedirectAttributes redirectAttributes) throws Exception {
 		this.resourceService.batchDeleteResources(ids);
 		/*WebMessage message = new WebMessage("资源删除成功", AlertType.SUCCESS);
 		redirectAttributes.addFlashAttribute("message", message);*/

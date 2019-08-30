@@ -18,9 +18,9 @@ import org.springframework.web.filter.CorsFilter;
 @EnableScheduling
 @EnableJpaRepositories(repositoryBaseClass = com.haze.core.jpa.SimpleBaseRepository.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class DemoApplication {
+public class HazeApplication {
 	public static void main(String[] args) {
-		ConfigurableApplicationContext ctx = SpringApplication.run(DemoApplication.class, args);
+		ConfigurableApplicationContext ctx = SpringApplication.run(HazeApplication.class, args);
 		try {
 			Class<?> c = Class.forName("org.pentaho.di.core.database.MySQLDatabaseMeta11");
 			System.out.println(c.getProtectionDomain().getCodeSource().getLocation());

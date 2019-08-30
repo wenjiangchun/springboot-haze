@@ -2,10 +2,11 @@ package com.haze.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.haze.common.HazeStringUtils;
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 import com.haze.system.utils.Status;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,9 +17,9 @@ import java.util.Set;
  *
  */
 @Entity
-@Table(name="SYS_ROLE")
+@Table(name="sys_role")
 @JsonIgnoreProperties(value={"users","resources","groups"})
-public class Role extends SimpleBaseEntity<Long> {
+public class Role extends AbstractBaseEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -35,8 +36,14 @@ public class Role extends SimpleBaseEntity<Long> {
 	/**
 	 * 角色状态
 	 */
-	private Status status;
-	
+	private Boolean enabled = true;
+
+	private Date createTime;
+
+	private Date updateTime;
+
+	private String description;
+
 	/**
 	 * 角色资源
 	 */
@@ -55,7 +62,7 @@ public class Role extends SimpleBaseEntity<Long> {
 	public Role() {
 	}
 	
-    @Column(unique=true)
+    @Column(unique=true, length = 20)
     public String getCode() {
         return code;
     }
@@ -64,6 +71,7 @@ public class Role extends SimpleBaseEntity<Long> {
         this.code = code;
     }
 
+	@Column(unique=true, length = 50)
     public String getName() {
 		return name;
 	}
@@ -72,23 +80,47 @@ public class Role extends SimpleBaseEntity<Long> {
 		this.name = name;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public Status getStatus() {
-		return status;
+	public Boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Column(length = 200)
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@ManyToMany
 	@JoinTable(
-			name="SYS_ROLE_RESOURCE"
+			name="sys_role_resource"
 			, joinColumns={
-				@JoinColumn(name="ROLE_ID")
+				@JoinColumn(name="role_id")
 				}
 			, inverseJoinColumns={
-				@JoinColumn(name="RESOURCE_ID")
+				@JoinColumn(name="resource_id")
 				}
 			)
 	public Set<Resource> getResources() {
@@ -151,7 +183,7 @@ public class Role extends SimpleBaseEntity<Long> {
 
 	@Override
 	public String toString() {
-		return "Role [name=" + name + ", code=" + code + ", status=" + status.getStatusName()
+		return "Role [name=" + name + ", code=" + code + ", enabled=" + enabled
 				+ "]";
 	}
 	

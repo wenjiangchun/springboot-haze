@@ -2,7 +2,7 @@
 <html>
 <head>
   <#include "../../common/head.ftl"/>
-    <link rel="stylesheet" href="${ctx.contextPath}/adminLTE/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/adminLTE/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="{ctx.contextPath}/adminLTE/Ionicons/css/ionicons.min.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -54,8 +54,8 @@
         </section>
         <!-- /.content -->
     <!-- /.content-wrapper -->
-        <script src="${ctx.contextPath}/adminLTE/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="${ctx.contextPath}/adminLTE/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+        <script src="${ctx}/adminLTE/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="${ctx}/adminLTE/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script>
     $(function () {
         $('#example1').DataTable({

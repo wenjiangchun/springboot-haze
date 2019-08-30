@@ -88,7 +88,7 @@
 
                 $.ajax({
                     "type": "post",
-                    "url": "${ctx.contextPath}/kettle/runTrans",
+                    "url": "${ctx}/kettle/runTrans",
                     "data": queryVariables,
                     "success": function (data) {
                         alert(data);
@@ -105,7 +105,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['380px', '90%'],
-            content: '${ctx.contextPath}/kettle/getTransMeta/'+ transObjectId //iframe的url
+            content: '${ctx}/kettle/getTransMeta/'+ transObjectId //iframe的url
         });
     }
 </script>

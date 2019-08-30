@@ -2,7 +2,7 @@
 <html>
 <head>
   <#include "../../common/head.ftl"/>
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="{ctx.contextPath}/resources/adminLTE/Ionicons/css/ionicons.min.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -87,12 +87,12 @@
 <#include "../../common/foot.ftl"/>
 <#include "../../common/left.ftl"/>
 </div>
-<script src="${ctx.contextPath}/resources/adminLTE/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${ctx.contextPath}/resources/adminLTE/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="${ctx}/resources/adminLTE/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${ctx}/resources/adminLTE/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- SlimScroll -->
-<script src="${ctx.contextPath}/resources/adminLTE/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${ctx}/resources/adminLTE/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
-<script src="${ctx.contextPath}/resources/adminLTE/fastclick/lib/fastclick.js"></script>
+<script src="${ctx}/resources/adminLTE/fastclick/lib/fastclick.js"></script>
 <script>
     $(function () {
         initMenu();
@@ -124,7 +124,7 @@
             })
 
         $("#refreshRepository").click(function() {
-            window.location.href="${ctx.contextPath}/kettle/refreshRepository";
+            window.location.href="${ctx}/kettle/refreshRepository";
         });
     });
 
@@ -136,7 +136,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['800px', '60%'],
-            content: '${ctx.contextPath}/kettle/job/getElementInfo/' + objectId + '/' + type //iframe的url
+            content: '${ctx}/kettle/job/getElementInfo/' + objectId + '/' + type //iframe的url
         });
     }
 
@@ -147,7 +147,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['80%', '60%'],
-            content: '${ctx.contextPath}/kettle/getElementLog/' + objectId + '/' + type //iframe的url
+            content: '${ctx}/kettle/getElementLog/' + objectId + '/' + type //iframe的url
         });
     }
 

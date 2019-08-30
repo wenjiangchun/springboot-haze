@@ -1,9 +1,10 @@
 package com.haze.system.entity;
 
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 import com.haze.system.utils.ConfigType;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 系统配置实体类
@@ -11,8 +12,8 @@ import javax.persistence.*;
  * @author sofar
  */
 @Entity
-@Table(name="SYS_CONFIG")
-public class Config extends SimpleBaseEntity<Long> {
+@Table(name="sys_config")
+public class Config extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 验证码校验 通过配置该对象来指定登陆时是否启用校验码校验功能。
@@ -46,7 +47,11 @@ public class Config extends SimpleBaseEntity<Long> {
      */
 	private String description;
 
-    @Column(unique=true)
+	private Date createTime;
+
+	private Date updateTime;
+
+    @Column(unique=true, length = 20)
     public String getCode() {
         return code;
     }
@@ -55,6 +60,7 @@ public class Config extends SimpleBaseEntity<Long> {
         this.code = code;
     }
 
+    @Column(length = 50)
     public String getName() {
 		return name;
 	}
@@ -63,6 +69,7 @@ public class Config extends SimpleBaseEntity<Long> {
 		this.name = name;
 	}
 
+	@Column(length = 200)
     public String getValue() {
         return value;
     }
@@ -71,7 +78,7 @@ public class Config extends SimpleBaseEntity<Long> {
         this.value = value;
     }
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
 	public ConfigType getConfigType() {
 		return configType;
 	}
@@ -80,12 +87,29 @@ public class Config extends SimpleBaseEntity<Long> {
 		this.configType = configType;
 	}
 
+	@Column(length = 300)
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import com.haze.system.dao.RoleDao;
 import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
 import com.haze.system.exception.RoleExistException;
-import com.haze.system.utils.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,7 @@ import org.springframework.util.Assert;
  *
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class RoleService extends AbstractBaseService<Role, Long> {
 	
 	private RoleDao roleDao;
@@ -33,18 +33,18 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 		super.setDao(roleDao);
 	}
 	
-	public List<Role> findByStatus(Status status) {
-		return this.roleDao.findByStatus(status);
+	public List<Role> findByEnabled(boolean enabled) {
+		return this.roleDao.findByEnabled(enabled);
 	}
 	
 	/**
 	 * 根据角色状态获取系统中所有的角色名称
-	 * @param status 角色状态
+	 * @param enabled 角色状态
 	 * @return 角色名称集合
 	 */
-	public List<String> findAllRoleNameByStatus(Status status) {
-		List<String> roleNameList = new ArrayList<String>();
-		List<Role> roleList = findByStatus(status);
+	public List<String> findAllRoleNameByEnabled(boolean enabled) {
+		List<String> roleNameList = new ArrayList<>();
+		List<Role> roleList = findByEnabled(enabled);
 		for (Role role : roleList) {
 			roleNameList.add(role.getName());
 		}
@@ -57,7 +57,6 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 * @throws RoleExistException 角色已存在对象
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public Role saveOrUpdate(Role role) throws RoleExistException {
 		Assert.notNull(role.getName());
 		Role r = this.roleDao.findByCode(role.getCode());
@@ -76,7 +75,6 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 */
 
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public void deleteALl() throws Exception {
 		List<Role> roleList = this.findAll();
 		for (Role role : roleList) {
@@ -90,7 +88,6 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public void delete(Long id) throws Exception {
 		Role role = this.roleDao.getOne(id);
 		if (role != null) {
@@ -109,7 +106,6 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 * @param ids 角色Id集合
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public void batchDelete(Long[] ids) throws Exception {
 		for (Long id : ids) {
 			delete(id);
@@ -117,7 +113,6 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	}
 
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public void addResources(Long id, Long[] resourceIds) throws Exception {
         Assert.notNull(id);
 		Role role = this.findById(id);
@@ -136,7 +131,6 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 * @param role 角色对象
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public Role updateRole(Role role) {
 		return this.roleDao.save(role);
 	}
@@ -146,6 +140,7 @@ public class RoleService extends AbstractBaseService<Role, Long> {
      * @param code 角色代码
      * @return 存在返回true,否则返回false
      */
+	@Transactional(readOnly = true)
 	public Boolean existCode(String code) {
 		Role role = this.roleDao.findByCode(code);
 		return role != null;

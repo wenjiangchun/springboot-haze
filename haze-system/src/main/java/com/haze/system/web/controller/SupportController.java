@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletRequest;
 
 /**
  * 系统辅助操作Controller
@@ -23,13 +22,13 @@ public class SupportController {
     private ResourceService resourceService;
 
     @RequestMapping(value = "view")
-    public String list(Model model, ServletRequest request) {
+    public String list(Model model) {
         return "system/support/supportList";
     }
 
     @RequestMapping(value = "refreshMenus")
     @ResponseBody
-    public Boolean refreshMenus(ServletRequest request, RedirectAttributes redirectAttributes) {
+    public Boolean refreshMenus( RedirectAttributes redirectAttributes) {
        /* List<Resource> menuResources = resourceService.findMenuResources();
         Map<String, Object> map = new HashMap<>();
         map.put("menuResources", menuResources);

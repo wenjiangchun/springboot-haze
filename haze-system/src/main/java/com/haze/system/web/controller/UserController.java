@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletRequest;
-
 import com.haze.system.entity.Group;
 import com.haze.system.entity.Role;
 import com.haze.system.entity.User;
@@ -14,30 +12,26 @@ import com.haze.system.service.RoleService;
 import com.haze.system.service.UserService;
 import com.haze.system.utils.Sex;
 import com.haze.system.utils.Status;
+import com.haze.web.BaseController;
 import com.haze.web.datatable.DataTablePage;
 import com.haze.web.datatable.DataTableParams;
 import com.haze.web.utils.WebMessage;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 用户操作Controller
+ * 系统管理--用户管理Controller
  * @author sofar
  *
  */
 @Controller
 @RequestMapping(value = "/system/user")
-public class UserController {
+public class UserController extends BaseController {
 
 	@Autowired
 	private UserService userService;
@@ -49,24 +43,21 @@ public class UserController {
 	private GroupService groupService;
 
 	/*@RequiresRoles("admin")*/
-	@RequestMapping(value = "view")
-	public String list(Model model, ServletRequest request) {
+	@GetMapping(value = "view")
+	public String list(Model model, @RequestParam(required = false) Long groupId) {
 		model.addAttribute("statuss", Status.values());
-//		model.addAttribute("userTypes", UserType.values());
-		String selectGroupId = request.getParameter("groupId");
-		model.addAttribute("groupId", selectGroupId);
+		model.addAttribute("groupId", groupId);
 		return "system/user/userList";
 	}
 	
 	/**
 	 * 根据查询参数查询用户列表分页对象
 	 * @param dataTableParams 包含分页对象和自定义查询对象的参数,其中PageSize
-	 * @param request
 	 * @return DataTablePage 前台DataTable组件使用的分页数据对象
 	 */
 	@RequestMapping(value = "search")
     @ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams, ServletRequest request) {
+	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest(); //根据dataTableParames对象获取JPA分页查询使用的PageRequest对象
 		Map<String, Object> queryVairables = dataTableParams.getQueryVairables(); //获取自定义查询参数
 		if (queryVairables != null && queryVairables.get("status") != null) {
@@ -80,31 +71,28 @@ public class UserController {
 //			queryVairables.put("userType", UserType.valueOf(value));
 		}
 		if (queryVairables.get("group.id") != null) {
-			String groupId = (String) queryVairables.get("group.id");
-			queryVairables.remove("group.id");
-			queryVairables.put("bakGroupId_or_group.id",groupId);
+			Long groupId = Long.valueOf(queryVairables.get("group.id").toString()) ;
+			queryVairables.put("group.id",groupId);
 		}
 
 		Page<User> userList = this.userService.findPage(p, queryVairables, false); //过滤掉"admin"对象
-		DataTablePage dtp = DataTablePage.generateDataTablePage(userList, dataTableParams); //将查询结果封装成前台使用的DataTablePage对象
-		return dtp;
+		return DataTablePage.generateDataTablePage(userList, dataTableParams);
 	}
 
 	/**
 	 * 进入添加用户页面
 	 * @param model
-	 * @param request
 	 * @return 添加用户页面
 	 */
-	@RequestMapping(value = "add", method = RequestMethod.GET)
-	public String add(Model model, ServletRequest request) {
-		List<Role> roleList = this.roleService.findByStatus(Status.ENABLE); //查找所有启用状态的角色
-		List<Group> groupList = this.groupService.findAll();
+	@GetMapping(value = "add")
+	public String add(Model model, @RequestParam(required = false) Long groupId) {
+		List<Role> roleList = this.roleService.findByEnabled(true); //查找所有启用状态的角色
 		model.addAttribute("roleList", roleList);
 		model.addAttribute("sexs", Sex.values());
 		model.addAttribute("statuss", Status.values());
-//		model.addAttribute("userTypes", UserType.values());
-		model.addAttribute("groupList",groupList);
+		if (groupId != null) {
+			model.addAttribute("group", groupService.findById(groupId));
+		}
 		return "system/user/addUser";
 	}
 	
@@ -112,12 +100,11 @@ public class UserController {
 	 * 保存用户，同时保存用户角色关联信息
 	 * @param user 用户对象
 	 * @param roleIds 角色ID集合
-	 * @param request
 	 * @return 返回用户列表页面
 	 */
-	@RequestMapping(value = "save")
+	@PostMapping(value = "save")
     @ResponseBody
-	public WebMessage save(User user, Long[] roleIds, ServletRequest request) {
+	public WebMessage save(User user, Long[] roleIds) {
 		Set<Role> roles = new HashSet<Role>();
 		if (roleIds != null) {
 			for (Long roleId : roleIds) {
@@ -130,20 +117,18 @@ public class UserController {
 			}
 		}
 		
-		if(user.getGroup() != null && user.getGroup().getId()!= null){
-			user.setGroup(null);
-		}
         try {
             this.userService.saveOrUpdate(user);
             return WebMessage.createSuccessWebMessage();
         } catch (Exception e) {
+        	logger.error("用户添加/更新失败", e);
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
     }
 	
-	@RequestMapping(value = "delete/{ids}")
+	@PostMapping(value = "delete/{ids}")
     @ResponseBody
-	public WebMessage delete(@PathVariable("ids") Long[] ids, ServletRequest request) {
+	public WebMessage delete(@PathVariable("ids") Long[] ids) {
         try {
             this.userService.batchDelete(ids);
             return WebMessage.createSuccessWebMessage();
@@ -158,10 +143,10 @@ public class UserController {
 	 * @param model
 	 * @return 用户添加角色页面
 	 */
-	@RequestMapping(value = "addRoles/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "addRoles/{id}")
 	public String addRoles(@PathVariable("id")Long id, Model model) {
 		User user = this.userService.findById(id);
-		List<Role> roleList = this.roleService.findByStatus(Status.ENABLE);
+		List<Role> roleList = this.roleService.findByEnabled(true);
 		Group group = user.getGroup();
 		if(group != null){
 			model.addAttribute("groupId", group.getId());
@@ -176,12 +161,11 @@ public class UserController {
 	 * 对用户进行角色授权
 	 * @param roleIds 角色ID集合
 	 * @param id 用户ID
-	 * @param request
 	 * @return 返回用户列表页面
 	 */
-	@RequestMapping(value = "saveRoles")
+	@PostMapping(value = "saveRoles")
     @ResponseBody
-	public WebMessage saveRoles(@RequestParam(value="roleIds",required=false) Long[] roleIds, @RequestParam("id") Long id, ServletRequest request) {
+	public WebMessage saveRoles(@RequestParam(value="roleIds",required=false) Long[] roleIds, @RequestParam("id") Long id) {
 		Set<Role> roles = new HashSet<Role>();
 		if (null != roleIds) {
 			for (Long roleId :roleIds) {
@@ -203,12 +187,11 @@ public class UserController {
 	 * @author 王先先  修改  2013-11-28   先判断用户输入的旧密码是否正确，正确的情况下才可修改密码
 	 * @param id    用户id
 	 * @param newPassword  新密码
-	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "updatePassword", method = RequestMethod.POST)	 
+	@PostMapping(value = "updatePassword")
 	@ResponseBody
-	public String updatePassword(@RequestParam(value = "id") Long id,@RequestParam(value = "newPassword") String newPassword,ServletRequest request) {
+	public String updatePassword(@RequestParam(value = "id") Long id,@RequestParam(value = "newPassword") String newPassword) {
 		try {
 			this.userService.updatePassword(id, newPassword);
 			return WebMessage.ACTION_SUCCESS_MESSAGE;
@@ -217,8 +200,8 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value = "resetPassword/{id}")
-	public WebMessage resetPassword(@PathVariable Long id, Model model, ServletRequest request) {
+	@PostMapping(value = "resetPassword/{id}")
+	public WebMessage resetPassword(@PathVariable Long id, Model model) {
         try {
             this.userService.resetPassword(id);
             return WebMessage.createSuccessWebMessage();
@@ -231,20 +214,17 @@ public class UserController {
 	 * 进入用户编辑页面
 	 * @param id 用户Id
 	 * @param model
-	 * @param request
-	 * @return 
+	 * @return
 	 */
-	@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable String id, Model model, ServletRequest request) {
+	@GetMapping(value = "edit/{id}")
+	public String edit(@PathVariable Long id, Model model) {
 		model.addAttribute("sexs", Sex.values());
 		model.addAttribute("statuss", Status.values());
 //		model.addAttribute("userTypes", UserType.values());
-		User user = this.userService.findByProperty("loginName","bbb").get(0);
-		System.out.println(user.getGroup().getGroupType().toString());
 		/*User user = this.userService.findById(id);
 		System.out.println(user.getGroup().getName());*/
 		List<Group> groupList = this.groupService.findAll();
-		model.addAttribute("user", user);
+		model.addAttribute("user", this.userService.findById(id));
 		model.addAttribute("groupList",groupList);
 		return "system/user/editUser";
 	}
@@ -252,12 +232,11 @@ public class UserController {
 	/**
 	 * 更新用户信息
 	 * @param user 用户
-	 * @param request
 	 * @return 返回用户列表页面
 	 */
-	@RequestMapping(value = "update", method = RequestMethod.POST)
+	@PostMapping(value = "update")
 	@ResponseBody
-	public WebMessage update(User user, ServletRequest request) {
+	public WebMessage update(User user) {
 		User u = this.userService.findById(user.getId());
 		u.setName(user.getName());
 		u.setEmail(user.getEmail());
@@ -284,10 +263,10 @@ public class UserController {
 	 * @param loginName 登录名
 	 * @return true/false
 	 */
-	@RequestMapping(value = "isNotExistLoginName", method = RequestMethod.POST)
+	@PostMapping(value = "isNotExistLoginName")
 	@ResponseBody
 	public Boolean isNotExistLoginName(String loginName) {
-		Boolean isExist = this.userService.existLoginName(loginName);
+		boolean isExist = this.userService.existLoginName(loginName);
 		return !isExist;
 	}	
 }

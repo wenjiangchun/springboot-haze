@@ -2,7 +2,7 @@
 <html>
 <head>
     <#include "../../common/head.ftl"/>
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/jointjs/joint.css">
+    <link rel="stylesheet" href="${ctx}/resources/jointjs/joint.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <!-- Main content -->
@@ -17,9 +17,9 @@
         </div>
     </div>
 </section>
-<script src="${ctx.contextPath}/resources/jointjs/lodash.js"></script>
-<script src="${ctx.contextPath}/resources/jointjs/backbone.js"></script>
-<script src="${ctx.contextPath}/resources/jointjs/joint.js"></script>
+<script src="${ctx}/resources/jointjs/lodash.js"></script>
+<script src="${ctx}/resources/jointjs/backbone.js"></script>
+<script src="${ctx}/resources/jointjs/joint.js"></script>
 <script>
     var objectId = "${objectId}";
     var graph = new joint.dia.Graph();
@@ -162,7 +162,7 @@
     }
 
     $(function () {
-        $.post("${ctx.contextPath}/kettle/previewTrans/${repositoryId}/${objectId}",function(data){
+        $.post("${ctx}/kettle/previewTrans/${repositoryId}/${objectId}",function(data){
             var stepList = data.stepList;
             var flowList = data.stepFlowList;
             $.each(stepList, function(i,el) {

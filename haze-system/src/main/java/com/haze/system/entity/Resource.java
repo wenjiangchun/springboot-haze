@@ -1,10 +1,11 @@
 package com.haze.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 import com.haze.system.utils.ResourceType;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,9 +16,9 @@ import java.util.Set;
  *
  */
 @Entity
-@Table(name="SYS_RESOURCE")
-@JsonIgnoreProperties(value={"childrens","roles"})
-public class Resource extends SimpleBaseEntity<Long> {
+@Table(name="sys_resource")
+@JsonIgnoreProperties(value={"childs","roles"})
+public class Resource extends AbstractBaseEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -33,11 +34,14 @@ public class Resource extends SimpleBaseEntity<Long> {
 	 * 上级资源
 	 */
 	private Resource parent;
-	
+
+	private Date createTime;
+
+	private Date updateTime;
 	/**
-	 * 子机构
+	 * 子资源
 	 */
-	private Set<Resource> childrens = new HashSet<>();
+	private Set<Resource> childs = new HashSet<>();
 	
 	/**
 	 * 资源角色
@@ -47,6 +51,7 @@ public class Resource extends SimpleBaseEntity<Long> {
 	public Resource() {
 	}
 
+	@Column(length = 200)
 	public String getPermission() {
 		return permission;
 	}
@@ -55,7 +60,7 @@ public class Resource extends SimpleBaseEntity<Long> {
 		this.permission = permission;
 	}
 
-	@Column(unique=true)
+	@Column(unique=true, length = 50)
 	public String getName() {
 		return name;
 	}
@@ -64,6 +69,7 @@ public class Resource extends SimpleBaseEntity<Long> {
 		this.name = name;
 	}
 
+	@Column(length = 200)
 	public String getUrl() {
 		return url;
 	}
@@ -72,13 +78,29 @@ public class Resource extends SimpleBaseEntity<Long> {
 		this.url = url;
 	}
 
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	public ResourceType getResourceType() {
 		return resourceType;
 	}
 
 	public void setResourceType(ResourceType resourceType) {
 		this.resourceType = resourceType;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 
 	@ManyToOne
@@ -92,12 +114,12 @@ public class Resource extends SimpleBaseEntity<Long> {
 	}
 
 	@OneToMany(mappedBy="parent")
-	public Set<Resource> getChildrens() {
-		return childrens;
+	public Set<Resource> getChilds() {
+		return childs;
 	}
 
-	public void setChildrens(Set<Resource> childrens) {
-		this.childrens = childrens;
+	public void setChilds(Set<Resource> childs) {
+		this.childs = childs;
 	}
 
 	@ManyToMany(mappedBy="resources")
@@ -109,8 +131,8 @@ public class Resource extends SimpleBaseEntity<Long> {
 		this.roles = roles;
 	}
 	
-	public void removeAllChildrens() {
-		for (Resource resource : this.childrens) {
+	public void removeAllChilds() {
+		for (Resource resource : this.childs) {
 			resource.setParent(null);
 		}
 	}

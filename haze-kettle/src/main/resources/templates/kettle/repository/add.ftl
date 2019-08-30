@@ -2,7 +2,7 @@
 <html>
 <head>
     <#include "../../common/head.ftl"/>
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/jointjs/joint.css">
+    <link rel="stylesheet" href="${ctx}/resources/jointjs/joint.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <section class="content">
@@ -12,7 +12,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">资源库信息</h3>
                     </div>
-                    <form class="form-horizontal" action="${ctx.contextPath}/kettle/repository/save">
+                    <form class="form-horizontal" action="${ctx}/kettle/repository/save">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-2 control-label">资源库名称</label>

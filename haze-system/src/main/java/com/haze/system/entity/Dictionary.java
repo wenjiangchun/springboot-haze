@@ -1,9 +1,10 @@
 package com.haze.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,9 +14,9 @@ import java.util.Set;
  * @author Sofar
  */
 @Entity
-@Table(name="SYS_DICTIONARY",uniqueConstraints={@UniqueConstraint(columnNames={"PARENT_ID","CODE"})})
+@Table(name="sys_dictionary",uniqueConstraints={@UniqueConstraint(columnNames={"parent_id","code"})})
 @JsonIgnoreProperties(value = {"childs"})
-public class Dictionary extends SimpleBaseEntity<Long> {
+public class Dictionary extends AbstractBaseEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -42,14 +43,20 @@ public class Dictionary extends SimpleBaseEntity<Long> {
 	/**
 	 * 是否启用
 	 */
-	private Boolean isEnabled;
+	private Boolean enabled = true;
 	
 	/**
 	 * 字典说明
 	 */
 	private String description;
-	
 
+	private Date createTime;
+
+	private Date updateTime;
+
+	private Integer sn = 1;
+
+	@Column(length = 20)
 	public String getName() {
 		return name;
 	}
@@ -58,6 +65,7 @@ public class Dictionary extends SimpleBaseEntity<Long> {
 		this.name = name;
 	}
 
+	@Column(length = 20)
 	public String getCode() {
 		return code;
 	}
@@ -85,14 +93,15 @@ public class Dictionary extends SimpleBaseEntity<Long> {
 		this.childs = childs;
 	}
 
-	public Boolean getIsEnabled() {
-		return isEnabled;
+	public Boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setIsEnabled(Boolean isEnabled) {
-		this.isEnabled = isEnabled;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 
+	@Column(length = 300)
 	public String getDescription() {
 		return description;
 	}
@@ -101,10 +110,34 @@ public class Dictionary extends SimpleBaseEntity<Long> {
 		this.description = description;
 	}
 
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getSn() {
+		return sn;
+	}
+
+	public void setSn(Integer sn) {
+		this.sn = sn;
+	}
+
 	@Override
 	public String toString() {
 		return "Dictionary [name=" + name + ", code=" + code + ", parent="
-				+ parent + ", isEnabled=" + isEnabled + ", description="
+				+ parent + ", isEnabled=" + enabled + ", description="
 				+ description + "]";
 	}
 
@@ -118,16 +151,6 @@ public class Dictionary extends SimpleBaseEntity<Long> {
 
 	public void setPid(Long pid) {
 		this.pid = pid;
-	}
-
-	private Integer sn = 0;
-
-	public Integer getSn() {
-		return sn;
-	}
-
-	public void setSn(Integer sn) {
-		this.sn = sn;
 	}
 
 }

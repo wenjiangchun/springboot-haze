@@ -8,10 +8,8 @@ package com.haze.system.utils;
  */
 public enum Status {
 
-	DISABLE("禁用"),
-
 	ENABLE("启用"),
-
+	DISABLE("禁用"),
 	LOCK("锁定");
 	
 	private String statusName;

@@ -2,9 +2,6 @@ package com.haze.system.web.controller;
 
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-
 import com.haze.system.entity.Config;
 import com.haze.system.service.ConfigService;
 import com.haze.system.utils.ConfigType;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.springframework.web.servlet.support.RequestContextUtils;
-
 /**
  * 系统配置Controller
  *
@@ -38,14 +33,14 @@ public class ConfigController {
 	private ConfigService configService;
 		
 	@RequestMapping(value = "view")
-	public String list(Model model, ServletRequest request) {
+	public String list(Model model) {
 		model.addAttribute("configTypes", ConfigType.values());
 		return "system/config/configList";
 	}
 	
 	@RequestMapping(value = "search")
 	@ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams, ServletRequest request) {
+	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest();
 		Map<String, Object> queryVaribles = dataTableParams.getQueryVairables();
 		if (queryVaribles != null && queryVaribles.get("configType") != null) {
@@ -58,13 +53,13 @@ public class ConfigController {
 	}
 	
 	@RequestMapping(value = "add")
-	public String add(Model model, ServletRequest request) {
+	public String add(Model model) {
 		return "system/config/addConfig";
 	}
 	
 	@RequestMapping(value = "save", method = RequestMethod.POST)
     @ResponseBody
-	public WebMessage save(Config config, HttpServletRequest request) {
+	public WebMessage save(Config config) {
 		config.setConfigType(ConfigType.B);
 		try {
 			this.configService.saveOrUpdate(config);
@@ -84,22 +79,23 @@ public class ConfigController {
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
     @ResponseBody
-    public WebMessage update(Config config, HttpServletRequest request) {
+    public WebMessage update(Config config) {
         try {
             Config g = this.configService.findById(config.getId());
             g.setDescription(config.getDescription());
             g.setValue(config.getValue());
             g.setName(config.getName());
             this.configService.saveOrUpdate(g);
-            return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));
+            //return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));
+            return WebMessage.createSuccessWebMessage();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage(), RequestContextUtils.getLocale(request));
+            return WebMessage.createErrorWebMessage(e.getMessage());
         }
     }
 
 	@RequestMapping(value = "delete/{ids}")
     @ResponseBody
-	public WebMessage delete(@PathVariable("ids") Long[] ids, HttpServletRequest request) {
+	public WebMessage delete(@PathVariable("ids") Long[] ids) {
 		try {
 			this.configService.deleteConfigs(ids);
 			return WebMessage.createSuccessWebMessage();
@@ -110,14 +106,15 @@ public class ConfigController {
 	
 	@RequestMapping(value="updateConfigValue")
     @ResponseBody 
-	public WebMessage updateConfigValue(@RequestParam(value="id")Long id,@RequestParam(value="value") String value, HttpServletRequest request) {
+	public WebMessage updateConfigValue(@RequestParam(value="id")Long id,@RequestParam(value="value") String value) {
         try {
             Config config = this.configService.findById(id);
             config.setValue(value);
             this.configService.updateConfig(config);
-            return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));
+            //return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));
+            return WebMessage.createSuccessWebMessage();
         } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage(), RequestContextUtils.getLocale(request));
+            return WebMessage.createErrorWebMessage(e.getMessage());
         }
     }
 	

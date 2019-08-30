@@ -18,7 +18,7 @@ import java.io.Serializable;
  *
  */
 @MappedSuperclass
-public abstract class UUIDBaseEntity<PK extends Serializable> implements BaseEntity<PK> {
+public abstract class AbstractUUIDEntity<PK extends Serializable> implements BaseEntity<PK> {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,7 +54,7 @@ public abstract class UUIDBaseEntity<PK extends Serializable> implements BaseEnt
         if (!getClass().equals(obj.getClass())) {
             return false;
         }
-        UUIDBaseEntity<?> that = (UUIDBaseEntity<?>) obj;
+        AbstractUUIDEntity<?> that = (AbstractUUIDEntity<?>) obj;
         return null != this.getId() && this.getId().equals(that.getId());
     }
 

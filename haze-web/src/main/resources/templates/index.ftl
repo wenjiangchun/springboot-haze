@@ -124,7 +124,7 @@
                         <div class="box-body chat" id="chat-box">
                             <!-- chat item -->
                             <div class="item">
-                                <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user4-128x128.jpg" alt="user image" class="online">
+                                <img src="${ctx}/resources/adminLTE/dist/img/user4-128x128.jpg" alt="user image" class="online">
 
                                 <p class="message">
                                     <a href="#" class="name">
@@ -151,7 +151,7 @@
                             <!-- /.item -->
                             <!-- chat item -->
                             <div class="item">
-                                <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user3-128x128.jpg" alt="user image" class="offline">
+                                <img src="${ctx}/resources/adminLTE/dist/img/user3-128x128.jpg" alt="user image" class="offline">
 
                                 <p class="message">
                                     <a href="#" class="name">
@@ -166,7 +166,7 @@
                             <!-- /.item -->
                             <!-- chat item -->
                             <div class="item">
-                                <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user2-160x160.jpg" alt="user image" class="offline">
+                                <img src="${ctx}/resources/adminLTE/dist/img/user2-160x160.jpg" alt="user image" class="offline">
 
                                 <p class="message">
                                     <a href="#" class="name">
@@ -212,7 +212,7 @@
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
-                            <!-- See ${ctx.contextPath}/adminLTE/dist/js/pages/dashboard.js to activate the todoList plugin -->
+                            <!-- See ${ctx}/adminLTE/dist/js/pages/dashboard.js to activate the todoList plugin -->
                             <ul class="todo-list">
                                 <li>
                                     <!-- drag handle -->

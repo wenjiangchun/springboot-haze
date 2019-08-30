@@ -72,13 +72,13 @@ public class ShiroRealm extends AuthorizingRealm {
 		Set<String> permissions = new HashSet<>();
 
 		if (user.isSuperAdmin()) { // 超级用户
-			info.addRoles(roleService.findAllRoleNameByStatus(Status.ENABLE));
+			info.addRoles(roleService.findAllRoleNameByEnabled(true));
 			List<String> perms = resourceService.findAllPermission();
 			permissions.addAll(HazeStringUtils.getValue(perms, PERMS));
 		} else {
 			Set<String> perms = new HashSet<String>();
 			for (Role role : user.getRoles()) {
-				if (role.getStatus() == Status.ENABLE) {
+				if (role.getEnabled()) {
 					info.addRole(role.getCode());
 					perms.addAll(role.getAllPermissons());
 				}

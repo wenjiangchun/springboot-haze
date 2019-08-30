@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
  *
  */
 @Service
-@Transactional(readOnly = true)
+@Transactional(rollbackFor = Exception.class)
 public class ResourceService extends AbstractBaseService<Resource, Long> {
 
 	private ResourceDao resourceDao;
@@ -40,7 +40,6 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public Resource saveOrUpdate(Resource resource) throws Exception {
 		Assert.notNull(resource);
 		if (resource.isNew()) { //保存资源对象
@@ -55,6 +54,7 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 * 获取所有资源权限不为空的权限名称  
 	 * @return 资源权限名称集合
 	 */
+	@Transactional(readOnly = true)
 	public List<String> findAllPermission() {
 		List<String> permissionList = new ArrayList<String>();
 		List<Resource> resourceList = this.resourceDao.findByPermissionIsNotNull();
@@ -72,7 +72,6 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	@Transactional(readOnly = false)
 	public void batchDeleteResources(Long[] ids) throws Exception {
 		for (Long id : ids) {
 			Resource resource = this.findById(id);
@@ -89,6 +88,7 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 * @param resourceType 资源类型
 	 * @return 资源信息列表
 	 */
+	@Transactional(readOnly = true)
 	public List<Resource> findByResourceType(ResourceType resourceType) {
 		return this.resourceDao.findByResourceType(resourceType);
 	}
@@ -97,6 +97,7 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 * 查找菜单资源
 	 * @return 菜单资源信息列表
 	 */
+	@Transactional(readOnly = true)
 	public List<Resource> findMenuResources() {
 		return findByResourceType(ResourceType.M);
 	}

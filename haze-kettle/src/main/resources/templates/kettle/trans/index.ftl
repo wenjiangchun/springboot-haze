@@ -3,8 +3,8 @@
 <head>
     <#include "../../common/head.ftl"/>
     <link rel="stylesheet"
-          href="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+          href="${ctx}/resources/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -41,10 +41,10 @@
                                 <#list repositoryList as repo>
                                     <#if repositoryId==repo.id>
                                         <li class="active"><a
-                                                    href="${ctx.contextPath}/kettle/trans/view?repositoryId=${repo.id!}"><i
+                                                    href="${ctx}/kettle/trans/view?repositoryId=${repo.id!}"><i
                                                         class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
                                     <#else>
-                                        <li><a href="${ctx.contextPath}/kettle/trans/view?repositoryId=${repo.id!}"><i
+                                        <li><a href="${ctx}/kettle/trans/view?repositoryId=${repo.id!}"><i
                                                         class="fa fa-circle-o text-red"></i> ${repo.name!}</a></li>
                                     </#if>
                                 </#list>
@@ -115,13 +115,13 @@
     <#include "../../common/foot.ftl"/>
     <#include "../../common/left.ftl"/>
 </div>
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- SlimScroll -->
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/fastclick/lib/fastclick.js"></script>
-<script src="${ctx.contextPath}/resources/test.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/fastclick/lib/fastclick.js"></script>
+<script src="${ctx}/resources/test.js"></script>
 <script>
     $(function () {
         initMenu();
@@ -153,7 +153,7 @@
         })
 
         $("#refreshRepository").click(function () {
-            window.location.href = "${ctx.contextPath}/kettle/refreshRepository";
+            window.location.href = "${ctx}/kettle/refreshRepository";
         });
     });
 
@@ -165,7 +165,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['800px', '60%'],
-            content: '${ctx.contextPath}/kettle/getElementInfo/${repositoryId!}/' + objectId + '/' + type //iframe的url
+            content: '${ctx}/kettle/getElementInfo/${repositoryId!}/' + objectId + '/' + type //iframe的url
         });
     }
 
@@ -176,7 +176,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['80%', '70%'],
-            content: '${ctx.contextPath}/kettle/previewElementInfo/${repositoryId!}/' + objectId + '/' + type //iframe的url
+            content: '${ctx}/kettle/previewElementInfo/${repositoryId!}/' + objectId + '/' + type //iframe的url
         });
     }
 

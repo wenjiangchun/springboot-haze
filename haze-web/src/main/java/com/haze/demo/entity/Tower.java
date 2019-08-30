@@ -1,6 +1,6 @@
 package com.haze.demo.entity;
 
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.Entity;
@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="s_tower")
-public class Tower extends SimpleBaseEntity<Long> {
+public class Tower extends AbstractBaseEntity<Long> {
     private String siteNum;
     private String name;
     private Point geom;

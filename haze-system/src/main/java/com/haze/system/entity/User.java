@@ -1,7 +1,7 @@
 package com.haze.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 import com.haze.system.utils.Sex;
 import com.haze.system.utils.Status;
 
@@ -18,6 +18,7 @@ import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,11 +28,11 @@ import java.util.Set;
  * @author sofar
  */
 @Entity
-@Table(name = "SYS_USER")
+@Table(name = "sys_user")
 @JsonIgnoreProperties(value = {"roles"})
 @NamedEntityGraph(name = "User.detail",
         attributeNodes = @NamedAttributeNode("group"))
-public class User extends SimpleBaseEntity<Long> {
+public class User extends AbstractBaseEntity<Long> {
 
     /**
      * 超级管理员用户登录名。
@@ -59,7 +60,7 @@ public class User extends SimpleBaseEntity<Long> {
      */
     private String password;
 
-    private Sex sex;
+    private Sex sex = Sex.M;
 
     private String email;
 
@@ -70,10 +71,14 @@ public class User extends SimpleBaseEntity<Long> {
     /**
      * 用户状态
      */
-    private Status status;
+    private Status status = Status.ENABLE;
 
 
     private String salt;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     /**
      * 用户角色组
@@ -93,6 +98,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.password = password;
     }
 
+    @Column(length = 1)
     public Sex getSex() {
         return sex;
     }
@@ -101,6 +107,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.sex = sex;
     }
 
+    @Column(length = 50)
     public String getEmail() {
         return email;
     }
@@ -109,6 +116,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.email = email;
     }
 
+    @Column(length = 1)
     @Enumerated(EnumType.ORDINAL)
     public Status getStatus() {
         return status;
@@ -118,7 +126,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.status = status;
     }
 
-    @Column(unique = true)
+    @Column(unique = true, length = 20)
     public String getLoginName() {
         return loginName;
     }
@@ -127,6 +135,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.loginName = loginName;
     }
 
+    @Column(length = 20)
     public String getName() {
         return name;
     }
@@ -143,7 +152,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.salt = salt;
     }
 
-
+    @Column(length = 11)
     public String getMobile() {
         return mobile;
     }
@@ -152,6 +161,7 @@ public class User extends SimpleBaseEntity<Long> {
         this.mobile = mobile;
     }
 
+    @Column(length = 15)
     public String getTel() {
         return tel;
     }
@@ -162,12 +172,12 @@ public class User extends SimpleBaseEntity<Long> {
 
     @ManyToMany
     @JoinTable(
-            name = "SYS_USER_ROLE"
+            name = "sys_user_role"
             , joinColumns = {
-            @JoinColumn(name = "USER_ID")
+            @JoinColumn(name = "user_id")
     }
             , inverseJoinColumns = {
-            @JoinColumn(name = "ROLE_ID")
+            @JoinColumn(name = "role_id")
     }
     )
     public Set<Role> getRoles() {
@@ -178,6 +188,21 @@ public class User extends SimpleBaseEntity<Long> {
         this.roles = roles;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")

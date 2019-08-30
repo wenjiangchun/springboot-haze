@@ -1,13 +1,13 @@
 package com.haze.kettle.entity;
 
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="k_repository")
-public class KettleRepository extends SimpleBaseEntity<Long> {
+public class KettleRepository extends AbstractBaseEntity<Long> {
 
 	private String name;
 

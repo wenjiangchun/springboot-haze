@@ -4,7 +4,7 @@
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>E</b>TL</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>ETL</b>数据抽取平台</span>
+        <span class="logo-lg"><b>Haze</b>系统管理平台</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -29,7 +29,7 @@
                                 <li><!-- start message -->
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user2-160x160.jpg"
+                                            <img src="${ctx}/resources/adminLTE/dist/img/user2-160x160.jpg"
                                                  class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
@@ -43,7 +43,7 @@
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user3-128x128.jpg"
+                                            <img src="${ctx}/resources/adminLTE/dist/img/user3-128x128.jpg"
                                                  class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
@@ -56,7 +56,7 @@
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user4-128x128.jpg"
+                                            <img src="${ctx}/resources/adminLTE/dist/img/user4-128x128.jpg"
                                                  class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
@@ -69,7 +69,7 @@
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user3-128x128.jpg"
+                                            <img src="${ctx}/resources/adminLTE/dist/img/user3-128x128.jpg"
                                                  class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
@@ -82,7 +82,7 @@
                                 <li>
                                     <a href="#">
                                         <div class="pull-left">
-                                            <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user4-128x128.jpg"
+                                            <img src="${ctx}/resources/adminLTE/dist/img/user4-128x128.jpg"
                                                  class="img-circle" alt="User Image">
                                         </div>
                                         <h4>
@@ -171,14 +171,14 @@
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user2-160x160.jpg" class="user-image"
+                        <img src="${ctx}/resources/adminLTE/dist/img/user2-160x160.jpg" class="user-image"
                              alt="User Image">
                         <span class="hidden-xs">系统管理员</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user2-160x160.jpg"
+                            <img src="${ctx}/resources/adminLTE/dist/img/user2-160x160.jpg"
                                  class="img-circle" alt="User Image">
 
                             <p>
@@ -227,7 +227,7 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="${ctx.contextPath}/resources/adminLTE/dist/img/user2-160x160.jpg" class="img-circle"
+                <img src="${ctx}/resources/adminLTE/dist/img/user2-160x160.jpg" class="img-circle"
                      alt="User Image">
             </div>
             <div class="pull-left info">
@@ -263,21 +263,44 @@
             </li>
             <li class="treeview">
                 <a href="#">
+                    <i class="fa fa-table"></i> <span>系统管理</span>
+                    <span class="pull-right-container">
+                           <i class="fa fa-angle-left"></i>
+                     </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="${ctx}/system/user/view" id="sys_user_menu"><i
+                                    class="fa fa-user-circle-o"></i>用户管理</a>
+                    </li>
+                    <li><a href="${ctx}/system/group/view" id="sys_group_menu"><i
+                                    class="fa fa-users"></i>机构管理</a>
+                    </li>
+                    <li><a href="${ctx}/system/role/view" id="sys_role_menu"><i class="fa fa-gears"></i>角色管理</a>
+                    </li>
+                    <li><a href="${ctx}/system/resource/view" id="sys_res_menu"><i class="fa fa-database"></i>资源管理</a>
+                    <li><a href="${ctx}/system/dictionary/view" id="sys_dict_menu"><i class="fa fa-book"></i>字典管理</a>
+                    <li><a href="${ctx}/system/config/view" id="sys_config_menu"><i class="fa fa-wrench"></i>配置管理</a>
+                    <li><a href="${ctx}/map" id="mapMenu"><i class="fa fa-map-o"></i>日志管理</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
                     <i class="fa fa-table"></i> <span>ETL管理</span>
                     <span class="pull-right-container">
                            <i class="fa fa-angle-left pull-right"></i>
                      </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="${ctx.contextPath}/kettle/repository" id="etl_repos_menu"><i
+                    <li><a href="${ctx}/kettle/repository" id="etl_repos_menu"><i
                                     class="fa fa-circle-o"></i>资源库管理</a>
                     </li>
-                    <li><a href="${ctx.contextPath}/kettle/trans/view" id="etl_trans_menu"><i
+                    <li><a href="${ctx}/kettle/trans/view" id="etl_trans_menu"><i
                                     class="fa fa-circle-o"></i>转换管理</a>
                     </li>
-                    <li><a href="${ctx.contextPath}/kettle/job/view" id="etl_job_menu"><i class="fa fa-circle-o"></i>作业管理</a>
+                    <li><a href="${ctx}/kettle/job/view" id="etl_job_menu"><i class="fa fa-circle-o"></i>作业管理</a>
                     </li>
-                    <li><a href="${ctx.contextPath}/map" id="mapMenu"><i class="fa fa-map-o"></i>地图展示</a>
+                    <li><a href="${ctx}/map" id="mapMenu"><i class="fa fa-map-o"></i>地图展示</a>
                     </li>
                 </ul>
             </li>

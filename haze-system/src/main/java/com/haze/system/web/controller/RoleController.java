@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-
 import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
 import com.haze.system.service.ResourceService;
@@ -43,14 +40,14 @@ public class RoleController {
 	private ResourceService resourceService;
 	
 	@RequestMapping(value = "view")
-	public String list(Model model, ServletRequest request) {
+	public String list(Model model) {
 		model.addAttribute("statuss", Status.values());
 		return "system/role/roleList";
 	}
 	
 	@RequestMapping(value = "search")
 	@ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams, ServletRequest request) {
+	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest();
 		Map<String, Object> queryVaribles = dataTableParams.getQueryVairables();
 		if (queryVaribles != null && queryVaribles.get("status") != null) {
@@ -63,14 +60,14 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "add", method = RequestMethod.GET)
-	public String add(Model model, ServletRequest request) {
+	public String add(Model model) {
 		model.addAttribute("statuss", Status.values());
 		return "system/role/addRole";
 	}
 	
 	@RequestMapping(value = "save")
     @ResponseBody
-	public WebMessage save(Role role, HttpServletRequest request) {
+	public WebMessage save(Role role) {
 		try {
 			this.roleService.saveOrUpdate(role);
             return WebMessage.createSuccessWebMessage();
@@ -81,7 +78,7 @@ public class RoleController {
 	
 	@RequestMapping(value = "delete/{ids}")
     @ResponseBody
-	public WebMessage delete(@PathVariable("ids") Long[] ids, HttpServletRequest request) {
+	public WebMessage delete(@PathVariable("ids") Long[] ids) {
         try {
             this.roleService.batchDelete(ids);
             return WebMessage.createSuccessWebMessage();
@@ -94,11 +91,10 @@ public class RoleController {
 	 * 进入对角色添加资源管理权限页面
 	 * @param id 角色Id
 	 * @param model
-	 * @param request
-	 * @return 
+	 * @return
 	 */
 	@RequestMapping(value = "addResources/{id}", method = RequestMethod.GET)
-	public String addResources(@PathVariable("id") Long id, Model model, ServletRequest request) {
+	public String addResources(@PathVariable("id") Long id, Model model) {
 		Role role = this.roleService.findById(id);
 		List<Resource> menus = this.resourceService.findMenuResources();
 		List<Resource> newMenus = new ArrayList<Resource>();
@@ -115,7 +111,7 @@ public class RoleController {
 	 */
 	@RequestMapping(value = "saveResources/{roleId}/{resourceIds}")
     @ResponseBody
-	public WebMessage saveResources(@PathVariable("roleId") Long id,@PathVariable("resourceIds") Long[] resourceIds, HttpServletRequest request) {
+	public WebMessage saveResources(@PathVariable("roleId") Long id,@PathVariable("resourceIds") Long[] resourceIds) {
         try {
             this.roleService.addResources(id, resourceIds);
             return WebMessage.createSuccessWebMessage();
@@ -128,11 +124,10 @@ public class RoleController {
 	 * 进入角色编辑页面
 	 * @param id 用户Id
 	 * @param model
-	 * @param request
-	 * @return 
+	 * @return
 	 */
 	@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable Long id, Model model, HttpServletRequest request) {
+	public String edit(@PathVariable Long id, Model model) {
 		model.addAttribute("statuss", Status.values());
 		Role role = this.roleService.findById(id);
 		model.addAttribute("role", role);
@@ -142,20 +137,20 @@ public class RoleController {
 	/**
 	 * 更新角色信息
 	 * @param role 角色信息
-	 * @param request
 	 * @return 返回角色列表页面
 	 */
 	@RequestMapping(value = "update")
     @ResponseBody
-	public WebMessage update(Role role, HttpServletRequest request) {
+	public WebMessage update(Role role) {
 		Role r = this.roleService.findById(role.getId());
 		r.setName(role.getName());
-		r.setStatus(role.getStatus());
+		r.setEnabled(role.getEnabled());
 		try {
 			this.roleService.saveOrUpdate(r);
-            return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));
+            /*return WebMessage.createLocaleSuccessWebMessage(RequestContextUtils.getLocale(request));*/
+            return WebMessage.createSuccessWebMessage();
 		} catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage(), RequestContextUtils.getLocale(request));
+            return WebMessage.createErrorWebMessage(e.getMessage());
 		}
 	}
 	

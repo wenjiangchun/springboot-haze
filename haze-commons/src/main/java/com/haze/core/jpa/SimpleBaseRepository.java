@@ -54,12 +54,10 @@ public class SimpleBaseRepository<T, ID extends Serializable> extends SimpleJpaR
                 path = path.get(name);
             }
         }
-        Predicate predicate = criteriaBuilder.equal(root.get(propertyName), value);
+        Predicate predicate = value != null ? criteriaBuilder.equal(root.get(propertyName), value) : criteriaBuilder.isNull(root.get(propertyName));
         criteriaQuery.where(predicate);
         for (Sort sort : sorts) {
-            Iterator<Sort.Order> it = sort.iterator();
-            while (it.hasNext()) {
-                Sort.Order order = it.next();
+            for (Sort.Order order : sort) {
                 Sort.Direction direction = order.getDirection();
                 String orderPropertyName = order.getProperty();
                 switch (direction) {

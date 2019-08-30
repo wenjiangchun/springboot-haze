@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.haze.core.jpa.BaseRepository;
 import com.haze.system.entity.Role;
-import com.haze.system.utils.Status;
 import org.springframework.stereotype.Repository;
 
 
@@ -19,10 +18,10 @@ public interface RoleDao extends BaseRepository<Role, Long> {
 
 	/**
 	 * 根据角色状态查找角色对象
-	 * @param status 状态值
+	 * @param enabled 状态值
 	 * @return 角色对象集合
 	 */
-	List<Role> findByStatus(Status status);
+	List<Role> findByEnabled(boolean enabled);
 
 	/**
 	 * 根据角色英文名称查找角色对象

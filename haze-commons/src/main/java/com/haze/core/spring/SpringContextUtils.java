@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.Locale;
  * @see ApplicationContextAware
  * @see ApplicationContext
  */
-
+@Component
 public final class SpringContextUtils implements ApplicationContextAware {
 
     private static ApplicationContext ctx;
@@ -80,7 +81,7 @@ public final class SpringContextUtils implements ApplicationContextAware {
     /**
      * 获取spring {@code ApplicationContext}对象。
      *
-     * @return
+     * @return ctx
      */
     public static ApplicationContext getApplicationContext() {
         return ctx;
@@ -128,4 +129,5 @@ public final class SpringContextUtils implements ApplicationContextAware {
         }
         return driverClassNames;
     }
+
 }

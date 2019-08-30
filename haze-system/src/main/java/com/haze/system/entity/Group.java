@@ -1,10 +1,11 @@
 package com.haze.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 import com.haze.system.utils.Status;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,9 +16,9 @@ import java.util.Set;
  */
 @Entity
 //@Table(name = "SYS_GROUP", uniqueConstraints = {@UniqueConstraint(columnNames = {"PARENT_ID", "CODE"})})
-@Table(name = "SYS_GROUP")
+@Table(name = "sys_group")
 @JsonIgnoreProperties(value = {"childs", "roles", "users"})
-public class Group extends SimpleBaseEntity<Long> {
+public class Group extends AbstractBaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,6 +44,9 @@ public class Group extends SimpleBaseEntity<Long> {
      */
     private Group parent;
 
+    private Date createTime;
+
+    private Date updateTime;
     /**
      * 子机构
      */
@@ -52,8 +56,6 @@ public class Group extends SimpleBaseEntity<Long> {
      * 机构下用户
      */
     private Set<User> users = new HashSet<>();
-
-
 
     /**
      * 机构角色组
@@ -69,6 +71,7 @@ public class Group extends SimpleBaseEntity<Long> {
      * 机构类型
      */
     private Dictionary groupType;
+
     /**
      * 机构地址
      */
@@ -89,7 +92,7 @@ public class Group extends SimpleBaseEntity<Long> {
      */
     private Status status = Status.ENABLE;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 100)
     public String getName() {
         return name;
     }
@@ -98,6 +101,7 @@ public class Group extends SimpleBaseEntity<Long> {
         this.name = name;
     }
 
+    @Column(unique = true, length = 200)
     public String getFullName() {
         return fullName;
     }
@@ -136,12 +140,12 @@ public class Group extends SimpleBaseEntity<Long> {
 
     @ManyToMany
     @JoinTable(
-            name = "SYS_GROUP_ROLE"
+            name = "sys_group_role"
             , joinColumns = {
-            @JoinColumn(name = "GROUP_ID")
+            @JoinColumn(name = "group_id")
     }
             , inverseJoinColumns = {
-            @JoinColumn(name = "ROLE_ID")
+            @JoinColumn(name = "role_id")
     }
     )
     public Set<Role> getRoles() {
@@ -152,6 +156,7 @@ public class Group extends SimpleBaseEntity<Long> {
         this.roles = roles;
     }
 
+    @Column(unique = true, length = 20)
     public String getCode() {
         return code;
     }
@@ -170,6 +175,7 @@ public class Group extends SimpleBaseEntity<Long> {
         this.groupType = groupType;
     }
 
+    @Column(unique = true, length = 200)
     public String getAddress() {
         return address;
     }
@@ -178,6 +184,7 @@ public class Group extends SimpleBaseEntity<Long> {
         this.address = address;
     }
 
+    @Column(unique = true, length = 15)
     public String getTel() {
         return tel;
     }
@@ -186,6 +193,7 @@ public class Group extends SimpleBaseEntity<Long> {
         this.tel = tel;
     }
 
+    @Column(unique = true, length = 500)
     public String getRemark() {
         return remark;
     }
@@ -242,16 +250,6 @@ public class Group extends SimpleBaseEntity<Long> {
 
     public void setPid(Long pid) {
         this.pid = pid;
-    }
-
-    private Integer sn = 0;
-
-    public Integer getSn() {
-        return sn;
-    }
-
-    public void setSn(Integer sn) {
-        this.sn = sn;
     }
 
     @Override

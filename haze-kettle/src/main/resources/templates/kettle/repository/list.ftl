@@ -2,10 +2,9 @@
 <html>
 <head>
   <#include "../../common/head.ftl"/>
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
-    <link href="${ctx.contextPath}/resources/zTree/css/bootstrapStyle/bootstrapStyle.css" type="text/css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <link href="${ctx}/resources/zTree/css/bootstrapStyle/bootstrapStyle.css" type="text/css" rel="stylesheet" />
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -95,11 +94,11 @@
 <#include "../../common/foot.ftl"/>
 <#include "../../common/left.ftl"/>
 </div>
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/fastclick/lib/fastclick.js"></script>
-<script type="text/javascript" src="${ctx.contextPath}/resources/zTree/js/jquery.ztree.all.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/fastclick/lib/fastclick.js"></script>
+<script type="text/javascript" src="${ctx}/resources/zTree/js/jquery.ztree.all.js"></script>
 <script>
     $(function () {
         initMenu('etl_repos_menu');
@@ -131,7 +130,7 @@
             });
 
         $("#refreshRepository").click(function() {
-            window.location.href="${ctx.contextPath}/kettle/refreshRepository";
+            window.location.href="${ctx}/kettle/refreshRepository";
         });
         $("#addRepository").click(function() {
             layer.open({
@@ -140,21 +139,21 @@
                 shadeClose: true,
                 shade: 0.8,
                 area: ['800px', '60%'],
-                content: '${ctx.contextPath}/kettle/repository/add'
+                content: '${ctx}/kettle/repository/add'
             });
         });
     });
 
 
     function testConnection(id) {
-        $.post('${ctx.contextPath}/kettle/repository/testConnection/' + id,function(data){
+        $.post('${ctx}/kettle/repository/testConnection/' + id,function(data){
             layer.alert(data.content)
         });
     }
 
     function createSchema(id) {
         layer.load();
-        $.post('${ctx.contextPath}/kettle/repository/createSchema/' + id,function(data){
+        $.post('${ctx}/kettle/repository/createSchema/' + id,function(data){
             layer.closeAll('loading');
             layer.alert(data.content)
         });
@@ -167,7 +166,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['80%', '60%'],
-            content: '${ctx.contextPath}/kettle/trans/getElementLog/' + objectId + '/' + type //iframe的url
+            content: '${ctx}/kettle/trans/getElementLog/' + objectId + '/' + type //iframe的url
         });
     }
 
@@ -178,7 +177,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['80%', '70%'],
-            content: '${ctx.contextPath}/kettle/trans/previewTrans/' + objectId + '/' + type //iframe的url
+            content: '${ctx}/kettle/trans/previewTrans/' + objectId + '/' + type //iframe的url
         });
     }
 </script>

@@ -87,7 +87,7 @@
                 console.log(queryVariables);
                 $.ajax({
                     "type": "post",
-                    "url": "${ctx.contextPath}/kettle/job/runJob",
+                    "url": "${ctx}/kettle/job/runJob",
                     "data": queryVariables,
                     "success": function (data) {
                         alert(data);
@@ -104,7 +104,7 @@
             shadeClose: true,
             shade: 0.8,
             area: ['380px', '90%'],
-            content: '${ctx.contextPath}/kettle/getTransMeta/'+ transObjectId //iframe的url
+            content: '${ctx}/kettle/getTransMeta/'+ transObjectId //iframe的url
         });
     }
 </script>

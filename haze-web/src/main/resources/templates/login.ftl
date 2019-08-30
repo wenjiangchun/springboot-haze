@@ -7,15 +7,15 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/bower_components/Ionicons/css/ionicons.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/dist/css/AdminLTE.min.css">
     <!-- iCheck -->
-    <link rel="stylesheet" href="${ctx.contextPath}/resources/adminLTE/plugins/iCheck/square/blue.css">
+    <link rel="stylesheet" href="${ctx}/resources/adminLTE/plugins/iCheck/square/blue.css">
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -26,7 +26,7 @@
     <div class="login-box-body">
         <p class="login-box-msg">Sign in to start your session</p>
 
-        <form action="${ctx.contextPath}/login" method="post" onsubmit="return validator()">
+        <form action="${ctx}/login" method="post" onsubmit="return validator()">
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" placeholder="Email" id="username" name="username">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -56,11 +56,11 @@
 <!-- /.login-box -->
 
 <!-- jQuery 3 -->
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
-<script src="${ctx.contextPath}/resources/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="${ctx}/resources/adminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- iCheck -->
-<script src="${ctx.contextPath}/resources/adminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="${ctx}/resources/adminLTE/plugins/iCheck/icheck.min.js"></script>
 <script>
     $(function () {
         $('input').iCheck({

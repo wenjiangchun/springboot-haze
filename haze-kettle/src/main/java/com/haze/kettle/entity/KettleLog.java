@@ -3,7 +3,7 @@ package com.haze.kettle.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haze.core.jpa.entity.SimpleBaseEntity;
+import com.haze.core.jpa.entity.AbstractBaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,7 +12,7 @@ import java.util.Map;
 @Entity
 @Table(name="k_log")
 @JsonIgnoreProperties(value = {"kettleRepository"})
-public class KettleLog extends SimpleBaseEntity<Long> {
+public class KettleLog extends AbstractBaseEntity<Long> {
 
 	private String objectId;
 
