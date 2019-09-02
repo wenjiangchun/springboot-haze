@@ -2,7 +2,7 @@
     <!-- Logo -->
     <a href="index2.html" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>E</b>TL</span>
+        <span class="logo-mini"><b>H</b>AZE</span>
         <!-- logo for regular state and mobile devices -->
         <span class="logo-lg"><b>Haze</b>系统管理平台</span>
     </a>
@@ -173,7 +173,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="${ctx}/resources/adminLTE/dist/img/user2-160x160.jpg" class="user-image"
                              alt="User Image">
-                        <span class="hidden-xs">系统管理员</span>
+                        <span class="hidden-xs"><@shiro.principal/></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
@@ -231,7 +231,7 @@
                      alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>系统管理员</p>
+                <p><@shiro.principal/></p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
@@ -263,7 +263,7 @@
             </li>
             <li class="treeview">
                 <a href="#">
-                    <i class="fa fa-table"></i> <span>系统管理</span>
+                    <i class="fa fa-desktop"></i> <span>系统管理</span>
                     <span class="pull-right-container">
                            <i class="fa fa-angle-left"></i>
                      </span>
@@ -280,7 +280,6 @@
                     <li><a href="${ctx}/system/resource/view" id="sys_res_menu"><i class="fa fa-database"></i>资源管理</a>
                     <li><a href="${ctx}/system/dictionary/view" id="sys_dict_menu"><i class="fa fa-book"></i>字典管理</a>
                     <li><a href="${ctx}/system/config/view" id="sys_config_menu"><i class="fa fa-wrench"></i>配置管理</a>
-                    <li><a href="${ctx}/map" id="mapMenu"><i class="fa fa-map-o"></i>日志管理</a>
                     </li>
                 </ul>
             </li>
@@ -301,6 +300,22 @@
                     <li><a href="${ctx}/kettle/job/view" id="etl_job_menu"><i class="fa fa-circle-o"></i>作业管理</a>
                     </li>
                     <li><a href="${ctx}/map" id="mapMenu"><i class="fa fa-map-o"></i>地图展示</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-eye"></i> <span>系统监控</span>
+                    <span class="pull-right-container">
+                           <i class="fa fa-angle-left"></i>
+                     </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="${ctx}/shiro/online/view" id="monitor_online_menu"><i class="fa fa-exchange"></i>在线用户</a>
+                    </li>
+                    <li><a href="${ctx}/monitor/jvm/view" id="monitor_jvm_menu"><i class="fa fa-exchange"></i>JVM信息</a>
+                    </li>
+                    <li><a href="${ctx}/monitor/ssh/view" id="monitor_ssh_menu"><i class="fa fa-exchange"></i>ssh信息</a>
                     </li>
                 </ul>
             </li>

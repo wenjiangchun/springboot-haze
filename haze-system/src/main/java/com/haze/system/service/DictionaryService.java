@@ -5,6 +5,7 @@ import com.haze.system.dao.DictionaryDao;
 import com.haze.system.entity.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +62,7 @@ public class DictionaryService extends AbstractBaseService<Dictionary, Long> {
      * @param rootCode 字典根节点code
      * @return 已启用子类字典集合
      */
-    //@Cacheable(value="dictionaryCache",key="#rootCode")
+    @Cacheable(value="dictionaryCache",key="#rootCode")
     @Transactional(readOnly = true)
     public List<Dictionary> findChildsByRootCode(String rootCode) {
         return this.dictionaryDao.findChildsByRootCode(rootCode);

@@ -88,6 +88,7 @@ public class Role extends AbstractBaseEntity<Long> {
 		this.enabled = enabled;
 	}
 
+	@Column(updatable = false)
 	public Date getCreateTime() {
 		return createTime;
 	}

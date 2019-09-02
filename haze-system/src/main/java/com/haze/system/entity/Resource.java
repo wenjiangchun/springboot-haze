@@ -28,16 +28,22 @@ public class Resource extends AbstractBaseEntity<Long> {
 
 	private String url;
 	
-	private ResourceType resourceType;
+	private ResourceType resourceType = ResourceType.MENU;
 	
 	/**
 	 * 上级资源
 	 */
 	private Resource parent;
 
+	private String icon;
+
 	private Date createTime;
 
 	private Date updateTime;
+
+	private Integer sn = 1;
+
+	private String description;
 	/**
 	 * 子资源
 	 */
@@ -101,6 +107,33 @@ public class Resource extends AbstractBaseEntity<Long> {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	@Column(length = 50)
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	@Column(length = 2)
+	public Integer getSn() {
+		return sn;
+	}
+
+	public void setSn(Integer sn) {
+		this.sn = sn;
+	}
+
+	@Column(length = 200)
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@ManyToOne

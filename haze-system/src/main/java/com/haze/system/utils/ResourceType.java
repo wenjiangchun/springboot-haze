@@ -8,14 +8,14 @@ package com.haze.system.utils;
 public enum ResourceType {
 
 	/**
-	 * 操作资源
-	 */
-	A("操作资源"), 
-	
-	/**
 	 * 菜单资源
 	 */
-	M("菜单资源");
+	MENU("菜单资源"),
+	/**
+	 * 操作资源
+	 */
+	ACTION("操作资源");
+
 	private String typeName;
 	
 	ResourceType(String typeName) {

@@ -23,5 +23,10 @@
             <artifactId>shiro-spring-boot-web-starter</artifactId>
             <version>1.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>shiro-freemarker-tags</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 </project>

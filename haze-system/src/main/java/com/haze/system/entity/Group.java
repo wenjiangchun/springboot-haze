@@ -85,7 +85,7 @@ public class Group extends AbstractBaseEntity<Long> {
     /**
      * 机构备注
      */
-    private String remark;
+    private String description;
 
     /**
      * 机构状态
@@ -175,7 +175,7 @@ public class Group extends AbstractBaseEntity<Long> {
         this.groupType = groupType;
     }
 
-    @Column(unique = true, length = 200)
+    @Column(length = 200)
     public String getAddress() {
         return address;
     }
@@ -184,7 +184,7 @@ public class Group extends AbstractBaseEntity<Long> {
         this.address = address;
     }
 
-    @Column(unique = true, length = 15)
+    @Column(length = 15)
     public String getTel() {
         return tel;
     }
@@ -193,13 +193,30 @@ public class Group extends AbstractBaseEntity<Long> {
         this.tel = tel;
     }
 
-    @Column(unique = true, length = 500)
-    public String getRemark() {
-        return remark;
+    @Column(updatable = false)
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Column(length = 200)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

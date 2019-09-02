@@ -1,0 +1,5 @@
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+com.haze.shiro.listener.UserRoleChangeListener
+
+

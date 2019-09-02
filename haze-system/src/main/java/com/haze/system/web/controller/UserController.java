@@ -105,7 +105,7 @@ public class UserController extends BaseController {
 	@PostMapping(value = "save")
     @ResponseBody
 	public WebMessage save(User user, Long[] roleIds) {
-		Set<Role> roles = new HashSet<Role>();
+		Set<Role> roles = new HashSet<>();
 		if (roleIds != null) {
 			for (Long roleId : roleIds) {
 				Role role = new Role();
@@ -220,12 +220,11 @@ public class UserController extends BaseController {
 	public String edit(@PathVariable Long id, Model model) {
 		model.addAttribute("sexs", Sex.values());
 		model.addAttribute("statuss", Status.values());
-//		model.addAttribute("userTypes", UserType.values());
-		/*User user = this.userService.findById(id);
-		System.out.println(user.getGroup().getName());*/
 		List<Group> groupList = this.groupService.findAll();
 		model.addAttribute("user", this.userService.findById(id));
 		model.addAttribute("groupList",groupList);
+		List<Role> roleList = this.roleService.findByEnabled(true); //查找所有启用状态的角色
+		model.addAttribute("roleList", roleList);
 		return "system/user/editUser";
 	}
 	
@@ -242,14 +241,14 @@ public class UserController extends BaseController {
 		u.setEmail(user.getEmail());
 		u.setSex(user.getSex());
 		u.setStatus(user.getStatus());
-//		u.setUserType(user.getUserType());
 		if (user.getGroup() == null || user.getGroup().getId()!= null) {
 			u.setGroup(null);
 		} else {
 			u.setGroup(user.getGroup());
 		}
-		/*u.setMobile(user.getMobile());
-		u.setTel(user.getTel());*/
+		u.setMobile(user.getMobile());
+		u.setTel(user.getTel());
+		u.setRoles(user.getRoles());
         try {
             this.userService.saveOrUpdate(u);
             return WebMessage.createSuccessWebMessage();

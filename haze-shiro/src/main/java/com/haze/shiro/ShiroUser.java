@@ -4,6 +4,7 @@ import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +25,17 @@ public class ShiroUser implements Serializable {
 	
 	public List<Role> roles;
 
+	private Date startLoginTime;
+
+	private String ip;
+
+	private String sessionId;
+
+	public ShiroUser() {
+	}
+
 	public ShiroUser(String userId, String loginName, String name,
-			List<Resource> resources) {
+					 List<Resource> resources) {
 		this.userId = userId;
 		this.loginName = loginName;
 		this.name = name;
@@ -78,6 +88,30 @@ public class ShiroUser implements Serializable {
 		this.roles = roles;
 	}
 
+	public Date getStartLoginTime() {
+		return startLoginTime;
+	}
+
+	public void setStartLoginTime(Date startLoginTime) {
+		this.startLoginTime = startLoginTime;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
 	/**
 	 * 本函数输出将作为默认的<shiro:principal/>输出.
 	 */
@@ -107,10 +141,7 @@ public class ShiroUser implements Serializable {
 			return false;
 		ShiroUser other = (ShiroUser) obj;
 		if (loginName == null) {
-			if (other.loginName != null)
-				return false;
-		} else if (!loginName.equals(other.loginName))
-			return false;
-		return true;
+			return other.loginName == null;
+		} else return loginName.equals(other.loginName);
 	}
 }

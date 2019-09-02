@@ -17,10 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -39,7 +36,7 @@ public class RoleController {
 	@Autowired
 	private ResourceService resourceService;
 	
-	@RequestMapping(value = "view")
+	@GetMapping(value = "view")
 	public String list(Model model) {
 		model.addAttribute("statuss", Status.values());
 		return "system/role/roleList";
@@ -59,13 +56,13 @@ public class RoleController {
 		return dtp;
 	}
 
-	@RequestMapping(value = "add", method = RequestMethod.GET)
+	@GetMapping(value = "add")
 	public String add(Model model) {
 		model.addAttribute("statuss", Status.values());
 		return "system/role/addRole";
 	}
 	
-	@RequestMapping(value = "save")
+	@PostMapping(value = "save")
     @ResponseBody
 	public WebMessage save(Role role) {
 		try {
@@ -76,7 +73,7 @@ public class RoleController {
 		}
 	}
 	
-	@RequestMapping(value = "delete/{ids}")
+	@PostMapping(value = "delete/{ids}")
     @ResponseBody
 	public WebMessage delete(@PathVariable("ids") Long[] ids) {
         try {
@@ -93,7 +90,7 @@ public class RoleController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "addResources/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "addResources/{id}")
 	public String addResources(@PathVariable("id") Long id, Model model) {
 		Role role = this.roleService.findById(id);
 		List<Resource> menus = this.resourceService.findMenuResources();
@@ -109,9 +106,9 @@ public class RoleController {
 	 * @param resourceIds 系统资源Id数组
 	 * @return 返回列表页面
 	 */
-	@RequestMapping(value = "saveResources/{roleId}/{resourceIds}")
+	@PostMapping(value = "saveResources")
     @ResponseBody
-	public WebMessage saveResources(@PathVariable("roleId") Long id,@PathVariable("resourceIds") Long[] resourceIds) {
+	public WebMessage saveResources(@RequestParam("roleId") Long id,@RequestParam(value = "resourceIds[]", required = false) Long[] resourceIds) {
         try {
             this.roleService.addResources(id, resourceIds);
             return WebMessage.createSuccessWebMessage();
@@ -126,7 +123,7 @@ public class RoleController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "edit/{id}")
 	public String edit(@PathVariable Long id, Model model) {
 		model.addAttribute("statuss", Status.values());
 		Role role = this.roleService.findById(id);
@@ -139,7 +136,7 @@ public class RoleController {
 	 * @param role 角色信息
 	 * @return 返回角色列表页面
 	 */
-	@RequestMapping(value = "update")
+	@PostMapping(value = "update")
     @ResponseBody
 	public WebMessage update(Role role) {
 		Role r = this.roleService.findById(role.getId());
@@ -159,7 +156,7 @@ public class RoleController {
 	 * @param roleName 角色英文名称
 	 * @return true/false 不存在返回true,否则返回false
 	 */
-	@RequestMapping(value = "notExistRoleName", method = RequestMethod.POST)
+	@GetMapping(value = "notExistRoleName")
 	@ResponseBody
 	public Boolean notExistRoleName(String roleName) {
 		Boolean isExist = this.roleService.existCode(roleName);

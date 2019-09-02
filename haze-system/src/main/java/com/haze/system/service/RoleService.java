@@ -1,14 +1,12 @@
 package com.haze.system.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.haze.core.service.AbstractBaseService;
 import com.haze.system.dao.RoleDao;
 import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
+import com.haze.system.entity.User;
 import com.haze.system.exception.RoleExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -59,14 +57,28 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	@CacheEvict(value="shiroCache",allEntries=true)
 	public Role saveOrUpdate(Role role) throws RoleExistException {
 		Assert.notNull(role.getName());
+		Date date = new Date();
+		role.setUpdateTime(date);
 		Role r = this.roleDao.findByCode(role.getCode());
-		if (null != r && role.getId() == null) {
-			logger.error("角色保存失败，角色名称{}已存在！" + role.getName());
-			throw new RoleExistException("角色名称" + role.getName() + "已存在");
+		//判断角色是否已包含ID
+		if (role.isNew()) {
+			//判断数据库中是否已存在对应code对象
+			if (r != null) {
+				logger.error("角色保存失败，角色代码{}已存在！" + role.getCode());
+				throw new RoleExistException("角色代码" + role.getCode() + "已存在");
+			} else {
+				role.setCreateTime(date);
+			}
 		} else {
-			logger.info("保存角色成功，角色名为{}", role.getName());
-			this.roleDao.save(role);
+			if (r != null && r.getId() != role.getId()) {
+				logger.error("角色保存失败，角色代码{}已存在！" + role.getCode());
+			} else {
+				//执行更新操作 对原先角色资源重新授权
+				role.setResources(this.findById(role.getId()).getResources());
+			}
 		}
+		logger.info("保存角色成功，角色名为{}", role.getName());
+		this.roleDao.save(role);
 		return role;
 	}
 	
@@ -83,19 +95,19 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	}
 	
 	/**
-	 * 删除角色 同时删除和该角色关联的用户 ， 资源的关联信息
+	 * 删除角色 同时删除和该角色关联的用户, 资源的关联信息
 	 * @param id 角色Id
-	 * @throws Exception
+	 * @throws Exception 删除失败抛出异常
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
 	public void delete(Long id) throws Exception {
-		Role role = this.roleDao.getOne(id);
+		Role role = this.findById(id);
 		if (role != null) {
-			role.setUsers(null);
-			/*Set<User> users = role.getUsers();
-			for (User user : users) {
+			//删除和角色关联的用户信息
+			for (User user : role.getUsers()) {
 				user.removeRole(role);
-			}*/
+			}
+			//删除和角色关联的资源信息
 			role.setResources(null);
 		}
 		this.deleteById(id);
@@ -106,6 +118,7 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 * @param ids 角色Id集合
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
+	@Override
 	public void batchDelete(Long[] ids) throws Exception {
 		for (Long id : ids) {
 			delete(id);
@@ -113,17 +126,21 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	}
 
 	@CacheEvict(value="shiroCache",allEntries=true)
-	public void addResources(Long id, Long[] resourceIds) throws Exception {
-        Assert.notNull(id);
+	public void addResources(Long id, Long[] resourceIds) {
+		Objects.requireNonNull(id, "角色id不能为null");
 		Role role = this.findById(id);
-		Set<Resource> resources = new HashSet<Resource>();
-		for (Long resourceId : resourceIds) {
-			Resource resource = new Resource();
-			resource.setId(resourceId);
-			resources.add(resource);
+		Set<Resource> resources = new HashSet<>();
+		if (resourceIds == null) {
+			role.setResources(null);
+		} else {
+			for (Long resourceId : resourceIds) {
+				Resource resource = new Resource();
+				resource.setId(resourceId);
+				resources.add(resource);
+			}
 			role.setResources(resources);
 		}
-		this.saveOrUpdate(role);
+		this.roleDao.save(role);
 	}
 	
 	/**

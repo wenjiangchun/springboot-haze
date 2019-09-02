@@ -72,15 +72,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="remark" class="col-sm-2 control-label">备注:</label>
-                                <div class="col-xs-4">
-                                    <textarea id="remark" name="remark" class="form-control">value="${group.remark!}"</textarea>
+                                <label for="description" class="col-sm-2 control-label">描述:</label>
+                                <div class="col-xs-10">
+                                    <textarea id="description" name="description" class="form-control">${group.description!}</textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="box-footer">
-                            <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
-                            <button type="reset" class="btn btn-danger pull-right">重置</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>
+                            <button type="reset" class="btn btn-danger">重置</button>
                             <input type="hidden" name="id" value="${group.id!}"/>
                         </div>
                     </form>
@@ -89,22 +89,15 @@
     </div>
 </section>
 <script>
-    var rules = {
-        "fullName":{required:true}
-    };
-    var messages = {
-        "fullName":{required:"机构名称不能为空"}
-    };
-    //initFormValidate("inputForm", rules, messages);
-
     $('#inputForm').ajaxForm({
-            dataType : 'json',
-            success : function(data) {
+        dataType : 'json',
+        success : function(data) {
             if (data.messageType === "SUCCESS") {
-                alert("操作成功");
-                parent.hideMyModal(${(parent.id)!});
+                layer.alert("操作成功", function() {
+                    parent.hideMyModal();
+                });
             } else {
-                alert("操作失败【"+data.content+"】");
+                layer.alert("操作失败【"+data.content+"】");
             }
         }
     });

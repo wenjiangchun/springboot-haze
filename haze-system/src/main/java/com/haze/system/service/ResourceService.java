@@ -12,6 +12,7 @@ import com.haze.system.entity.Role;
 import com.haze.system.utils.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -72,7 +73,8 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 * @throws Exception
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
-	public void batchDeleteResources(Long[] ids) throws Exception {
+	@Override
+	public void batchDelete(Long[] ids) throws Exception {
 		for (Long id : ids) {
 			Resource resource = this.findById(id);
 			Set<Role> roles = resource.getRoles();
@@ -99,6 +101,15 @@ public class ResourceService extends AbstractBaseService<Resource, Long> {
 	 */
 	@Transactional(readOnly = true)
 	public List<Resource> findMenuResources() {
-		return findByResourceType(ResourceType.M);
+		return findByResourceType(ResourceType.MENU);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Resource> findAllBySn(boolean asc) {
+		if (asc) {
+			return this.resourceDao.findAll(Sort.by(Sort.Direction.ASC, "sn"));
+		} else {
+			return this.resourceDao.findAll(Sort.by(Sort.Direction.DESC, "sn"));
+		}
 	}
 }

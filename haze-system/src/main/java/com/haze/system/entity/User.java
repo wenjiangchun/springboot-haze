@@ -30,8 +30,6 @@ import java.util.Set;
 @Entity
 @Table(name = "sys_user")
 @JsonIgnoreProperties(value = {"roles"})
-@NamedEntityGraph(name = "User.detail",
-        attributeNodes = @NamedAttributeNode("group"))
 public class User extends AbstractBaseEntity<Long> {
 
     /**

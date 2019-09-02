@@ -99,8 +99,8 @@
                             </div>
                         </div>
                         <div class="box-footer">
-                            <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-check"></i> 提交</button>
-                            <button type="reset" class="btn btn-danger pull-right">重置</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>
+                            <button type="reset" class="btn btn-danger">重置</button>
                         </div>
                     </form>
                 </div>
@@ -110,13 +110,14 @@
 <script>
     $('.select2').select2();
     $('#inputForm').ajaxForm({
-            dataType : 'json',
-            success : function(data) {
+        dataType : 'json',
+        success : function(data) {
             if (data.messageType === "SUCCESS") {
-                alert("操作成功");
-                parent.hideMyModal();
+                layer.alert("操作成功", function() {
+                    parent.hideMyModal();
+                });
             } else {
-                alert("操作失败【"+data.content+"】");
+                layer.alert("操作失败【"+data.content+"】");
             }
         }
     });

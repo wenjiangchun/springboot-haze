@@ -24,7 +24,6 @@ public interface UserDao extends BaseRepository<User, Long> {
 	 * @param loginName 登陆名称
 	 * @return 用户对象
 	 */
-	@EntityGraph(value = "User.detail", type = EntityGraph.EntityGraphType.LOAD)
 	User findByLoginName(String loginName);
 	
 	/**

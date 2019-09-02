@@ -79,8 +79,9 @@
         dataType : 'json',
         success : function(data) {
             if (data.messageType === "SUCCESS") {
-                layer.alert("操作成功");
-                parent.hideMyModal();
+                layer.alert("操作成功", function() {
+                    parent.hideMyModal();
+                });
             } else {
                 layer.alert("操作失败【"+data.content+"】");
             }

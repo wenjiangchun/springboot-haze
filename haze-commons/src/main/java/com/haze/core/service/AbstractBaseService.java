@@ -48,6 +48,10 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
         return this.dao.findAll();
     }
 
+    public List<T> findAll(Sort sort) {
+        return this.dao.findAll(sort);
+    }
+
     /**
      * 根据Id查找对象
      * @param id 对象Id
@@ -63,17 +67,17 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param t 对象
      * @return T 对象
      */
-    @Transactional(readOnly = false, rollbackFor=Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public T save(T t) throws Exception {
         return this.dao.save(t);
     }
 
-    @Transactional(readOnly = false, rollbackFor=Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public void delete(T t) throws Exception {
         this.dao.delete(t);
     }
 
-    @Transactional(readOnly = false, rollbackFor=Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public void deleteById(PK id) throws Exception {
         this.dao.deleteById(id);
     }
@@ -82,7 +86,7 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * 根据Id数组批量删除对象
      * @param ids Id数组
      */
-    @Transactional(readOnly = false, rollbackFor=Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public void batchDelete(PK[] ids) throws Exception {
         for (PK id : ids) {
             deleteById(id);

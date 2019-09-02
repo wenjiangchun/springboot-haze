@@ -13,6 +13,7 @@ import com.haze.system.entity.Group;
 import com.haze.system.entity.Role;
 import com.haze.system.entity.User;
 import com.haze.system.event.UserChangeGroupEvent;
+import com.haze.system.event.UserRoleChangeEvent;
 import com.haze.system.exception.UserLoginNameExistException;
 import com.haze.system.utils.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,19 @@ public class UserService extends AbstractBaseService<User, Long> {
         return this.userDao.findByLoginName(loginName);
     }
 
+    @Transactional(readOnly = true)
+    public User findByLoginName(String loginName, boolean initialRole) {
+        User user = this.findByLoginName(loginName);
+        if (initialRole) {
+            Set<Role> roles = user.getRoles();
+            for (Role role : roles) {
+                role.getResources();
+                role.getAllPermissons();
+            }
+        }
+        return user;
+    }
+
     /**
      * 添加或更新用户对象，如果ID不存在则添加用户否则更新用户信息
      *
@@ -81,8 +95,14 @@ public class UserService extends AbstractBaseService<User, Long> {
             }
         } else {
             //更新用户对象
+            //查询之前存在的密码
+            User u = this.findById(user.getId());
+            user.setPassword(u.getPassword());
+            user.setSalt(u.getSalt());
             user.setUpdateTime(date);
             logger.debug("更新用户，用户信息为：{}", user);
+            //发布用户变更事件
+            SpringContextUtils.publishEvent(new UserRoleChangeEvent(user));
         }
         user = this.userDao.save(user);
         return user;

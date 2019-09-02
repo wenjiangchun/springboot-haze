@@ -52,7 +52,7 @@
 										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
 											<i class="fa fa-search"></i> 查询
 										</button>
-										<button type="button" class="btn btn-sm btn-danger" data-bind='click: clear' style="margin-left:10px;">清空</button>
+										<button type="button" class="btn btn-sm btn-danger" data-bind='click: reset' style="margin-left:10px;">清空</button>
 									</div>
 								</form>
 						</div>
@@ -66,8 +66,7 @@
 									<th sName="name" bSortable="true">用户名</th>
 									<th sName="mobile" >手机号</th>
 									<th sName="group.name">所在机构</th>
-									<!-- <th sName="sex" columnRender="formatSex">性别</th> -->
-									<th sName="userType" columnRender="formatUserType">用户类型</th>
+									<th sName="sex" columnRender="formatSex">性别</th>
 									<th sName="status" columnRender="formatStatus">状态</th>
 									<th sName="operator" columnRender="formatOperator">操作</th>
 								</tr>
@@ -102,11 +101,38 @@
 				}
 				showMyModel(url,'添加用户', '800px', '60%', callBackAction);
 			},
-			clear: function() {
-				$(".databatle_query").val("");
+			reset: function() {
+				$(".datatable_query").val('');
 			},
 			query: function() {
 				refreshTable();
+			},
+			edit: function(id) {
+				let url = "${ctx}/system/user/edit/" + id;
+				showMyModel(url,'编辑用户', '800px', '60%', callBackAction);
+			},
+			delete: function(id) {
+				if (id == null || id === "") {
+					alert("ID不能为空");
+				} else {
+					layer.confirm('确认删除?', {
+						btn: ['确认','取消'] //按钮
+					}, function(){
+						const ids = [id];
+						$.post({
+							url:'${ctx}/system/user/delete/'+ids,
+							success:function(data) {
+								if (data.messageType == 'SUCCESS') {
+									layer.alert('删除成功');
+									callBackAction(data);
+								} else {
+									layer.alert('删除失败:' + data.content);
+								}
+							}
+						});
+					}, function(){
+					});
+				}
 			}
 		};
 		ko.applyBindings(viewModel);
@@ -253,8 +279,8 @@
 
 	function formatOperator(data) {
 		var html = "";
-		html += "<a href='javascript:void(0)' onclick='editUser(\"" + data.id + "\")' title=''> <i class='fa fa-edit fa-lg'></i> </a> | ";
-		html += "<a href='javascript:void(0)' onclick='deleteUser(\"" + data.id + "\")' title=''> <i class='fa fa-trash-o fa-lg'></i> </a> | ";
+		html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + data.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
+		html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + data.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> | ";
 		html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";
 		return html;
 	}

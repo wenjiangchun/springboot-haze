@@ -22,10 +22,12 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 public class ShiroRealm extends AuthorizingRealm {
 
 	private static final String PERMS = "perms\\[(.*?)\\]";
+
 	@Autowired
 	private UserService userService;
 
@@ -67,7 +69,7 @@ public class ShiroRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(
 			PrincipalCollection principals) {
 		ShiroUser shiroUser = (ShiroUser) principals.getPrimaryPrincipal();
-		User user = userService.findByLoginName(shiroUser.getLoginName());
+		User user = userService.findByLoginName(shiroUser.getLoginName(), true);
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		Set<String> permissions = new HashSet<>();
 
@@ -75,6 +77,7 @@ public class ShiroRealm extends AuthorizingRealm {
 			info.addRoles(roleService.findAllRoleNameByEnabled(true));
 			List<String> perms = resourceService.findAllPermission();
 			permissions.addAll(HazeStringUtils.getValue(perms, PERMS));
+			permissions.addAll(perms);
 		} else {
 			Set<String> perms = new HashSet<String>();
 			for (Role role : user.getRoles()) {
@@ -83,8 +86,7 @@ public class ShiroRealm extends AuthorizingRealm {
 					perms.addAll(role.getAllPermissons());
 				}
 			}
-			permissions.addAll(HazeStringUtils.getValue(perms, PERMS)); //添加用户所有资源权限
-			//permissions.addAll(perms);
+			permissions.addAll(perms); //添加用户所有资源权限
 		}
 		info.addStringPermissions(permissions);
 		return info;

@@ -27,31 +27,24 @@ public class ShiroFilterChainDBDefinition {
 	@Autowired
 	private RoleService roleService;
 
-	private String filterChainDefinitions;
-	
 	public Map<String, String> getFilterChainDefinitions() {
 		Map<String, String> filterChainDefinitions = new HashMap<String, String>();
         List<Resource> resources = resourceService.findAll();
         List<Role> roles = roleService.findAll();
 
         //循环数据库资源的url
-        for (Iterator<Resource> it = resources.iterator(); it.hasNext();) {
-        	Resource resource = it.next();
-        	if(HazeStringUtils.isNotEmpty(resource.getUrl()) && HazeStringUtils.isNotEmpty(resource.getPermission())) {
-				filterChainDefinitions.put(resource.getUrl(), "perms["+resource.getPermission()+"]");
-        		//section.put(resource.getUrl(), resource.getPermission());
-        		//section.put(resource.getUrl()+"/", resource.getPermission());
-        	}
-        }
+		for (Resource resource : resources) {
+			if (HazeStringUtils.isNotEmpty(resource.getUrl()) && HazeStringUtils.isNotEmpty(resource.getPermission())) {
+				filterChainDefinitions.put(resource.getUrl(), "perms[" + resource.getPermission() + "]");
+			}
+		}
         
         //循环数据库组的url
         for (Iterator<Role> it = roles.iterator(); it.hasNext();) {
-        	
         	Role role = it.next();
         	if(HazeStringUtils.isNotEmpty(role.getName()) && HazeStringUtils.isNotEmpty(role.getName())) {
         		//section.put(role.getCname(), role.getName());
         	}
-        	
         }
         //section.put("/**", "authc");  //对所有资源请求加上认证访问权限
 		return filterChainDefinitions;

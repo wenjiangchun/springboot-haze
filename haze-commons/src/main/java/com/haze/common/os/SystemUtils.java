@@ -1,9 +1,10 @@
-package com.haze.common;
+package com.haze.common.os;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.BiFunction;
 
@@ -16,7 +17,7 @@ import org.springframework.util.Assert;
  *
  * @author sofar
  */
-public final class OSUtils {
+public final class SystemUtils {
 
     /**
      * 操作系统文件分隔符
@@ -33,11 +34,11 @@ public final class OSUtils {
      *     <b>说明：</b>该类继承自{@link HashMap}, 在类加载过程中获取系统属性信息，一旦系统属性加载完毕则关闭
      *     向{@code Map} put内容功能，使该对象{@code static{}}代码块一旦执行完毕后，{@code OS_PROPERTIES_MAP}则不可更改其内容。
      * </p>
-     * @see com.haze.common.OSUtils.UnChangeHashMap
+     * @see SystemUtils.UnChangeHashMap
      */
     public static final Map<String, Object> OS_PROPERTIES_MAP = new UnChangeHashMap<>();;
 
-    private static final Logger logger = LoggerFactory.getLogger(OSUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SystemUtils.class);
 
     static {
 
@@ -51,21 +52,22 @@ public final class OSUtils {
         ((UnChangeHashMap)OS_PROPERTIES_MAP).closeChange();
     }
 
-    public OSUtils() {
+    public SystemUtils() {
         throw new UnsupportedOperationException("OSUtils不能被实例化！");
     }
 
     /**
      * 根据命令参数执行底层操作系统命令
      *
-     * @param commond 命令参数
+     * @param command 命令参数
      * @throws IOException 执行失败抛出该异常
      */
-    public static void execCommond(String commond) throws IOException {
-        Assert.notNull(commond);
-        logger.debug("准备执行系统命令【{}】", commond);
-        Runtime.getRuntime().exec(commond);
-        logger.debug("系统命令【{}】执行完毕！", commond);
+    public static Process execCommand(String[] command) throws IOException {
+        Objects.requireNonNull(command, "命令不能为空");
+        logger.debug("准备执行系统命令【{}】", command);
+        Process p =  Runtime.getRuntime().exec(command);
+        logger.debug("系统命令【{}】执行完毕！", command);
+        return p;
     }
 
     /**

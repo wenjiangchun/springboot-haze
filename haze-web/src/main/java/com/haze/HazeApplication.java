@@ -1,6 +1,9 @@
 package com.haze;
 
 import com.haze.spatial.config.SpatialProperties;
+import com.jagregory.shiro.freemarker.ShiroTags;
+import freemarker.template.TemplateException;
+import net.sf.ehcache.CacheManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -12,6 +15,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+
+import java.io.IOException;
 
 @SpringBootApplication
 @EnableCaching
@@ -21,14 +28,16 @@ import org.springframework.web.filter.CorsFilter;
 public class HazeApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(HazeApplication.class, args);
-		try {
+		/*try {
 			Class<?> c = Class.forName("org.pentaho.di.core.database.MySQLDatabaseMeta11");
 			System.out.println(c.getProtectionDomain().getCodeSource().getLocation());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		}*/
+		System.out.println(ctx.getBean(CacheManager.class));
+		for (String beanDefinitionName : ctx.getBeanDefinitionNames()) {
+			System.out.println(beanDefinitionName);
 		}
-		SpatialProperties spatialProperties = ctx.getBean(SpatialProperties.class);
-		System.out.println(spatialProperties.getName());
 	}
 
 	private CorsConfiguration buildConfig() {
@@ -44,5 +53,22 @@ public class HazeApplication {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", buildConfig()); // 4
 		return new CorsFilter(source);
+	}
+
+	/*@Bean
+	public FreeMarkerConfigurer freeMarkerConfigurer() throws IOException, TemplateException {
+		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
+		freeMarkerConfigurer.setTemplateLoaderPath("classpath:templates/");
+		freemarker.template.Configuration configuration = freeMarkerConfigurer.createConfiguration();
+		configuration.setDefaultEncoding("UTF-8");
+		configuration.setSharedVariable("shiro", new ShiroTags());
+		freeMarkerConfigurer.setConfiguration(configuration);
+		return freeMarkerConfigurer;
+	}*/
+
+	@Bean
+	public Object Object(freemarker.template.Configuration configuration) {
+		configuration.setSharedVariable("shiro", new ShiroTags());
+		return new Object();
 	}
 }

@@ -113,8 +113,8 @@
 				}
 			},
 			addResource: function(id) {
-				let url = "${ctx}/system/config/addResources/" + id;
-				showMyModel(url,'资源授权', '900px', '50%', callBackAction);
+				let url = "${ctx}/system/role/addResources/" + id;
+				showMyModel(url,'角色授权', '800px', '60%', callBackAction);
 			}
 		};
 		ko.applyBindings(viewModel);

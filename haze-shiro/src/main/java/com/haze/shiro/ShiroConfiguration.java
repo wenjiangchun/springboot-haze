@@ -1,37 +1,57 @@
 package com.haze.shiro;
 
-import org.apache.shiro.realm.Realm;
+import net.sf.ehcache.CacheManager;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @Configuration
 @PropertySource("classpath:/config/shiro/application.properties")
 public class ShiroConfiguration {
 
     @Bean
-    public Realm realm() {
-        return new ShiroRealm();
+    public ShiroRealm shiroRealm() {
+        ShiroRealm realm =  new ShiroRealm();
+        realm.setAuthenticationCacheName("shiroCache");
+        realm.setAuthenticationCachingEnabled(true);
+        realm.setCachingEnabled(true);
+        return realm;
     }
 
     @Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-        /*chainDefinition.addPathDefinition("/login", "anon");
+        chainDefinition.addPathDefinition("/login", "anon");
         chainDefinition.addPathDefinition("/res/**", "anon");
         chainDefinition.addPathDefinition("/resources/**", "anon");
-        chainDefinition.addPathDefinition("/k/**", "authc,perms[mvn:install]");
-        chainDefinition.addPathDefinition("/kettle/**", "anon");
         chainDefinition.addPathDefinition("/swagger-ui.html", "anon");
         chainDefinition.addPathDefinition("/swagger-resources/**", "anon");
         chainDefinition.addPathDefinition("/swagger-resources", "anon");
         chainDefinition.addPathDefinition("/v2/**", "anon");
         chainDefinition.addPathDefinition("/crsf", "anon");
-        chainDefinition.addPathDefinition("/webjars/**", "anon");*/
-        chainDefinition.addPathDefinition("/**", "anon");
+        chainDefinition.addPathDefinition("/webjars/**", "anon");
         chainDefinition.addPathDefinition("/", "anon");
         chainDefinition.addPathDefinitions(shiroFilterChainDBDefinition().getFilterChainDefinitions());
         return chainDefinition;
@@ -62,5 +82,83 @@ public class ShiroConfiguration {
     @Bean
     public ShiroFilterChainDBDefinition shiroFilterChainDBDefinition() {
         return new ShiroFilterChainDBDefinition();
+    }
+
+    @Bean
+    public EhCacheManager ehCacheManager(CacheManager cacheManager){
+        EhCacheManager ehCacheManager =  new EhCacheManager();
+        ehCacheManager.setCacheManager(cacheManager);
+        return ehCacheManager;
+    }
+
+    /**
+     * session 管理对象
+     *
+     * @return DefaultWebSessionManager
+     */
+    @Bean
+    public DefaultWebSessionManager sessionManager(SessionDAO sessionDAO) {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        List<SessionListener> listeners = new ArrayList<>();
+        listeners.add(new ShiroSessionListener());
+        // 设置 session超时时间
+        sessionManager.setGlobalSessionTimeout(1800000);
+        sessionManager.setSessionListeners(listeners);
+        sessionManager.setSessionDAO(sessionDAO);
+        sessionManager.setSessionIdUrlRewritingEnabled(false);
+        sessionManager.setDeleteInvalidSessions(true);
+        sessionManager.setSessionValidationSchedulerEnabled(true);
+        sessionManager.setSessionIdCookieEnabled(true);
+        return sessionManager;
+    }
+
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }
+
+    @Bean
+    public DefaultWebSecurityManager securityManager(ShiroRealm shiroRealm, SessionDAO sessionDAO, CacheManager cacheManager) {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        // 配置 SecurityManager，并注入 shiroRealm
+        securityManager.setRealm(shiroRealm);
+        // 配置 shiro session管理器
+        securityManager.setSessionManager(sessionManager(sessionDAO));
+        // 配置 缓存管理类 cacheManager
+        securityManager.setCacheManager(ehCacheManager(cacheManager));
+        // 配置 rememberMeCookie
+        securityManager.setRememberMeManager(rememberMeManager());
+        return securityManager;
+    }
+
+    private SimpleCookie rememberMeCookie() {
+        // 设置 cookie 名称，对应 login.html 页面的 <input type="checkbox" name="rememberMe"/>
+        SimpleCookie cookie = new SimpleCookie("rememberMe");
+        // 设置 cookie 的过期时间，单位为秒，这里为30分钟
+        cookie.setMaxAge(180000);
+        return cookie;
+    }
+
+    /**
+     * cookie管理对象
+     *
+     * @return CookieRememberMeManager
+     */
+    private CookieRememberMeManager rememberMeManager() {
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCookie(rememberMeCookie());
+        // rememberMe cookie 加密的密钥
+        String encryptKey = "haze_shiro_key";
+        byte[] encryptKeyBytes = encryptKey.getBytes(StandardCharsets.UTF_8);
+        String rememberKey =  Base64.getEncoder().encodeToString(encryptKeyBytes);
+        cookieRememberMeManager.setCipherKey(Base64.getDecoder().decode(rememberKey));
+        return cookieRememberMeManager;
+    }
+
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
     }
 }
