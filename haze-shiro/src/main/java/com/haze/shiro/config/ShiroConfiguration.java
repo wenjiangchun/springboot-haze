@@ -1,5 +1,8 @@
-package com.haze.shiro;
+package com.haze.shiro.config;
 
+import com.haze.shiro.ShiroFilterChainDBDefinition;
+import com.haze.shiro.ShiroRealm;
+import com.haze.shiro.ShiroSessionListener;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.cache.ehcache.EhCacheManager;

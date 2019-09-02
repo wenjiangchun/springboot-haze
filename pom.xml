@@ -13,6 +13,7 @@
 		<module>haze-system</module>
 		<module>haze-test</module>
 		<module>haze-ehcache</module>
+		<module>haze-websocket</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
