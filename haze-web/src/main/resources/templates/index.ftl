@@ -527,8 +527,10 @@
     </div>
     <!-- /.content-wrapper -->
     <#include "common/foot.ftl"/>
-
     <#include "common/left.ftl"/>
 </div>
+<script>
+    initMenu('home_menu');
+</script>
 </body>
 </html>

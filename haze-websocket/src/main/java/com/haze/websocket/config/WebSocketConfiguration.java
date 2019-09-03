@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 @Configuration
-@PropertySource("classpath:/config/websocket/application.properties")
+/*@PropertySource("classpath:/config/websocket/application.properties")*/
 public class WebSocketConfiguration {
 
     @Bean
