@@ -16,7 +16,6 @@ import com.haze.system.event.UserChangeGroupEvent;
 import com.haze.system.event.UserRoleChangeEvent;
 import com.haze.system.exception.UserLoginNameExistException;
 import com.haze.system.utils.Status;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,11 +39,9 @@ public class UserService extends AbstractBaseService<User, Long> {
 
     private UserDao userDao;
 
-    @Autowired
-    public void setUserDao(UserDao userDao) {
-        Assert.notNull(userDao, "userDao不能为null!");
+    public UserService(UserDao userDao) {
+        super(userDao);
         this.userDao = userDao;
-        super.setDao(userDao);
     }
 
     /**

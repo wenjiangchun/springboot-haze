@@ -40,16 +40,12 @@ public class Config extends AbstractBaseEntity<Long> {
     /**
      * 配置类型
      */
-	private ConfigType configType;
+	private ConfigType configType = ConfigType.B;
 
     /**
      * 配置说明
      */
 	private String description;
-
-	private Date createTime;
-
-	private Date updateTime;
 
     @Column(unique=true, length = 20)
     public String getCode() {
@@ -94,22 +90,6 @@ public class Config extends AbstractBaseEntity<Long> {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
 	}
 
 	@Override

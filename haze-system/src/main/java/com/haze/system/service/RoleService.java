@@ -8,7 +8,6 @@ import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
 import com.haze.system.entity.User;
 import com.haze.system.exception.RoleExistException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +23,12 @@ import org.springframework.util.Assert;
 public class RoleService extends AbstractBaseService<Role, Long> {
 	
 	private RoleDao roleDao;
-	
-	@Autowired
-	public void setRoleDao(RoleDao roleDao) {
+
+	public RoleService(RoleDao roleDao) {
+		super(roleDao);
 		this.roleDao = roleDao;
-		super.setDao(roleDao);
 	}
-	
+
 	public List<Role> findByEnabled(boolean enabled) {
 		return this.roleDao.findByEnabled(enabled);
 	}

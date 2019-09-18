@@ -6,7 +6,6 @@ import com.haze.system.entity.Config;
 import com.haze.system.exception.ConfigCannotDeleteException;
 import com.haze.system.exception.ConfigNameExistException;
 import com.haze.system.utils.ConfigType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,13 +27,12 @@ import java.util.List;
 public class ConfigService extends AbstractBaseService<Config, Long> {
 
 	private ConfigDao configDao;
-	
-	@Autowired
-	public void setConfigDao(ConfigDao configDao) {
+
+	public ConfigService(ConfigDao configDao) {
+		super(configDao);
 		this.configDao = configDao;
-		super.setDao(configDao);
 	}
-	
+
 	/**
 	 * 根据配置代码查找配置对象 并将查询结果加入缓存
 	 * @param code 配置代码

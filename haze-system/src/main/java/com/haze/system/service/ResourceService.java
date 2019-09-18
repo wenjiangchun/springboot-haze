@@ -10,7 +10,6 @@ import com.haze.system.dao.ResourceDao;
 import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
 import com.haze.system.utils.ResourceType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,13 +26,11 @@ import org.springframework.util.Assert;
 public class ResourceService extends AbstractBaseService<Resource, Long> {
 
 	private ResourceDao resourceDao;
-	
-	@Autowired
-	public void setResourceDao(ResourceDao resourceDao) {
-		this.resourceDao = resourceDao;
-		super.setDao(resourceDao);
-	}
 
+	public ResourceService(ResourceDao resourceDao) {
+		super(resourceDao);
+		this.resourceDao = resourceDao;
+	}
 
 	/**
 	 * 保存或更新资源对象 同时清空shiro缓存对象

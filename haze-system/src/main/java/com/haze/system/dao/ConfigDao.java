@@ -1,6 +1,6 @@
 package com.haze.system.dao;
 
-import com.haze.core.jpa.BaseRepository;
+import com.haze.core.jpa.repository.BaseRepository;
 import com.haze.system.entity.Config;
 import org.springframework.stereotype.Repository;
 

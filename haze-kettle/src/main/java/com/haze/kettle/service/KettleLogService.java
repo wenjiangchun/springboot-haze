@@ -3,7 +3,6 @@ package com.haze.kettle.service;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.kettle.dao.KettleLogDao;
 import com.haze.kettle.entity.KettleLog;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -16,10 +15,9 @@ public class KettleLogService extends AbstractBaseService<KettleLog, Long> {
 
 	private KettleLogDao kettleLogDao;
 
-	@Autowired
-	public void setKettleLogDao(KettleLogDao kettleLogDao) {
+	public KettleLogService(KettleLogDao kettleLogDao) {
+		super(kettleLogDao);
 		this.kettleLogDao = kettleLogDao;
-		super.setDao(kettleLogDao);
 	}
 
 	@Transactional(readOnly = true)

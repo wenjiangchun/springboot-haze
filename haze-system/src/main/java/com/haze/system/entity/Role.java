@@ -38,10 +38,6 @@ public class Role extends AbstractBaseEntity<Long> {
 	 */
 	private Boolean enabled = true;
 
-	private Date createTime;
-
-	private Date updateTime;
-
 	private String description;
 
 	/**
@@ -86,23 +82,6 @@ public class Role extends AbstractBaseEntity<Long> {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	@Column(updatable = false)
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
 	}
 
 	@Column(length = 200)

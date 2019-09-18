@@ -7,7 +7,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +18,11 @@ public class TowerService extends AbstractBaseService<Tower, Long>  {
 
     private TowerDao towerDao;
 
-    @Autowired
-    public void setTowerDao(TowerDao towerDao) {
+    public TowerService(TowerDao towerDao) {
+        super(towerDao);
         this.towerDao = towerDao;
-        super.setDao(towerDao);
     }
+
 
     public void saveTower(String siteNum, String name, String x, String y) {
         List<Tower> rs =  this.towerDao.findByExample();

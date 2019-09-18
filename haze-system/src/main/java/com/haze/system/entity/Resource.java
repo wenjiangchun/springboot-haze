@@ -37,10 +37,6 @@ public class Resource extends AbstractBaseEntity<Long> {
 
 	private String icon;
 
-	private Date createTime;
-
-	private Date updateTime;
-
 	private Integer sn = 1;
 
 	private String description;
@@ -91,22 +87,6 @@ public class Resource extends AbstractBaseEntity<Long> {
 
 	public void setResourceType(ResourceType resourceType) {
 		this.resourceType = resourceType;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
 	}
 
 	@Column(length = 50)

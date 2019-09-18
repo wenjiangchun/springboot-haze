@@ -2,10 +2,12 @@ package com.haze.core.jpa.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 持久化实体类基类，该类定义了实体主键Id生成策略和根据Id实现基本hashCode()和equals()方法，
@@ -24,6 +26,10 @@ public abstract class AbstractUUIDEntity<PK extends Serializable> implements Bas
 
     protected PK id;
 
+    protected Date createTime;
+
+    protected Date updateTime;
+
     @Id
     @GeneratedValue(generator = "uuidGenerator")
     @GenericGenerator(name = "uuidGenerator", strategy = "uuid.hex")
@@ -34,6 +40,27 @@ public abstract class AbstractUUIDEntity<PK extends Serializable> implements Bas
 
     public void setId(final PK id) {
         this.id = id;
+    }
+
+    @Column(updatable = false)
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Override

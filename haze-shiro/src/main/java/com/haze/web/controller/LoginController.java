@@ -3,6 +3,7 @@ package com.haze.web.controller;
 import com.haze.common.HazeStringUtils;
 import com.haze.common.ValidateCodeUtils;
 import com.haze.shiro.ValidateCodeAuthenticationFilter;
+import com.haze.web.BaseController;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -23,7 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Controller
-public class LoginController {
+public class LoginController extends BaseController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login() {

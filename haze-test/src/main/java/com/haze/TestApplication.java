@@ -1,5 +1,6 @@
 package com.haze;
 
+import com.haze.core.jpa.repository.SimpleBaseRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-@EnableJpaRepositories(repositoryBaseClass = com.haze.core.jpa.SimpleBaseRepository.class)
+@EnableJpaRepositories(repositoryBaseClass = SimpleBaseRepository.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class TestApplication {
 	public static void main(String[] args) {

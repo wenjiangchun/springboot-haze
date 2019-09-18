@@ -54,7 +54,6 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
 
     private final KettleLogDao kettleLogDao;
 
-    @Autowired
     private KettleProperties kettleProperties;
 
     private DatabaseDialectService databaseDialectService = new DatabaseDialectService(false);
@@ -64,10 +63,11 @@ public class KettleRepositoryService extends AbstractBaseService<KettleRepositor
      */
     private final Map<Long, KettleDatabaseRepository> repositoryCache = new ConcurrentHashMap<>();
 
-    public KettleRepositoryService(KettleRepositoryDao kettleRepositoryDao, KettleLogDao kettleLogDao) {
+    public KettleRepositoryService(KettleRepositoryDao kettleRepositoryDao, KettleLogDao kettleLogDao, KettleProperties kettleProperties) {
+        super(kettleRepositoryDao);
         this.kettleRepositoryDao = kettleRepositoryDao;
         this.kettleLogDao = kettleLogDao;
-        super.setDao(kettleRepositoryDao);
+        this.kettleProperties = kettleProperties;
     }
 
     @Transactional(readOnly = true)

@@ -3,7 +3,6 @@ package com.haze.system.service;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.system.dao.DictionaryDao;
 import com.haze.system.entity.Dictionary;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -40,10 +39,9 @@ public class DictionaryService extends AbstractBaseService<Dictionary, Long> {
 
     private DictionaryDao dictionaryDao;
 
-    @Autowired
-    public void setDictionaryDao(DictionaryDao dictionaryDao) {
+    public DictionaryService(DictionaryDao dictionaryDao) {
+        super(dictionaryDao);
         this.dictionaryDao = dictionaryDao;
-        super.setDao(dictionaryDao);
     }
 
     /**

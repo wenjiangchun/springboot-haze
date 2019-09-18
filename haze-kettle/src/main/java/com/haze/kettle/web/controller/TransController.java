@@ -5,6 +5,7 @@ import com.haze.kettle.KettleParams;
 import com.haze.kettle.StepWrapper;
 import com.haze.kettle.service.KettleRepositoryService;
 import com.haze.kettle.utils.KettleUtils;
+import com.haze.web.BaseController;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.repository.RepositoryElementMetaInterface;
 import org.pentaho.di.repository.RepositoryObjectType;
@@ -19,8 +20,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/kettle/trans")
-public class TransController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransController.class);
+public class TransController extends BaseController {
     /*//String uploadPath = "/home/sofar/下载";
 
     private final KettleUtils kettleRunner;

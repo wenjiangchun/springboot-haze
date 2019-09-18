@@ -3,6 +3,7 @@ package com.haze.kettle.web.controller;
 import com.haze.kettle.KLog;
 import com.haze.kettle.KettleParams;
 import com.haze.kettle.utils.KettleUtils;
+import com.haze.web.BaseController;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.repository.RepositoryElementMetaInterface;
 import org.pentaho.di.repository.RepositoryObjectType;
@@ -19,8 +20,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/kettle/job")
-public class JobController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobController.class);
+public class JobController extends BaseController {
     /*//String uploadPath = "/home/sofar/下载";
 
     @Autowired

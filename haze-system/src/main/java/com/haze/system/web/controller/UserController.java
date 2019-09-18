@@ -12,16 +12,13 @@ import com.haze.system.service.RoleService;
 import com.haze.system.service.UserService;
 import com.haze.system.utils.Sex;
 import com.haze.system.utils.Status;
-import com.haze.web.BaseController;
-import com.haze.web.datatable.DataTablePage;
-import com.haze.web.datatable.DataTableParams;
+import com.haze.web.BaseCrudController;
 import com.haze.web.utils.WebMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -31,31 +28,59 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping(value = "/system/user")
-public class UserController extends BaseController {
+public class UserController extends BaseCrudController<User, Long> {
 
-	@Autowired
 	private UserService userService;
-	
-	@Autowired
+
 	private RoleService roleService;
-	
-	@Autowired
+
 	private GroupService groupService;
 
-	/*@RequiresRoles("admin")*/
+	public UserController(UserService userService, RoleService roleService, GroupService groupService) {
+		super("system", "user", "用户信息", userService);
+		this.userService = userService;
+		this.roleService = roleService;
+		this.groupService = groupService;
+	}
+
+	@Override
+	protected void setPageQueryVariables(Map<String, Object> queryVariables, HttpServletRequest request) {
+		if (queryVariables != null && queryVariables.get("status") != null) {
+			String value = (String) queryVariables.get("status");
+			//将传递进来的status字符串转化为Status枚举对象
+			queryVariables.put("status", Status.valueOf(value));
+		}
+		if (queryVariables != null && queryVariables.get("userType") != null) {
+			String value = (String) queryVariables.get("userType");
+			//将传递进来的status字符串转化为Status枚举对象
+//			queryVairables.put("userType", UserType.valueOf(value));
+		}
+		if (queryVariables.get("group.id") != null) {
+			Long groupId = Long.valueOf(queryVariables.get("group.id").toString()) ;
+			queryVariables.put("group.id",groupId);
+		}
+	}
+
+	@Override
+	protected void setModel(Model model, HttpServletRequest request) {
+		model.addAttribute("statuss", Status.values());
+		model.addAttribute("groupId", request.getParameter("groupId"));
+	}
+
+	/*@RequiresRoles("admin")*//*
 	@GetMapping(value = "view")
 	public String list(Model model, @RequestParam(required = false) Long groupId) {
 		model.addAttribute("statuss", Status.values());
 		model.addAttribute("groupId", groupId);
 		return "system/user/userList";
-	}
+	}*/
 	
 	/**
 	 * 根据查询参数查询用户列表分页对象
 	 * @param dataTableParams 包含分页对象和自定义查询对象的参数,其中PageSize
 	 * @return DataTablePage 前台DataTable组件使用的分页数据对象
 	 */
-	@RequestMapping(value = "search")
+	/*@RequestMapping(value = "search")
     @ResponseBody
 	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest(); //根据dataTableParames对象获取JPA分页查询使用的PageRequest对象
@@ -77,21 +102,23 @@ public class UserController extends BaseController {
 
 		Page<User> userList = this.userService.findPage(p, queryVairables, false); //过滤掉"admin"对象
 		return DataTablePage.generateDataTablePage(userList, dataTableParams);
-	}
+	}*/
 
 	/**
 	 * 进入添加用户页面
 	 * @param model
 	 * @return 添加用户页面
 	 */
+	@Override
 	@GetMapping(value = "add")
-	public String add(Model model, @RequestParam(required = false) Long groupId) {
+	public String add(Model model, HttpServletRequest request) {
 		List<Role> roleList = this.roleService.findByEnabled(true); //查找所有启用状态的角色
 		model.addAttribute("roleList", roleList);
 		model.addAttribute("sexs", Sex.values());
 		model.addAttribute("statuss", Status.values());
-		if (groupId != null) {
-			model.addAttribute("group", groupService.findById(groupId));
+		String parentId = request.getParameter("parentId");
+		if (parentId != null) {
+			model.addAttribute("group", groupService.findById(Long.parseLong(parentId)));
 		}
 		return "system/user/addUser";
 	}
@@ -102,7 +129,7 @@ public class UserController extends BaseController {
 	 * @param roleIds 角色ID集合
 	 * @return 返回用户列表页面
 	 */
-	@PostMapping(value = "save")
+	@PostMapping(value = "save1")
     @ResponseBody
 	public WebMessage save(User user, Long[] roleIds) {
 		Set<Role> roles = new HashSet<>();
@@ -126,7 +153,7 @@ public class UserController extends BaseController {
         }
     }
 	
-	@PostMapping(value = "delete/{ids}")
+	/*@PostMapping(value = "delete/{ids}")
     @ResponseBody
 	public WebMessage delete(@PathVariable("ids") Long[] ids) {
         try {
@@ -135,7 +162,7 @@ public class UserController extends BaseController {
         } catch (Exception e) {
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
-    }
+    }*/
 	
 	/**
 	 * 进入用户添加角色页面
@@ -216,8 +243,9 @@ public class UserController extends BaseController {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping(value = "edit/{id}")
-	public String edit(@PathVariable Long id, Model model) {
+	@Override
+	@GetMapping(value = "edit1/{id}")
+	public String edit(@PathVariable Long id, Model model, HttpServletRequest request) {
 		model.addAttribute("sexs", Sex.values());
 		model.addAttribute("statuss", Status.values());
 		List<Group> groupList = this.groupService.findAll();

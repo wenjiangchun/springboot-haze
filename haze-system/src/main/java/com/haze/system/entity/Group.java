@@ -1,13 +1,12 @@
 package com.haze.system.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.haze.core.jpa.entity.AbstractBaseEntity;
 import com.haze.system.utils.Status;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 系统组织机构实体类
@@ -44,9 +43,6 @@ public class Group extends AbstractBaseEntity<Long> {
      */
     private Group parent;
 
-    private Date createTime;
-
-    private Date updateTime;
     /**
      * 子机构
      */
@@ -193,23 +189,6 @@ public class Group extends AbstractBaseEntity<Long> {
         this.tel = tel;
     }
 
-    @Column(updatable = false)
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     @Column(length = 200)
     public String getDescription() {
         return description;
@@ -275,4 +254,35 @@ public class Group extends AbstractBaseEntity<Long> {
                 + code + ", address=" + address + ", tel=" + tel + "]";
     }
 
+
+    /**
+     * 获取机构所在顶级机构信息 如果机构本身为顶级机构则回返自己
+     * @return 机构所在顶级机构
+     */
+    @JsonIgnore
+    @Transient
+    public Group getRootGroup() {
+        if (this.getParent() == null) {
+            return this;
+        } else {
+            return this.getParent().getRootGroup();
+        }
+    }
+
+    /**
+     * 获取机构所在顶级机构信息 如果机构本身为顶级机构则回返自己
+     * @return 机构所在顶级机构
+     */
+    @JsonIgnore
+    @Transient
+    public List<Group> getChildList(Status status) {
+        List<Group> childList = new ArrayList<>();
+        for (Group child : this.getChilds()) {
+            if (child.getStatus() == status) {
+                childList.add(child);
+                childList.addAll(child.getChildList(status));
+            }
+        }
+        return childList;
+    }
 }

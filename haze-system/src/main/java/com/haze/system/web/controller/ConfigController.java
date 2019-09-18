@@ -5,19 +5,16 @@ import java.util.Map;
 import com.haze.system.entity.Config;
 import com.haze.system.service.ConfigService;
 import com.haze.system.utils.ConfigType;
-import com.haze.web.datatable.DataTablePage;
-import com.haze.web.datatable.DataTableParams;
+import com.haze.web.BaseCrudController;
 import com.haze.web.utils.WebMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 系统配置Controller
@@ -27,18 +24,35 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(value = "/system/config")
-public class ConfigController {
+public class ConfigController extends BaseCrudController<Config, Long> {
 
-	@Autowired
 	private ConfigService configService;
-		
-	@RequestMapping(value = "view")
+
+	public ConfigController(ConfigService configService) {
+		super("system", "config", "配置信息", configService);
+		this.configService = configService;
+	}
+
+	@Override
+	protected void setPageQueryVariables(Map<String, Object> queryVariables, HttpServletRequest request) {
+		if (queryVariables != null && queryVariables.get("configType") != null) {
+			String value = (String) queryVariables.get("configType");
+			queryVariables.put("configType", ConfigType.valueOf(value));
+		}
+	}
+
+	@Override
+	protected void setModel(Model model, HttpServletRequest request) {
+		model.addAttribute("configTypes", ConfigType.values());
+	}
+
+	/*@RequestMapping(value = "view")
 	public String list(Model model) {
 		model.addAttribute("configTypes", ConfigType.values());
 		return "system/config/configList";
-	}
+	}*/
 	
-	@RequestMapping(value = "search")
+	/*@RequestMapping(value = "search")
 	@ResponseBody
 	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest();
@@ -50,14 +64,14 @@ public class ConfigController {
 		Page<Config> configList = this.configService.findPage(p, dataTableParams.getQueryVairables());
 		DataTablePage dtp = DataTablePage.generateDataTablePage(configList, dataTableParams);
 		return dtp;
-	}
+	}*/
 	
-	@RequestMapping(value = "add")
+	/*@RequestMapping(value = "add")
 	public String add(Model model) {
 		return "system/config/addConfig";
-	}
+	}*/
 	
-	@RequestMapping(value = "save", method = RequestMethod.POST)
+	/*@RequestMapping(value = "save", method = RequestMethod.POST)
     @ResponseBody
 	public WebMessage save(Config config) {
 		config.setConfigType(ConfigType.B);
@@ -68,16 +82,16 @@ public class ConfigController {
             return WebMessage.createErrorWebMessage(e.getMessage());
 		}
 
-	}
+	}*/
 
-    @RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable Long id, Model model) {
         Config config = this.configService.findById(id);
         model.addAttribute("config", config);
         return "system/config/editConfig";
-    }
+    }*/
 
-    @RequestMapping(value = "update", method = RequestMethod.POST)
+    /*@RequestMapping(value = "update", method = RequestMethod.POST)
     @ResponseBody
     public WebMessage update(Config config) {
         try {
@@ -102,7 +116,7 @@ public class ConfigController {
 		} catch (Exception e) {
             return WebMessage.createErrorWebMessage(e.getMessage());
 		}
-	}
+	}*/
 	
 	@RequestMapping(value="updateConfigValue")
     @ResponseBody 

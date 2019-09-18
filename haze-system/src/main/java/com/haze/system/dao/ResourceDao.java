@@ -2,7 +2,7 @@ package com.haze.system.dao;
 
 import java.util.List;
 
-import com.haze.core.jpa.BaseRepository;
+import com.haze.core.jpa.repository.BaseRepository;
 import com.haze.system.entity.Resource;
 import com.haze.system.utils.ResourceType;
 import org.springframework.stereotype.Repository;

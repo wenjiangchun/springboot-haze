@@ -1,7 +1,8 @@
 package com.haze.core.service;
 
-import com.haze.core.jpa.BaseRepository;
-import com.haze.core.jpa.HazeSpecification;
+import com.haze.core.jpa.entity.BaseEntity;
+import com.haze.core.jpa.repository.BaseRepository;
+import com.haze.core.jpa.repository.HazeSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,22 +23,14 @@ import java.util.Optional;
  * @param <PK> 业务主键类型
  * @author sofar
  */
-public  abstract class AbstractBaseService<T, PK extends Serializable> {
+@Transactional(rollbackFor = Exception.class)
+public abstract class AbstractBaseService<T extends BaseEntity, PK extends Serializable> implements BaseService<T, PK> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private BaseRepository<T,PK> dao;
 
-    /**
-     *  在子类实现类注入函数中调用该方法注入dao 示例如下:
-     *  @Autowired
-     *	public void setGroupDao(GroupDao groupDao) {
-     *		this.groupDao = groupDao;
-     *		super.setDao(groupDao);
-     *	}
-     * @param dao
-     */
-    public void setDao(BaseRepository<T,PK> dao) {
+    public AbstractBaseService(BaseRepository<T, PK> dao) {
         this.dao = dao;
     }
 
@@ -44,10 +38,12 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * 查询所有对象
      * @return T 对象集合
      */
+    @Override
     public List<T> findAll() {
         return this.dao.findAll();
     }
 
+    @Override
     public List<T> findAll(Sort sort) {
         return this.dao.findAll(sort);
     }
@@ -57,6 +53,7 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param id 对象Id
      * @return T 对象
      */
+    @Override
     public T findById(PK id) {
         Optional<T> t = this.dao.findById(id);
         return t.orElse(null);
@@ -67,16 +64,33 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param t 对象
      * @return T 对象
      */
+    @Override
     @Transactional(rollbackFor=Exception.class)
     public T save(T t) throws Exception {
+        Date d = new Date();
+        if (t.isNew() && t.getCreateTime() == null) {
+            t.setCreateTime(d);
+        } else {
+            t.setUpdateTime(d);
+        }
         return this.dao.save(t);
     }
 
+    @Override
     @Transactional(rollbackFor=Exception.class)
     public void delete(T t) throws Exception {
         this.dao.delete(t);
     }
 
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public void deleteIds(PK[] ids) throws Exception {
+        for (PK id : ids) {
+            this.dao.deleteById(id);
+        }
+    }
+
+    @Override
     @Transactional(rollbackFor=Exception.class)
     public void deleteById(PK id) throws Exception {
         this.dao.deleteById(id);
@@ -86,6 +100,7 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * 根据Id数组批量删除对象
      * @param ids Id数组
      */
+    @Override
     @Transactional(rollbackFor=Exception.class)
     public void batchDelete(PK[] ids) throws Exception {
         for (PK id : ids) {
@@ -98,6 +113,7 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param p 分页对象
      * @return 分页<T>列表对象
      */
+    @Override
     public Page<T> findPage(Pageable p) {
         return this.dao.findAll(p);
     }
@@ -108,6 +124,7 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param pageable 分页对象
      * @return 分页对象
      */
+    @Override
     public Page<T> findPage(Pageable pageable, Map<String, Object> queryVirables) {
         Specification<T> spec = new HazeSpecification<>(queryVirables);
         return this.dao.findAll(spec, pageable);
@@ -118,6 +135,7 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param queryParams 查询参数
      * @return {@code List<T>}
      */
+    @Override
     public List<T> findAll(Map<String, Object> queryParams) {
         Specification<T> spec = new HazeSpecification<>(queryParams);
         return this.dao.findAll(spec);
@@ -129,14 +147,17 @@ public  abstract class AbstractBaseService<T, PK extends Serializable> {
      * @param value         属性值
      * @return  {@code List<T>}
      */
+    @Override
     public List<T> findByProperty(String propertyName, Object value, Sort... sorts) {
         return this.dao.findByProperty(propertyName, value, sorts);
     }
 
+    @Override
     public List<T> findByJql(String jql, Map<String, Object> queryParams) {
         return this.dao.findByJql(jql, queryParams);
     }
 
+    @Override
     public List<T> findBySql(String sql, Map<String, Object> queryParams) {
         return this.dao.findBySql(sql, queryParams);
     }

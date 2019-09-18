@@ -2,10 +2,9 @@ package com.haze.system.dao;
 
 import java.util.List;
 
-import com.haze.core.jpa.BaseRepository;
+import com.haze.core.jpa.repository.BaseRepository;
 import com.haze.system.entity.User;
 import com.haze.system.utils.Status;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

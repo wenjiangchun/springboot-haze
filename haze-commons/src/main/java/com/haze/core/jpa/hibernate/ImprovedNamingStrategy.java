@@ -1,4 +1,4 @@
-package com.haze.core.jpa;
+package com.haze.core.jpa.hibernate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.Identifier;

@@ -1,6 +1,6 @@
 package com.haze.demo.dao;
 
-import com.haze.core.jpa.BaseRepository;
+import com.haze.core.jpa.repository.BaseRepository;
 import com.haze.demo.entity.Tower;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

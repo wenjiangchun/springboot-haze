@@ -3,16 +3,14 @@ package com.haze.system.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.haze.core.service.AbstractBaseService;
-import com.haze.core.service.HazeServiceException;
 import com.haze.system.dao.GroupDao;
-import com.haze.system.dao.UserDao;
 import com.haze.system.entity.Group;
 import com.haze.system.entity.User;
 import com.haze.web.utils.TreeNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +27,10 @@ public class GroupService extends AbstractBaseService<Group, Long> {
 
     private GroupDao groupDao;
 
-    @Autowired
-    public void setGroupDao(GroupDao groupDao) {
-        this.groupDao = groupDao;
-        super.setDao(groupDao);
-    }
+	public GroupService(GroupDao groupDao) {
+		super(groupDao);
+		this.groupDao = groupDao;
+	}
 
     @Transactional(readOnly = true)
     public List<Group> getTopGroups() {
@@ -82,5 +79,44 @@ public class GroupService extends AbstractBaseService<Group, Long> {
 			}
 		}
 		treeNodes.add(treeNode);
+	}
+
+	/**
+	 * 根据顶级机构代码查询机构信息
+	 * @param rootCode 顶级机构代码
+	 * @return 机构信息
+	 */
+	public Group getRootGroup(String rootCode) {
+		return groupDao.getRootGroup(rootCode);
+	}
+
+	/**
+	 * 根据顶级机构代码查询该机构下所有启用的机构信息
+	 * @param rootCode 顶级机构代码
+	 * @return 返回包含顶级机构的所有机构列表
+	 */
+	public List<Group> getEnabledGroups(String rootCode) {
+		List<Group> groupList = new ArrayList<>();
+		Group root = this.getRootGroup(rootCode);
+		if (root == null || root.getStatus() != Status.ENABLE) {
+			return groupList;
+		}
+		//查询节点下面所有子节点
+		getChildsGroup(root, groupList);
+		return groupList;
+	}
+
+	/**
+	 * 遍历循环机构下所有启用机构信息
+	 * @param parent 所在机构节点
+	 * @param groupList 返回包含机构本身以及子机构信息的机构列表
+	 */
+	private void getChildsGroup(Group parent, List<Group> groupList) {
+		if (parent.getStatus() == Status.ENABLE) {
+			groupList.add(parent);
+			for (Group child : parent.getChilds()) {
+				getChildsGroup(child, groupList);
+			}
+		}
 	}
 }

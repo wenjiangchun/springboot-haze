@@ -12,7 +12,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/monitor")
-public class SystemMonitorController extends BaseController{
+public class SystemMonitorController{
 
     @GetMapping("/jvm/view")
     public String jvm(Model model) {

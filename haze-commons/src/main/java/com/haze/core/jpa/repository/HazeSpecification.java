@@ -1,4 +1,4 @@
-package com.haze.core.jpa;
+package com.haze.core.jpa.repository;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;

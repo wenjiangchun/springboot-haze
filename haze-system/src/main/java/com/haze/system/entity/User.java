@@ -74,10 +74,6 @@ public class User extends AbstractBaseEntity<Long> {
 
     private String salt;
 
-    private Date createTime;
-
-    private Date updateTime;
-
     /**
      * 用户角色组
      */
@@ -186,22 +182,6 @@ public class User extends AbstractBaseEntity<Long> {
         this.roles = roles;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     public Group getGroup() {
@@ -271,6 +251,7 @@ public class User extends AbstractBaseEntity<Long> {
         }
         return roleName;
     }
+
 
     /**
      * 判断用户是否为超级管理员 如果loginName为"admin"则为超级管理员

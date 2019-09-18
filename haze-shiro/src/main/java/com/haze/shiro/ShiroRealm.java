@@ -58,7 +58,12 @@ public class ShiroRealm extends AuthorizingRealm {
 			throw new LockedAccountException();
 		}
 		byte[] salt = EncodeUtils.decodeHex(user.getSalt());
-		return new SimpleAuthenticationInfo(new ShiroUser(user.getId().toString(), user.getLoginName(),user.getName()),user.getPassword(), ByteSource.Util.bytes(salt),
+         //获取用户所在机构
+		if (user.getGroup() != null) {
+			//加载子机构信息
+			user.getGroup().getChildList(Status.ENABLE);
+		}
+		return new SimpleAuthenticationInfo(new ShiroUser(user.getId().toString(), user.getLoginName(),user.getName(), user.getGroup()),user.getPassword(), ByteSource.Util.bytes(salt),
 				getName());
 	}
 

@@ -7,14 +7,8 @@ import com.haze.system.entity.Group;
 import com.haze.system.entity.Resource;
 import com.haze.system.service.ResourceService;
 import com.haze.system.utils.ResourceType;
-import com.haze.web.BaseController;
-import com.haze.web.datatable.DataTablePage;
-import com.haze.web.datatable.DataTableParams;
+import com.haze.web.BaseCrudController;
 import com.haze.web.utils.TreeNode;
-import com.haze.web.utils.WebMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +17,8 @@ import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 资源操作Controller
  * @author Sofar
@@ -30,18 +26,43 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Controller
 @RequestMapping(value = "/system/resource")
-public class ResourceController extends BaseController {
+public class ResourceController extends BaseCrudController<Resource, Long> {
 	
-	@Autowired
+	//@Autowired
 	private ResourceService resourceService;
-	
-	@GetMapping(value = "view")
+
+	public ResourceController(ResourceService resourceService) {
+		super("system", "resource", "资源信息", resourceService);
+		this.resourceService = resourceService;
+	}
+
+	@Override
+	protected void setModel(Model model, HttpServletRequest request) {
+		model.addAttribute("resourceTypes", ResourceType.values());
+	}
+
+	@Override
+	protected void setPageQueryVariables(Map<String, Object> queryVariables, HttpServletRequest request) {
+		if (queryVariables != null && queryVariables.get("resourceType") != null) {
+			String value = (String) queryVariables.get("resourceType");
+			queryVariables.put("resourceType",ResourceType.valueOf(value));
+		}
+		if (queryVariables.containsKey("parent.id") && queryVariables.get("parent.id") != null){
+			Group g = new Group();
+			g.setId(Long.valueOf(queryVariables.get("parent.id").toString()));
+			queryVariables.put("parent.id", Long.valueOf(queryVariables.get("parent.id").toString()));
+		} else {
+			queryVariables.put("parent_isNull", null); //默认查询顶级字典列表
+		}
+	}
+
+	/*@GetMapping(value = "view")
 	public String list(Model model) {
 		model.addAttribute("resourceTypes", ResourceType.values());
 		return "system/resource/resourceList";
-	}
+	}*/
 	
-	@RequestMapping(value = "search")
+	/*@RequestMapping(value = "search")
 	@ResponseBody
 	public DataTablePage search(DataTableParams dataTableParams) {
 		PageRequest p = dataTableParams.getPageRequest();
@@ -59,11 +80,12 @@ public class ResourceController extends BaseController {
 		}
 		Page<Resource> resourceList = this.resourceService.findPage(p, dataTableParams.getQueryVairables());
 		return DataTablePage.generateDataTablePage(resourceList, dataTableParams);
-	}
+	}*/
 
+	@Override
 	@GetMapping(value = "add")
-	public String add(Model model, @RequestParam(required = false) Long parentId) {
-		model.addAttribute("resourceTypes",ResourceType.values());
+	public String add(Model model, HttpServletRequest request) {
+		setModel(model, request);
 		List<Resource> resources = this.resourceService.findMenuResources();
 		model.addAttribute("resources",resources);
 		RequestMappingHandlerMapping requestMappingBean = SpringContextUtils.getBean(RequestMappingHandlerMapping.class);
@@ -75,8 +97,9 @@ public class ResourceController extends BaseController {
 			result.addAll(pSet);
 		}
 		model.addAttribute("urlList",result);
+		String parentId = request.getParameter("parentId");
 		if (parentId != null) {
-			Resource parent = this.resourceService.findById(parentId);
+			Resource parent = this.resourceService.findById(Long.parseLong(parentId));
 			model.addAttribute("parent", parent);
 			model.addAttribute("parentId", parentId);
 			model.addAttribute("num", parent.getChilds().size() + 1);
@@ -84,10 +107,10 @@ public class ResourceController extends BaseController {
 			List<Resource> roots = this.resourceService.findByProperty("parent", null);
 			model.addAttribute("num", roots.size() + 1);
 		}
-		return "system/resource/addResource";
+		return "system/resource/add";
 	}
 	
-	@PostMapping(value = "save")
+	/*@PostMapping(value = "save")
 	@ResponseBody
 	public WebMessage save(Resource resource) {
 		try {
@@ -96,7 +119,7 @@ public class ResourceController extends BaseController {
         } catch (Exception e) {
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
-	}
+	}*/
 	
 	@RequestMapping(value = "getResourcesTree")
 	@ResponseBody
@@ -117,8 +140,10 @@ public class ResourceController extends BaseController {
 		}
 		return treeNodeList;
 	}
+
+	@Override
 	@GetMapping(value = "edit/{id}")
-	public String edit(@PathVariable Long id, Model model) {
+	public String edit(@PathVariable Long id, Model model, HttpServletRequest request) {
 		model.addAttribute("resourceTypes",ResourceType.values());
 		List<Resource> menuResources = new ArrayList<Resource>();
 		Resource resource = this.resourceService.findById(id);
@@ -153,7 +178,7 @@ public class ResourceController extends BaseController {
 	 * @param ids 资源ID数组
 	 * @return 返回操作对象
 	 */
-	@PostMapping(value = "delete/{ids}")
+	/*@PostMapping(value = "delete/{ids}")
 	@ResponseBody
 	public WebMessage delete(@PathVariable("ids") Long[] ids) {
 		try{
@@ -164,5 +189,5 @@ public class ResourceController extends BaseController {
 			logger.error("资源删除失败", e);
 			return WebMessage.createErrorWebMessage(e.getMessage());
 		}
-	}
+	}*/
 }

@@ -8,18 +8,14 @@ import java.util.Set;
 
 import com.haze.system.entity.Dictionary;
 import com.haze.system.service.DictionaryService;
-import com.haze.web.datatable.DataTablePage;
-import com.haze.web.datatable.DataTableParams;
-import com.haze.web.utils.WebMessage;
+import com.haze.web.BaseCrudController;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -29,12 +25,39 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping(value = "/system/dictionary")
-public class DictionaryController {
+public class DictionaryController extends BaseCrudController<Dictionary, Long> {
 
-	@Autowired
 	private DictionaryService dictionaryService;
-	
-	@GetMapping(value = "view")
+
+	public DictionaryController(DictionaryService dictionaryService) {
+		super("system", "dictionary", "字典信息", dictionaryService);
+		this.dictionaryService = dictionaryService;
+	}
+
+	@Override
+	protected void setPageQueryVariables(Map<String, Object> queryVariables, HttpServletRequest request) {
+		if(queryVariables.containsKey("parent.id") && queryVariables.get("parent.id") != null){ //查询parent字典下面的所有子字典列表
+			Dictionary d = new Dictionary();
+			d.setId(Long.valueOf(queryVariables.get("parent.id").toString()));
+			queryVariables.put("parent.id", Long.valueOf(queryVariables.get("parent.id").toString()));
+		} else {
+			queryVariables.put("parent_isNull", null); //默认查询顶级字典列表
+		}
+		if ( queryVariables.get("isEnabled") != null) {
+			String value = (String) queryVariables.get("isEnabled");
+			queryVariables.put("isEnabled", Boolean.valueOf(value));
+		};
+	}
+
+	@Override
+	protected void setModel(Model model, HttpServletRequest request) {
+		String parentId = request.getParameter("parentId");
+		if(StringUtils.isNotBlank(parentId)){
+			model.addAttribute("parentId", parentId);
+		}
+	}
+
+	/*@GetMapping(value = "view")
 	public String list(Model model, @RequestParam(required = false) String parentId) {
 		if(StringUtils.isNotBlank(parentId)){
 			model.addAttribute("parentId", parentId);
@@ -61,7 +84,7 @@ public class DictionaryController {
 		Page<Dictionary> dictionaryList = this.dictionaryService.findPage(p,map);
 		DataTablePage dtp = DataTablePage.generateDataTablePage(dictionaryList, dataTableParams); //将查询结果封装成前台使用的DataTablePage对象
 		return dtp;
-	}
+	}*/
 	
 	@PostMapping(value = "getDictionaryTree")
 	@ResponseBody
@@ -83,21 +106,23 @@ public class DictionaryController {
 		}
 		return new ArrayList<Dictionary>(newDictionary);
 	}
-	
+
+	@Override
 	@GetMapping(value = "add")
-	public String add(@RequestParam(value="parentId",required=false) Long parentId, Model model) {
+	public String add(Model model, HttpServletRequest request) {
+		String parentId = request.getParameter("parentId");
 		if (parentId != null) {
-			Dictionary parent = this.dictionaryService.findById(parentId);
+			Dictionary parent = this.dictionaryService.findById(Long.parseLong(parentId));
 			model.addAttribute("parent", parent);
 			model.addAttribute("num", parent.getChilds().size() + 1);
 		} else {
 			List<Dictionary> roots = this.dictionaryService.findByProperty("parent", null);
 			model.addAttribute("num", roots.size() + 1);
 		}
-		return "system/dictionary/addDictionary";
+		return "system/dictionary/add";
 	}
 	
-	@RequestMapping(value = "save", method = RequestMethod.POST)
+	/*@RequestMapping(value = "save", method = RequestMethod.POST)
 	@ResponseBody
 	public WebMessage save(Dictionary dictionary, RedirectAttributes redirectAttributes) {
 		try {
@@ -106,9 +131,9 @@ public class DictionaryController {
 		} catch (Exception e) {
 			return WebMessage.createErrorWebMessage(e.getMessage());
 		}
-	}
+	}*/
 	
-	@RequestMapping(value = "delete/{ids}")
+	/*@RequestMapping(value = "delete/{ids}")
 	@ResponseBody
 	public WebMessage delete(@PathVariable("ids") Long[] ids) {
 		try {
@@ -117,16 +142,16 @@ public class DictionaryController {
         } catch (Exception e) {
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
-	}
+	}*/
 	
-	@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
+	/*@RequestMapping(value = "edit/{id}", method = RequestMethod.GET)
 	public String edit(@PathVariable Long id, Model model) {
 		Dictionary dictionary = this.dictionaryService.findById(id);
 		model.addAttribute("dictionary", dictionary);
 		return "system/dictionary/editDictionary";
-	}
+	}*/
 	
-	@RequestMapping(value = "update")
+	/*@RequestMapping(value = "update")
 	@ResponseBody
 	public WebMessage update(Dictionary dictionary) {
 		try {
@@ -135,7 +160,7 @@ public class DictionaryController {
 		} catch (Exception e) {
 			return WebMessage.createErrorWebMessage(e.getMessage());
 		}
-	}
+	}*/
 	
 	/**
 	 * 设置字典启用状态

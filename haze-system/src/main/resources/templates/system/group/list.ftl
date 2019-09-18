@@ -60,7 +60,6 @@
 							<table id="contentTable" class="table table-bordered table-striped table-hover">
 								<thead>
 								<tr>
-								<tr>
 									<th sName="id" type="checkbox">编号</th>
 									<th sName="fullName">机构全称</th>
 									<th sName="name">机构简称</th>
@@ -68,7 +67,6 @@
 									<th sName="code">机构代码</th>
 									<th sName="tel">固定电话</th>
 									<th sName="operator" columnRender="formatOperator">操作</th>
-								</tr>
 								</tr>
 								</thead>
 							</table>

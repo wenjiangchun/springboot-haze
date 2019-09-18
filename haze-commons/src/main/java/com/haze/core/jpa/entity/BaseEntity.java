@@ -1,6 +1,9 @@
 package com.haze.core.jpa.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Transient;
 
@@ -16,12 +19,21 @@ public interface BaseEntity<PK extends Serializable> extends Serializable {
 
 	void setId(final PK id);
 
+	Date getCreateTime();
+
+	void setCreateTime(Date createTime);
+
+	Date getUpdateTime();
+
+	void setUpdateTime(Date updateTime);
+
 	/**
 	 * 判断实体对象是否为新实体对象
 	 * <p><b>说明：</b>当一个持久化实体对象中的{@code id == null}时，则表示该实体对象是新的未持久化对象。
 	 * 
 	 * @return 如果对象未关联持久化数据返回true,否则返回false.
 	 */
+	@JsonIgnore
 	@Transient
 	default boolean isNew() {
 		return null == getId();

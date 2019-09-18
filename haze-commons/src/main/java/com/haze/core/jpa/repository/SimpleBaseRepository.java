@@ -1,5 +1,7 @@
-package com.haze.core.jpa;
+package com.haze.core.jpa.repository;
 
+import com.haze.core.jpa.entity.AbstractLoginDeletedEntity;
+import com.haze.core.jpa.entity.BaseEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -12,7 +14,6 @@ import javax.persistence.Parameter;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,11 +23,9 @@ import java.util.Map;
  * @param <ID>
  */
 @NoRepositoryBean
-public class SimpleBaseRepository<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID> {
+public class SimpleBaseRepository<T extends BaseEntity, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID> {
 
     private EntityManager em;
-
-    //private Class<T> domainClass;
 
     private JpaEntityInformation<T, ?> entityInformation;
 
@@ -36,12 +35,7 @@ public class SimpleBaseRepository<T, ID extends Serializable> extends SimpleJpaR
         this.em = entityManager;
     }
 
-   /* public SimpleBaseRepository(Class<T> domainClass, EntityManager em) {
-        super(domainClass, em);
-        this.em = em;
-        this.domainClass = domainClass;
-    }*/
-
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> findByProperty(String propertyName, Object value, Sort... sorts) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -55,7 +49,11 @@ public class SimpleBaseRepository<T, ID extends Serializable> extends SimpleJpaR
             }
         }
         Predicate predicate = value != null ? criteriaBuilder.equal(root.get(propertyName), value) : criteriaBuilder.isNull(root.get(propertyName));
-        criteriaQuery.where(predicate);
+        if (AbstractLoginDeletedEntity.class.isAssignableFrom(entityInformation.getJavaType())) {
+            criteriaQuery.where(predicate, criteriaBuilder.equal(root.get("deleted"), false));
+        } else {
+            criteriaQuery.where(predicate);
+        }
         for (Sort sort : sorts) {
             for (Sort.Order order : sort) {
                 Sort.Direction direction = order.getDirection();
@@ -73,10 +71,49 @@ public class SimpleBaseRepository<T, ID extends Serializable> extends SimpleJpaR
             }
         }
         Query query = em.createQuery(criteriaQuery);
-        //query.setHint("javax.persistence.fetchgraph",em.getEntityGraphs(entityInformation.getJavaType()).get(0));
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public T findOneByProperty(String propertyName, Object value, Sort... sorts) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityInformation.getJavaType());
+        Root<T> root = criteriaQuery.from(entityInformation.getJavaType());
+        String[] propertyNames = propertyName.split("\\.");
+        Path<?> path = root.get(propertyNames[0]);
+        for (String name : propertyNames) {
+            if (!name.equals(propertyNames[0])) {
+                path = path.get(name);
+            }
+        }
+        Predicate predicate = value != null ? criteriaBuilder.equal(root.get(propertyName), value) : criteriaBuilder.isNull(root.get(propertyName));
+        if (AbstractLoginDeletedEntity.class.isAssignableFrom(entityInformation.getJavaType())) {
+            criteriaQuery.where(predicate, criteriaBuilder.equal(root.get("deleted"), false));
+        } else {
+            criteriaQuery.where(predicate);
+        }
+        for (Sort sort : sorts) {
+            for (Sort.Order order : sort) {
+                Sort.Direction direction = order.getDirection();
+                String orderPropertyName = order.getProperty();
+                switch (direction) {
+                    case ASC:
+                        criteriaQuery.orderBy(criteriaBuilder.asc(root.get(orderPropertyName)));
+                        break;
+                    case DESC:
+                        criteriaQuery.orderBy(criteriaBuilder.desc(root.get(orderPropertyName)));
+                        break;
+                    default:
+                        criteriaQuery.orderBy(criteriaBuilder.desc(root.get(orderPropertyName)));
+                }
+            }
+        }
+        Query query = em.createQuery(criteriaQuery);
+        return (T) query.getSingleResult();
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> findByJql(String jpql, Map<String, Object> queryParams) {
         Assert.notNull(jpql, "查询语句不能为空!");
@@ -96,6 +133,7 @@ public class SimpleBaseRepository<T, ID extends Serializable> extends SimpleJpaR
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> findBySql(String sql, Map<String, Object> queryParams) {
         Assert.notNull(sql, "查询语句不能为空!");

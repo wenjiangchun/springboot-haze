@@ -1,8 +1,7 @@
 package com.haze;
 
-import com.haze.spatial.config.SpatialProperties;
+import com.haze.core.jpa.repository.SimpleBaseRepository;
 import com.jagregory.shiro.freemarker.ShiroTags;
-import freemarker.template.TemplateException;
 import net.sf.ehcache.CacheManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,15 +14,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
-
-import java.io.IOException;
 
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-@EnableJpaRepositories(repositoryBaseClass = com.haze.core.jpa.SimpleBaseRepository.class)
+@EnableJpaRepositories(repositoryBaseClass = SimpleBaseRepository.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class HazeApplication {
 	public static void main(String[] args) {

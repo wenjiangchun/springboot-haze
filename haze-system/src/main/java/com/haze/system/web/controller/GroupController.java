@@ -6,17 +6,15 @@ import com.haze.system.entity.Dictionary;
 import com.haze.system.entity.Group;
 import com.haze.system.service.DictionaryService;
 import com.haze.system.service.GroupService;
-import com.haze.web.BaseController;
-import com.haze.web.datatable.DataTablePage;
-import com.haze.web.datatable.DataTableParams;
+import com.haze.web.BaseCrudController;
 import com.haze.web.utils.TreeNode;
 import com.haze.web.utils.WebMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 组织机构Controller
@@ -25,15 +23,44 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 @RequestMapping(value = "/system/group")
-public class GroupController extends BaseController {
+public class GroupController extends BaseCrudController<Group, Long> {
 
-    @Autowired
     private GroupService groupService;
 
     @Autowired
     private DictionaryService dictionaryService;
 
-    @GetMapping(value = "view")
+    public GroupController(GroupService groupService) {
+        super("system", "group", "机构信息", groupService);
+        this.groupService = groupService;
+    }
+
+    @Override
+    protected void setPageQueryVariables(Map<String, Object> queryVariables, HttpServletRequest request) {
+        if (queryVariables.get("parent.id") != null) {
+            Group g = new Group();
+            g.setId(Long.valueOf(queryVariables.get("parent.id").toString()));
+            queryVariables.put("parent.id", Long.valueOf(queryVariables.get("parent.id").toString()));
+        } else {
+            queryVariables.put("parent_isNull", null); //默认查询顶级字典列表
+        }
+        if (queryVariables.get("groupType.id") != null) {
+            String value = (String) queryVariables.get("groupType.id");
+            queryVariables.put("groupType.id", Long.valueOf(value));
+        }
+    }
+
+    @Override
+    protected void setModel(Model model, HttpServletRequest request) {
+        List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
+        model.addAttribute("groupTypeList", groupTypeList);
+        String parentId = request.getParameter("parentId");
+        if (parentId != null) {
+            model.addAttribute("parent", groupService.findById(Long.parseLong(parentId)));
+        }
+    }
+
+    /*@GetMapping(value = "view")
     public String list(Model model, @RequestParam(required = false) Long parentId) {
         List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
         model.addAttribute("groupTypeList", groupTypeList);
@@ -41,11 +68,12 @@ public class GroupController extends BaseController {
             model.addAttribute("parent", groupService.findById(parentId));
         }
         return "system/group/groupList";
-    }
+    }*/
 
+    /*@Override
     @RequestMapping(value = "search")
     @ResponseBody
-    public DataTablePage search(DataTableParams dataTableParams) {
+    public DataTablePage search(DataTableParams dataTableParams, HttpServletRequest request) {
         PageRequest p = dataTableParams.getPageRequest(); //根据dataTableParames对象获取JPA分页查询使用的PageRequest对象
         Map<String, Object> map = dataTableParams.getQueryVairables();
         if (map.get("parent.id") != null) {
@@ -62,7 +90,7 @@ public class GroupController extends BaseController {
         Page<Group> groupList = this.groupService.findPage(p, dataTableParams.getQueryVairables());
         DataTablePage dtp = DataTablePage.generateDataTablePage(groupList, dataTableParams); //将查询结果封装成前台使用的DataTablePage对象
         return dtp;
-    }
+    }*/
 
     @RequestMapping(value = "getTopGroups")
     @ResponseBody
@@ -84,21 +112,24 @@ public class GroupController extends BaseController {
         return new ArrayList<>(newGroup);
     }
 
+    @Override
     @GetMapping(value = "add")
-    public String add(@RequestParam(value = "parentId", required = false) Long parentId, Model model) {
+    public String add(Model model, HttpServletRequest request) {
+        String parentId = request.getParameter("parentId");
         if (parentId != null) {
-            Group parent = this.groupService.findById(parentId);
+            Group parent = this.groupService.findById(Long.parseLong(parentId));
             model.addAttribute("parent", parent);
             model.addAttribute("parentId", parentId);
         }
         List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
         model.addAttribute("groupTypeList", groupTypeList);
-        return "system/group/addGroup";
+        return "system/group/add";
     }
 
+    @Override
     @PostMapping(value = "save")
     @ResponseBody
-    public WebMessage save(Group group) {
+    public WebMessage save(Group group, HttpServletRequest request) {
         try {
             Date date = new Date();
 			group.setUpdateTime(date);
@@ -114,6 +145,7 @@ public class GroupController extends BaseController {
         }
     }
 
+    /*@Override
     @GetMapping(value = "delete/{ids}")
     @ResponseBody
     public WebMessage delete(@PathVariable("ids") Long[] ids) {
@@ -125,8 +157,9 @@ public class GroupController extends BaseController {
             logger.error("机构删除失败", e);
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
-    }
+    }*/
 
+    /*@Override
     @GetMapping(value = "edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
         Group group = this.groupService.findById(id);
@@ -137,7 +170,7 @@ public class GroupController extends BaseController {
             model.addAttribute("parentId", group.getParent().getId());
         }
         return "system/group/editGroup";
-    }
+    }*/
 
     @PostMapping(value = "update")
     @ResponseBody

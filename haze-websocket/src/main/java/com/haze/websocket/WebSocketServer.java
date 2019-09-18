@@ -72,6 +72,7 @@ public class WebSocketServer {
     @OnOpen
     public void OnOpen(Session session, @PathParam(value = "name") String name) {
         this.session = session;
+        session.setMaxIdleTimeout(0);
         this.name = name;
         connectedMap.put(name, this);
         logger.info("[WebSocketServer] 连接成功，name={}, 当前连接人数为：={}", name, connectedMap.size());

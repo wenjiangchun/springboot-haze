@@ -1,9 +1,13 @@
 package com.haze.shiro;
 
+import com.haze.system.entity.Group;
 import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
+import com.haze.system.entity.User;
+import com.haze.system.utils.Status;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +35,10 @@ public class ShiroUser implements Serializable {
 
 	private String sessionId;
 
+	private List<Group> groupList = new ArrayList<>();
+
+	private Group group;
+
 	public ShiroUser() {
 	}
 
@@ -42,22 +50,18 @@ public class ShiroUser implements Serializable {
 		this.resources = resources;
 	}
 
-	public ShiroUser(String userId, String loginName, String name) {
+	public ShiroUser(String userId, String loginName, String name, Group group) {
 		this.userId = userId;
 		this.loginName = loginName;
 		this.name = name;
+		this.group = group;
 	}
 
+    public boolean isSuperAdmin() {
+		return User.ADMIN.equalsIgnoreCase(this.loginName);
+	}
 	public String getUserId() {
 		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getName() {
@@ -66,10 +70,6 @@ public class ShiroUser implements Serializable {
 
 	public String getLoginName() {
 		return loginName;
-	}
-
-	public void setLoginName(String loginName) {
-		this.loginName = loginName;
 	}
 
 	public List<Resource> getResources() {
@@ -82,10 +82,6 @@ public class ShiroUser implements Serializable {
 	
 	public List<Role> getRoles() {
 		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 
 	public Date getStartLoginTime() {
@@ -108,8 +104,16 @@ public class ShiroUser implements Serializable {
 		return sessionId;
 	}
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public List<Group> getGroupList() {
+		if (group != null) {
+			groupList.add(group);
+			groupList.addAll(group.getChildList(Status.ENABLE));
+		}
+		return groupList;
+	}
+
+	public Group getGroup() {
+		return group;
 	}
 
 	/**

@@ -1,12 +1,12 @@
 package com.haze.websocket.web.controller;
 
-import com.haze.web.BaseController;
 import com.haze.websocket.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/websocket")
-public class WebSocketController extends BaseController {
+public class WebSocketController {
 
     @Autowired
     private WebSocketServer webSocketServer;
@@ -32,6 +32,7 @@ public class WebSocketController extends BaseController {
      * @param destinations 目标对象,如果为null则群发消息
      */
     @PostMapping("/sendMessage")
+    @ResponseBody
     public void sendMessage(@RequestParam String message, @RequestParam(required = false) List<String> destinations) {
         if (destinations != null) {
             webSocketServer.sendMessageToNames(message, new HashSet<>(destinations));
