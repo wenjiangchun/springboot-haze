@@ -1,8 +1,10 @@
 package com.haze.core.service;
 
+import com.haze.core.jpa.entity.AbstractCustomIDEntity;
 import com.haze.core.jpa.entity.BaseEntity;
 import com.haze.core.jpa.repository.BaseRepository;
 import com.haze.core.jpa.repository.HazeSpecification;
+import org.apache.shardingsphere.core.strategy.keygen.SnowflakeShardingKeyGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -70,6 +72,7 @@ public abstract class AbstractBaseService<T extends BaseEntity, PK extends Seria
         Date d = new Date();
         if (t.isNew() && t.getCreateTime() == null) {
             t.setCreateTime(d);
+            if (t instanceof AbstractCustomIDEntity) t.setId((Serializable) new SnowflakeShardingKeyGenerator().generateKey());
         } else {
             t.setUpdateTime(d);
         }

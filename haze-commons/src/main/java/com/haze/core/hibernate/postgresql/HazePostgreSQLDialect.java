@@ -1,4 +1,4 @@
-package com.haze.core.jpa.hibernate.postgresql;
+package com.haze.core.hibernate.postgresql;
 
 import org.hibernate.dialect.PostgreSQL10Dialect;
 

@@ -1,8 +1,11 @@
 package com.haze.redis.manage;
 
+import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +27,25 @@ public class RedisManager {
     }
 
     public Object getKey(String key) {
-        return redisTemplate.opsForValue().get(key);
+        DataType dataType = redisTemplate.type(key);
+        assert dataType != null;
+        switch (dataType) {
+            case STRING:
+                return redisTemplate.opsForValue().get(key);
+            case HASH:
+                Map<Object, Object> result = new LinkedHashMap<>();
+                redisTemplate.opsForHash().keys(key).forEach(k -> {
+                    result.put(k, redisTemplate.opsForHash().get(key, k));
+                });
+                return result;
+            case SET:
+            case LIST:
+            case ZSET:
+            default:
+                return null;
+
+        }
+        //return redisTemplate.opsForValue().get(key);
     }
 
     public void deleteKey(String key) {

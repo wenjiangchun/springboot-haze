@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
 <title>redis管理</title>
 	<#include "../../common/head.ftl"/>
@@ -25,7 +25,7 @@
 				<div class="col-xs-3">
 					<div class="box">
 						<div class="box-header">
-							<h3 class="box-title">所有key</h3>
+							<h3 class="box-title">key</h3>
 						</div>
 						<div class="box-body">
 							<ul class="nav nav-pills nav-stacked">
@@ -42,16 +42,19 @@
 				<div class="col-xs-9">
 					<div class="box">
 						<div class="box-header">
-							<h3 class="box-title">值 <span data-bind="text: key"></span></h3>
+							<h3 class="box-title">Value【<span data-bind="text: key"></span>】</h3>
 							<div class="box-tools">
 							</div>
 
 						</div>
 						<!-- /.box-header -->
-						<div class="box-body">
-							<label>
+						<div class="box-body" >
+							<#--<label>
 								<textarea class="form-control" data-bind="value: val"></textarea>
-							</label>
+							</label>-->
+							<pre>
+								<code data-bind="text: val"></code>
+							</pre>
 						</div>
 						<!-- /.box-body -->
 					</div>

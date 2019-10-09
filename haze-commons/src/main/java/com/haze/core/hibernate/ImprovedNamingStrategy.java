@@ -1,10 +1,13 @@
-package com.haze.core.jpa.hibernate;
+package com.haze.core.hibernate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
+/**
+ * 采用驼峰格式生成数据库信息
+ */
 public class ImprovedNamingStrategy implements PhysicalNamingStrategy {
 
     @Override

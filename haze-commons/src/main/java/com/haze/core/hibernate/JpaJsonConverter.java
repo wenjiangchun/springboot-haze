@@ -1,9 +1,12 @@
-package com.haze.core.jpa.hibernate;
+package com.haze.core.hibernate;
 
 import com.haze.common.json.HazeJsonUtils;
 
 import javax.persistence.AttributeConverter;
 
+/**
+ * 将字符串映射为数据库Json字段转换器
+ */
 public class JpaJsonConverter implements AttributeConverter<Object, String> {
 
     @Override

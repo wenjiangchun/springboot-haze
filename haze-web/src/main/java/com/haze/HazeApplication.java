@@ -2,7 +2,6 @@ package com.haze;
 
 import com.haze.core.jpa.repository.SimpleBaseRepository;
 import com.jagregory.shiro.freemarker.ShiroTags;
-import net.sf.ehcache.CacheManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -29,7 +28,6 @@ public class HazeApplication {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}*/
-		System.out.println(ctx.getBean(CacheManager.class));
 		for (String beanDefinitionName : ctx.getBeanDefinitionNames()) {
 			System.out.println(beanDefinitionName);
 		}
