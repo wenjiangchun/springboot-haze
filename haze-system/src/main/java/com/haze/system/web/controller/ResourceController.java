@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/system/resource")
 public class ResourceController extends BaseCrudController<Resource, Long> {
 	
-	//@Autowired
 	private ResourceService resourceService;
 
 	public ResourceController(ResourceService resourceService) {
@@ -55,32 +54,6 @@ public class ResourceController extends BaseCrudController<Resource, Long> {
 			queryVariables.put("parent_isNull", null); //默认查询顶级字典列表
 		}
 	}
-
-	/*@GetMapping(value = "view")
-	public String list(Model model) {
-		model.addAttribute("resourceTypes", ResourceType.values());
-		return "system/resource/resourceList";
-	}*/
-	
-	/*@RequestMapping(value = "search")
-	@ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams) {
-		PageRequest p = dataTableParams.getPageRequest();
-		Map<String, Object> queryVaribles = dataTableParams.getQueryVairables();
-		if (queryVaribles != null && queryVaribles.get("resourceType") != null) {
-			String value = (String) queryVaribles.get("resourceType");
-			queryVaribles.put("resourceType",ResourceType.valueOf(value));
-		}
-		if (queryVaribles.containsKey("parent.id") && queryVaribles.get("parent.id") != null){
-			Group g = new Group();
-			g.setId(Long.valueOf(queryVaribles.get("parent.id").toString()));
-			queryVaribles.put("parent.id", Long.valueOf(queryVaribles.get("parent.id").toString()));
-		} else {
-			queryVaribles.put("parent_isNull", null); //默认查询顶级字典列表
-		}
-		Page<Resource> resourceList = this.resourceService.findPage(p, dataTableParams.getQueryVairables());
-		return DataTablePage.generateDataTablePage(resourceList, dataTableParams);
-	}*/
 
 	@Override
 	@GetMapping(value = "add")
@@ -110,18 +83,8 @@ public class ResourceController extends BaseCrudController<Resource, Long> {
 		return "system/resource/add";
 	}
 	
-	/*@PostMapping(value = "save")
-	@ResponseBody
-	public WebMessage save(Resource resource) {
-		try {
-			this.resourceService.saveOrUpdate(resource);
-            return WebMessage.createSuccessWebMessage();
-        } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
-        }
-	}*/
-	
-	@RequestMapping(value = "getResourcesTree")
+
+	@PostMapping(value = "getResourcesTree")
 	@ResponseBody
 	public List<TreeNode> getResources() {
 		List<Resource> resourceList = this.resourceService.findAllBySn(true);
@@ -173,21 +136,4 @@ public class ResourceController extends BaseCrudController<Resource, Long> {
 		return "redirect:/system/resource/view/";
 	}
 
-	/**
-	 * 批量删除资源,同时会删除已授权角色的资源信息
-	 * @param ids 资源ID数组
-	 * @return 返回操作对象
-	 */
-	/*@PostMapping(value = "delete/{ids}")
-	@ResponseBody
-	public WebMessage delete(@PathVariable("ids") Long[] ids) {
-		try{
-			this.resourceService.batchDelete(ids);
-			logger.debug("资源删除成功, ids={}", ids);
-			return WebMessage.createSuccessWebMessage();
-		} catch (Exception e) {
-			logger.error("资源删除失败", e);
-			return WebMessage.createErrorWebMessage(e.getMessage());
-		}
-	}*/
 }

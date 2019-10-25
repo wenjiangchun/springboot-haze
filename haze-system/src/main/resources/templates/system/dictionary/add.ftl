@@ -12,7 +12,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">字典信息</h3>
                     </div>
-                    <form id="inputForm" class="form-horizontal" action="${ctx}/system/dictionary/save/" method="post">
+                    <form id="inputForm" class="form-horizontal" action="${ctx}/system/dict/save/" method="post">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="name" class="col-sm-2 control-label">字典名称</label>

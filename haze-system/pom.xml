@@ -8,7 +8,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>haze-system</artifactId>
     <dependencies>
         <dependency>
@@ -23,6 +22,11 @@
         </dependency>
         <dependency>
             <groupId>com.haze</groupId>
+            <artifactId>haze-web</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.haze</groupId>
             <artifactId>haze-test</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>test</scope>
@@ -33,5 +37,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

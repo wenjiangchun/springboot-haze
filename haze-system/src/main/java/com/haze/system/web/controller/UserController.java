@@ -67,43 +67,6 @@ public class UserController extends BaseCrudController<User, Long> {
 		model.addAttribute("groupId", request.getParameter("groupId"));
 	}
 
-	/*@RequiresRoles("admin")*//*
-	@GetMapping(value = "view")
-	public String list(Model model, @RequestParam(required = false) Long groupId) {
-		model.addAttribute("statuss", Status.values());
-		model.addAttribute("groupId", groupId);
-		return "system/user/userList";
-	}*/
-	
-	/**
-	 * 根据查询参数查询用户列表分页对象
-	 * @param dataTableParams 包含分页对象和自定义查询对象的参数,其中PageSize
-	 * @return DataTablePage 前台DataTable组件使用的分页数据对象
-	 */
-	/*@RequestMapping(value = "search")
-    @ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams) {
-		PageRequest p = dataTableParams.getPageRequest(); //根据dataTableParames对象获取JPA分页查询使用的PageRequest对象
-		Map<String, Object> queryVairables = dataTableParams.getQueryVairables(); //获取自定义查询参数
-		if (queryVairables != null && queryVairables.get("status") != null) {
-			String value = (String) queryVairables.get("status");
-            //将传递进来的status字符串转化为Status枚举对象
-			queryVairables.put("status", Status.valueOf(value));
-		}
-		if (queryVairables != null && queryVairables.get("userType") != null) {
-			String value = (String) queryVairables.get("userType");
-            //将传递进来的status字符串转化为Status枚举对象
-//			queryVairables.put("userType", UserType.valueOf(value));
-		}
-		if (queryVairables.get("group.id") != null) {
-			Long groupId = Long.valueOf(queryVairables.get("group.id").toString()) ;
-			queryVairables.put("group.id",groupId);
-		}
-
-		Page<User> userList = this.userService.findPage(p, queryVairables, false); //过滤掉"admin"对象
-		return DataTablePage.generateDataTablePage(userList, dataTableParams);
-	}*/
-
 	/**
 	 * 进入添加用户页面
 	 * @param model
@@ -120,7 +83,7 @@ public class UserController extends BaseCrudController<User, Long> {
 		if (parentId != null) {
 			model.addAttribute("group", groupService.findById(Long.parseLong(parentId)));
 		}
-		return "system/user/addUser";
+		return "system/user/add";
 	}
 	
 	/**
@@ -143,7 +106,6 @@ public class UserController extends BaseCrudController<User, Long> {
 				user.setRoles(roles);
 			}
 		}
-		
         try {
             this.userService.saveOrUpdate(user);
             return WebMessage.createSuccessWebMessage();
@@ -152,17 +114,6 @@ public class UserController extends BaseCrudController<User, Long> {
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
     }
-	
-	/*@PostMapping(value = "delete/{ids}")
-    @ResponseBody
-	public WebMessage delete(@PathVariable("ids") Long[] ids) {
-        try {
-            this.userService.batchDelete(ids);
-            return WebMessage.createSuccessWebMessage();
-        } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
-        }
-    }*/
 	
 	/**
 	 * 进入用户添加角色页面

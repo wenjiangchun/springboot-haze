@@ -4,8 +4,8 @@ import java.util.*;
 
 
 import com.haze.common.Digests;
-import com.haze.common.EncodeUtils;
-import com.haze.common.HazeStringUtils;
+import com.haze.common.util.EncodeUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.core.spring.SpringContextUtils;
 import com.haze.system.dao.UserDao;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 
 /**
@@ -76,7 +75,7 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @throws Exception 如果登录名称已存在则抛出该异常
      */
     public User saveOrUpdate(User user) throws Exception {
-        Assert.notNull(user);
+        Objects.requireNonNull(user, "用户信息不能为空");
         Date date = new Date();
         if (user.isNew()) {
             User u = this.userDao.findByLoginName(user.getLoginName());
@@ -118,8 +117,8 @@ public class UserService extends AbstractBaseService<User, Long> {
      */
     @CacheEvict(value = "shiroCache", allEntries = true)
     public void addRole(Long id, Role role) throws Exception {
+        Objects.requireNonNull(id, "用户ID不能为空");
         User user = this.userDao.getOne(id);
-        Assert.notNull(user);
         user.addRole(role);
         this.saveOrUpdate(user);
     }
@@ -132,8 +131,8 @@ public class UserService extends AbstractBaseService<User, Long> {
      */
     @CacheEvict(value = "shiroCache", allEntries = true)
     public void addRoles(Long id, Set<Role> roles) throws Exception {
+        Objects.requireNonNull(id, "用户ID不能为空");
         User user = this.findById(id);
-        Assert.notNull(user);
         user.setRoles(roles);
         this.saveOrUpdate(user);
     }
@@ -145,8 +144,8 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @param group 组织机构
      */
     public void addOrUpdateGroup(Long id, Group group) throws Exception {
+        Objects.requireNonNull(id, "用户ID不能为空");
         User user = this.userDao.getOne(id);
-        Assert.notNull(user);
         if (user.getGroup() == null || user.getGroup().getId() != group.getId()) {
             user.setGroup(group);
         }
@@ -162,7 +161,7 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @return 更新后的用户对象
      */
     public User updatePassword(Long id, String password) throws Exception {
-        Assert.notNull(id, "用户ID不能为空");
+        Objects.requireNonNull(id, "用户ID不能为空");
         User user = this.findById(id);
         user.setPassword(password);
         entryptPassword(user);
@@ -177,6 +176,7 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @return 重置密码后的用户对象
      */
     public User resetPassword(Long id) throws Exception {
+        Objects.requireNonNull(id, "用户ID不能为空");
         return updatePassword(id, User.DEFAULT_PASSWORD);
     }
 
@@ -188,6 +188,7 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @throws Exception
      */
     public User disableUser(Long id) throws Exception {
+        Objects.requireNonNull(id, "用户ID不能为空");
         return changeStatus(id, Status.DISABLE);
     }
 
@@ -199,6 +200,7 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @throws Exception
      */
     public User enableUser(Long id) throws Exception {
+        Objects.requireNonNull(id, "用户ID不能为空");
         return changeStatus(id, Status.ENABLE);
     }
 
@@ -211,7 +213,7 @@ public class UserService extends AbstractBaseService<User, Long> {
      * @throws Exception
      */
     public User changeStatus(Long id, Status status) throws Exception {
-        Assert.notNull(id, "用户ID不能为空");
+        Objects.requireNonNull(id, "用户ID不能为空");
         User user = this.findById(id);
         user.setStatus(status);
         this.saveOrUpdate(user);

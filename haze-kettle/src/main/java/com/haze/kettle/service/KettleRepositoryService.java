@@ -1,6 +1,6 @@
 package com.haze.kettle.service;
 
-import com.haze.common.HazeStringUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.kettle.StepWrapper;
 import com.haze.kettle.config.KettleProperties;
@@ -32,15 +32,11 @@ import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.net.URI;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;

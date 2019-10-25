@@ -66,7 +66,7 @@ public class Group extends AbstractBaseEntity<Long> {
     /**
      * 机构类型
      */
-    private Dictionary groupType;
+    private Dict groupType;
 
     /**
      * 机构地址
@@ -163,11 +163,11 @@ public class Group extends AbstractBaseEntity<Long> {
 
     @ManyToOne
     @JoinColumn(name = "type_id")
-    public Dictionary getGroupType() {
+    public Dict getGroupType() {
         return groupType;
     }
 
-    public void setGroupType(Dictionary groupType) {
+    public void setGroupType(Dict groupType) {
         this.groupType = groupType;
     }
 

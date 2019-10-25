@@ -1,1 +1,0 @@
-**包`designpattern`为设计模式**

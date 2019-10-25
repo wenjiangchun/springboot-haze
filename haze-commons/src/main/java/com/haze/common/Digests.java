@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 
+import com.haze.common.util.ExceptionUtils;
 import org.apache.commons.lang3.Validate;
 
 /**

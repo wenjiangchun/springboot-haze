@@ -1,8 +1,7 @@
 package com.haze.redis.web.controller;
 
-import com.haze.common.json.HazeJsonUtils;
+import com.haze.common.util.HazeJsonUtils;
 import com.haze.redis.manage.RedisManager;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

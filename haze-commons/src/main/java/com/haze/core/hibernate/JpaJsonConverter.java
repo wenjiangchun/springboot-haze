@@ -1,6 +1,6 @@
 package com.haze.core.hibernate;
 
-import com.haze.common.json.HazeJsonUtils;
+import com.haze.common.util.HazeJsonUtils;
 
 import javax.persistence.AttributeConverter;
 

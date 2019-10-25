@@ -23,7 +23,7 @@ import java.util.Map;
  * @param <ID>
  */
 @NoRepositoryBean
-public class SimpleBaseRepository<T extends BaseEntity, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID> {
+public class SimpleBaseRepository<T extends BaseEntity<ID>, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements BaseRepository<T, ID> {
 
     private EntityManager em;
 

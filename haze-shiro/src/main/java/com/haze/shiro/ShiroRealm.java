@@ -6,8 +6,8 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import com.haze.common.EncodeUtils;
-import com.haze.common.HazeStringUtils;
+import com.haze.common.util.EncodeUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.system.entity.Role;
 import com.haze.system.entity.User;
 import com.haze.system.service.ResourceService;
@@ -22,7 +22,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 public class ShiroRealm extends AuthorizingRealm {
 

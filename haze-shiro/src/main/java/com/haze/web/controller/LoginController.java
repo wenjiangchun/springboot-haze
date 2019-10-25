@@ -1,7 +1,7 @@
 package com.haze.web.controller;
 
-import com.haze.common.HazeStringUtils;
-import com.haze.common.ValidateCodeUtils;
+import com.haze.common.util.HazeStringUtils;
+import com.haze.common.util.ValidateCodeUtils;
 import com.haze.shiro.ValidateCodeAuthenticationFilter;
 import com.haze.web.BaseController;
 import org.apache.shiro.SecurityUtils;

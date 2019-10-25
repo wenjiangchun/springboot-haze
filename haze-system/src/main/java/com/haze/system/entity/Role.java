@@ -1,12 +1,10 @@
 package com.haze.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.haze.common.HazeStringUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.core.jpa.entity.AbstractBaseEntity;
-import com.haze.system.utils.Status;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 

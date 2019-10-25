@@ -1,6 +1,8 @@
 
 package com.haze.common;
 
+import com.haze.common.util.ExceptionUtils;
+
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Arrays;

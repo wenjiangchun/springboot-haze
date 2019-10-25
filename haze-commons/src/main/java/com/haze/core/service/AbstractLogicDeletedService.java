@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.*;
 
 @Transactional(rollbackFor = Exception.class)
-public abstract class AbstractLogicDeletedService<T extends AbstractLoginDeletedEntity, PK extends Serializable> implements BaseService<T, PK> {
+public abstract class AbstractLogicDeletedService<T extends AbstractLoginDeletedEntity<PK>, PK extends Serializable> implements BaseService<T, PK> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

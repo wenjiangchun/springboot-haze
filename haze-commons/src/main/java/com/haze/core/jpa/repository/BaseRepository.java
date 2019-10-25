@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoRepositoryBean
-public interface BaseRepository<T extends BaseEntity, ID extends Serializable> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
+public interface BaseRepository<T extends BaseEntity<ID>, ID extends Serializable> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
     /**
      * 根据对象属性查询对象信息列表

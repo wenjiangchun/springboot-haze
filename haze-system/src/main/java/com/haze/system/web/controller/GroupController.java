@@ -2,9 +2,9 @@ package com.haze.system.web.controller;
 
 import java.util.*;
 
-import com.haze.system.entity.Dictionary;
+import com.haze.system.entity.Dict;
 import com.haze.system.entity.Group;
-import com.haze.system.service.DictionaryService;
+import com.haze.system.service.DictService;
 import com.haze.system.service.GroupService;
 import com.haze.web.BaseCrudController;
 import com.haze.web.utils.TreeNode;
@@ -28,7 +28,7 @@ public class GroupController extends BaseCrudController<Group, Long> {
     private GroupService groupService;
 
     @Autowired
-    private DictionaryService dictionaryService;
+    private DictService dictService;
 
     public GroupController(GroupService groupService) {
         super("system", "group", "机构信息", groupService);
@@ -52,45 +52,13 @@ public class GroupController extends BaseCrudController<Group, Long> {
 
     @Override
     protected void setModel(Model model, HttpServletRequest request) {
-        List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
+        List<Dict> groupTypeList = this.dictService.findChildsByRootCode(Group.GROUP_TYPE);
         model.addAttribute("groupTypeList", groupTypeList);
         String parentId = request.getParameter("parentId");
         if (parentId != null) {
             model.addAttribute("parent", groupService.findById(Long.parseLong(parentId)));
         }
     }
-
-    /*@GetMapping(value = "view")
-    public String list(Model model, @RequestParam(required = false) Long parentId) {
-        List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
-        model.addAttribute("groupTypeList", groupTypeList);
-        if (parentId != null) {
-            model.addAttribute("parent", groupService.findById(parentId));
-        }
-        return "system/group/groupList";
-    }*/
-
-    /*@Override
-    @RequestMapping(value = "search")
-    @ResponseBody
-    public DataTablePage search(DataTableParams dataTableParams, HttpServletRequest request) {
-        PageRequest p = dataTableParams.getPageRequest(); //根据dataTableParames对象获取JPA分页查询使用的PageRequest对象
-        Map<String, Object> map = dataTableParams.getQueryVairables();
-        if (map.get("parent.id") != null) {
-            Group g = new Group();
-            g.setId(Long.valueOf(map.get("parent.id").toString()));
-            map.put("parent.id", Long.valueOf(map.get("parent.id").toString()));
-        } else {
-            map.put("parent_isNull", null); //默认查询顶级字典列表
-        }
-        if (map.get("groupType.id") != null) {
-            String value = (String) map.get("groupType.id");
-            map.put("groupType.id", Long.valueOf(value));
-        }
-        Page<Group> groupList = this.groupService.findPage(p, dataTableParams.getQueryVairables());
-        DataTablePage dtp = DataTablePage.generateDataTablePage(groupList, dataTableParams); //将查询结果封装成前台使用的DataTablePage对象
-        return dtp;
-    }*/
 
     @RequestMapping(value = "getTopGroups")
     @ResponseBody
@@ -121,7 +89,7 @@ public class GroupController extends BaseCrudController<Group, Long> {
             model.addAttribute("parent", parent);
             model.addAttribute("parentId", parentId);
         }
-        List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
+        List<Dict> groupTypeList = this.dictService.findChildsByRootCode(Group.GROUP_TYPE);
         model.addAttribute("groupTypeList", groupTypeList);
         return "system/group/add";
     }
@@ -145,33 +113,6 @@ public class GroupController extends BaseCrudController<Group, Long> {
         }
     }
 
-    /*@Override
-    @GetMapping(value = "delete/{ids}")
-    @ResponseBody
-    public WebMessage delete(@PathVariable("ids") Long[] ids) {
-        try {
-            this.groupService.batchDelete(ids);
-            logger.debug("机构删除成功, ids={}", ids);
-            return WebMessage.createSuccessWebMessage();
-        } catch (Exception e) {
-            logger.error("机构删除失败", e);
-            return WebMessage.createErrorWebMessage(e.getMessage());
-        }
-    }*/
-
-    /*@Override
-    @GetMapping(value = "edit/{id}")
-    public String edit(@PathVariable Long id, Model model) {
-        Group group = this.groupService.findById(id);
-        model.addAttribute("group", group);
-        List<Dictionary> groupTypeList = this.dictionaryService.findChildsByRootCode(Group.GROUP_TYPE);
-        model.addAttribute("groupTypeList", groupTypeList);
-        if (group.getParent() != null) {
-            model.addAttribute("parentId", group.getParent().getId());
-        }
-        return "system/group/editGroup";
-    }*/
-
     @PostMapping(value = "update")
     @ResponseBody
     public WebMessage update(Group group) {
@@ -179,7 +120,6 @@ public class GroupController extends BaseCrudController<Group, Long> {
             this.groupService.save(group);
             return WebMessage.createSuccessWebMessage();
         } catch (Exception e) {
-            e.printStackTrace();
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
     }
@@ -190,15 +130,4 @@ public class GroupController extends BaseCrudController<Group, Long> {
         return this.groupService.getTreeNode();
     }
 
-	/*@RequestMapping(value = "getTreeNodeByUser", method = RequestMethod.POST)
-	@ResponseBody
-	public List<TreeNode> getTreeNodeByUser() {
-		try {
-			String userId = HazeUtils.getCurrentUser().getUserId();
-			Group g = userService.findById(Long.valueOf(userId)).getGroup();
-			return this.groupService.getTreeNode(g.getId());
-		} catch (UserNotFoundException e) {
-			return this.groupService.getTreeNode();
-		}
-	}*/
 }

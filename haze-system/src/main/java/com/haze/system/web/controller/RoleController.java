@@ -49,54 +49,6 @@ public class RoleController extends BaseCrudController<Role, Long> {
 		model.addAttribute("statuss", Status.values());
 	}
 
-	/*@GetMapping(value = "view")
-	public String list(Model model) {
-		model.addAttribute("statuss", Status.values());
-		return "system/role/roleList";
-	}*/
-	
-	/*@RequestMapping(value = "search")
-	@ResponseBody
-	public DataTablePage search(DataTableParams dataTableParams) {
-		PageRequest p = dataTableParams.getPageRequest();
-		Map<String, Object> queryVaribles = dataTableParams.getQueryVairables();
-		if (queryVaribles != null && queryVaribles.get("status") != null) {
-			String value = (String) queryVaribles.get("status");
-			queryVaribles.put("status", Status.valueOf(value));
-		}
-		Page<Role> roleList = this.roleService.findPage(p, dataTableParams.getQueryVairables());
-		DataTablePage dtp = DataTablePage.generateDataTablePage(roleList, dataTableParams);
-		return dtp;
-	}*/
-
-	/*@GetMapping(value = "add")
-	public String add(Model model) {
-		model.addAttribute("statuss", Status.values());
-		return "system/role/addRole";
-	}*/
-	
-	/*@PostMapping(value = "save")
-    @ResponseBody
-	public WebMessage save(Role role) {
-		try {
-			this.roleService.saveOrUpdate(role);
-            return WebMessage.createSuccessWebMessage();
-		} catch (Exception e) {
-			return WebMessage.createErrorWebMessage(e.getMessage());
-		}
-	}*/
-	
-	/*@PostMapping(value = "delete/{ids}")
-    @ResponseBody
-	public WebMessage delete(@PathVariable("ids") Long[] ids) {
-        try {
-            this.roleService.batchDelete(ids);
-            return WebMessage.createSuccessWebMessage();
-        } catch (Exception e) {
-            return WebMessage.createErrorWebMessage(e.getMessage());
-        }
-	}*/
-	
 	/**
 	 * 进入对角色添加资源管理权限页面
 	 * @param id 角色Id
@@ -129,20 +81,6 @@ public class RoleController extends BaseCrudController<Role, Long> {
             return WebMessage.createErrorWebMessage(e.getMessage());
         }
     }
-	
-	/**
-	 * 进入角色编辑页面
-	 * @param id 用户Id
-	 * @param model
-	 * @return
-	 *//*
-	@GetMapping(value = "edit/{id}")
-	public String edit(@PathVariable Long id, Model model) {
-		model.addAttribute("statuss", Status.values());
-		Role role = this.roleService.findById(id);
-		model.addAttribute("role", role);
-		return "system/role/editRole";
-	}*/
 	
 	/**
 	 * 更新角色信息

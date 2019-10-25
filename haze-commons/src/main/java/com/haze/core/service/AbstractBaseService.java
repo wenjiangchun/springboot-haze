@@ -26,7 +26,7 @@ import java.util.Optional;
  * @author sofar
  */
 @Transactional(rollbackFor = Exception.class)
-public abstract class AbstractBaseService<T extends BaseEntity, PK extends Serializable> implements BaseService<T, PK> {
+public abstract class AbstractBaseService<T extends BaseEntity<PK>, PK extends Serializable> implements BaseService<T, PK> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -72,7 +72,10 @@ public abstract class AbstractBaseService<T extends BaseEntity, PK extends Seria
         Date d = new Date();
         if (t.isNew() && t.getCreateTime() == null) {
             t.setCreateTime(d);
-            if (t instanceof AbstractCustomIDEntity) t.setId((Serializable) new SnowflakeShardingKeyGenerator().generateKey());
+            if (t instanceof AbstractCustomIDEntity) {
+
+                t.setId((PK) new SnowflakeShardingKeyGenerator().generateKey());
+            }
         } else {
             t.setUpdateTime(d);
         }

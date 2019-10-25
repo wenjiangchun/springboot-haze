@@ -94,7 +94,7 @@
 			dictName: ko.observable(''),
 			parentId: ko.observable('${parentId!}'),
 			add: function() {
-				let url = "${ctx}/system/dictionary/add";
+				let url = "${ctx}/system/dict/add";
 				if (this.parentId() != null && this.parentId() !== "") {
 					url += "?parentId=" + this.parentId();
 				}
@@ -107,7 +107,7 @@
 				refreshTable();
 			},
 			edit: function(id) {
-				let url = "${ctx}/system/dictionary/edit/" + id;
+				let url = "${ctx}/system/dict/edit/" + id;
 				showMyModel(url,'编辑字典', '900px', '60%', callBackAction);
 			},
 			delete: function(id) {
@@ -119,7 +119,7 @@
 					}, function(){
 						const ids = [id];
 						$.post({
-							url:'${ctx}/system/dictionary/delete/'+ids,
+							url:'${ctx}/system/dict/delete/'+ids,
 							success:function(data) {
 								if (data.messageType == 'SUCCESS') {
 									layer.alert('删除成功');
@@ -142,7 +142,7 @@
 	function initGroupTree() {
 		$.ajax({
 			method : "post",
-			url : "${ctx}/system/dictionary/getDictionaryTree",
+			url : "${ctx}/system/dict/getDictionaryTree",
 			dataType : "json",
 			success : function(data) {
 				var setting = {data:{
@@ -188,7 +188,7 @@
 	function initDataTable() {
 		const options = {
 			divId : "contentTable",
-			url : "${ctx}/system/dictionary/search"
+			url : "${ctx}/system/dict/search"
 		};
 		createTable(options);
 	}

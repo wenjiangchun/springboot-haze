@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface BaseService<T extends BaseEntity, PK extends Serializable> {
+public interface BaseService<T extends BaseEntity<PK>, PK extends Serializable> {
 
     List<T> findAll();
 

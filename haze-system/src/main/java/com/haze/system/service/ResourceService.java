@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.haze.common.HazeStringUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.system.dao.ResourceDao;
 import com.haze.system.entity.Resource;

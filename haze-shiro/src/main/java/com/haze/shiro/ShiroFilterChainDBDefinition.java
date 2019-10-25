@@ -5,15 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.haze.common.HazeStringUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.system.entity.Resource;
 import com.haze.system.entity.Role;
 import com.haze.system.service.ResourceService;
 import com.haze.system.service.RoleService;
-import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.Ini.Section;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
