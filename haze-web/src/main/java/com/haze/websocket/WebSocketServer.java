@@ -139,10 +139,14 @@ public class WebSocketServer {
      */
     public void sendMessageToName(String message, String name) {
         try {
+            //connectedMap.get(name).session.getBasicRemote().sendObject(message);
             connectedMap.get(name).session.getBasicRemote().sendText(message);
         } catch (Exception e) {
             logger.error("[WebSocketServer] sendMessageToName 信息发送失败, name={}, message={}, e={}", name, message, e);
         }
     }
 
+    public static Map<String, WebSocketServer> getConnectedMap() {
+        return connectedMap;
+    }
 }

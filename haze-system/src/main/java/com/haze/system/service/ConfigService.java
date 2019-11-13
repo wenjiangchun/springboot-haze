@@ -1,11 +1,13 @@
 package com.haze.system.service;
 
+import com.haze.core.jpa.entity.AbstractCustomIDEntity;
 import com.haze.core.service.AbstractBaseService;
 import com.haze.system.dao.ConfigDao;
 import com.haze.system.entity.Config;
 import com.haze.system.exception.ConfigCannotDeleteException;
 import com.haze.system.exception.ConfigNameExistException;
 import com.haze.system.utils.ConfigType;
+import org.apache.shardingsphere.core.strategy.keygen.SnowflakeShardingKeyGenerator;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +25,6 @@ import java.util.List;
  * @author sofar
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class ConfigService extends AbstractBaseService<Config, Long> {
 
 	private ConfigDao configDao;
@@ -48,7 +49,7 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
             return null;
         }
         if (configList.size() > 1) {
-            logger.warn("配置代码为[{}]的配置对象不唯一，请检查数据，当前将使用最后一次添加配置对象信息！");
+            logger.warn("配置代码为[{}]的配置对象不唯一，请检查数据，当前将使用最后一次添加配置对象信息！", code);
         }
 		return configList.get(0);
 	}
@@ -58,26 +59,34 @@ public class ConfigService extends AbstractBaseService<Config, Long> {
 	 * @param config 配置对象
 	 * @throws Exception 当保存配置对象名称已存在时抛出该异常
 	 */
-	@CachePut(value="configCache",key="#config.code")
-	public Config saveOrUpdate(Config config) throws Exception {
+	private Config saveOrUpdate(Config config) throws Exception {
 		Assert.notNull(config, "配置信息不能为null");
 		Config c = this.findByCode(config.getCode());
-		Date date = new Date();
-		config.setUpdateTime(date);
 		if (c != null && config.isNew()) {
 			logger.error("配置代码{}已存在！",config.getCode());
 			throw new ConfigNameExistException("配置代码" + config.getCode() + "已存在！");
 		} else {
 			if (config.isNew()) { //保存配置对象
-				config.setCreateTime(date);
 				logger.info("添加配置信息，配置信息为：{}", config);
 			} else { //更新配置对象
 				logger.info("更新配置信息，配置信息为：{}", config);
 			}
 		}
-		return this.save(config);
+		return this.configDao.save(config);
 	}
-	
+
+	@Override
+	@CacheEvict(value="configCache",key="#config.code")
+	public Config save(Config config) throws Exception {
+		Date d = new Date();
+		if (config.isNew() && config.getCreateTime() == null) {
+			config.setCreateTime(d);
+		} else {
+			config.setUpdateTime(d);
+		}
+		return this.saveOrUpdate(config);
+	}
+
 	/**
 	 * 删除配置对象
 	 * @param id 配置对象Id

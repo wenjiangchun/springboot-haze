@@ -7,9 +7,6 @@
 	<#include "../../common/ztree.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-	<#include "../../common/nav.ftl"/>
-	<div class="content-wrapper">
 		<section class="content-header">
 			<h1>
 				资源管理
@@ -75,20 +72,17 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加资源</a>
+					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加资源</a>
 				</div>
 				<!-- /.col -->
 			</div>
 			<!-- /.row -->
 		</section>
-	</div>
-</div>
 </body>
 <script type="text/javascript">
 	let viewModel;
 	let tree;
 	$(document).ready(function() {
-		initMenu('sys_res_menu');
 		viewModel = {
 			resName: ko.observable(''),
 			parentId: ko.observable('${parentId!}'),
@@ -97,7 +91,7 @@
 				if (this.parentId() != null && this.parentId() !== "") {
 					url += "?parentId=" + this.parentId();
 				}
-				showMyModel(url,'添加资源', '900px', '60%', callBackAction);
+				top.showMyModel(url,'添加资源', '900px', '60%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -107,7 +101,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/resource/edit/" + id;
-				showMyModel(url,'编辑资源', '900px', '60%', callBackAction);
+				top.showMyModel(url,'编辑资源', '900px', '60%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {

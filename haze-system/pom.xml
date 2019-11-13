@@ -12,11 +12,6 @@
     <dependencies>
         <dependency>
             <groupId>com.haze</groupId>
-            <artifactId>haze-commons</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.haze</groupId>
             <artifactId>haze-ehcache</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

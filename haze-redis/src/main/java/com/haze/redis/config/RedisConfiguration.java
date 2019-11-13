@@ -12,7 +12,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@PropertySource("classpath:/config/redis/application.properties")
+//@PropertySource("classpath:/config/redis/application.properties")
 public class RedisConfiguration {
 
     @Bean

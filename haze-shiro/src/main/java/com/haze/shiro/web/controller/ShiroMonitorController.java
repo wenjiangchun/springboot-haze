@@ -1,6 +1,7 @@
 package com.haze.shiro.web.controller;
 
 import com.haze.shiro.ShiroUser;
+import com.haze.shiro.util.ShiroUtils;
 import com.haze.web.BaseController;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
@@ -24,19 +25,7 @@ public class ShiroMonitorController extends BaseController {
 		
 	@GetMapping(value = "/online/view")
 	public String list(Model model) {
-		List<ShiroUser> onlineList = new ArrayList<>();
-		Collection<Session> activeSessions = sessionDAO.getActiveSessions();
-		for (Session activeSession : activeSessions) {
-			SimplePrincipalCollection principalCollection;
-			if (activeSession.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY) != null) {
-				principalCollection = (SimplePrincipalCollection) activeSession
-						.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
-				ShiroUser user = (ShiroUser) principalCollection.getPrimaryPrincipal();
-				user.setIp(activeSession.getHost());
-				user.setStartLoginTime(activeSession.getStartTimestamp());
-				onlineList.add(user);
-			}
-		}
+		List<ShiroUser> onlineList = ShiroUtils.getOnlineUserList();
 		model.addAttribute("onlineList", onlineList);
 		return "shiro/onlineList";
 	}

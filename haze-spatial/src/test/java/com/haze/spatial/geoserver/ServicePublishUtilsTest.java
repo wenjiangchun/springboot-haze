@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class ServicePublishUtilsTest {
 
-    @Test
+    //@Test
     public void publish() {
         //ServicePublishUtils.publish("E:\\images.tif", "demo", "tif");
         ServicePublishUtils.publishDem("d:\\008.IMG", "demo", "moon","moon");

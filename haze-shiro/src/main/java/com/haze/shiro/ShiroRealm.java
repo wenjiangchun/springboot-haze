@@ -51,10 +51,10 @@ public class ShiroRealm extends AuthorizingRealm {
         }
 		Status status = user.getStatus();
 		if (status == Status.DISABLE) { //账户禁用
-			throw new DisabledAccountException();
+			throw new DisabledAccountException("账户被禁用!");
 		}
          else if (status == Status.LOCK) { //账户冻结
-			throw new LockedAccountException();
+			throw new LockedAccountException("账户被锁定!");
 		}
 		byte[] salt = EncodeUtils.decodeHex(user.getSalt());
          //获取用户所在机构

@@ -7,9 +7,6 @@
 	<#include "../../common/ztree.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-	<#include "../../common/nav.ftl"/>
-	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
 			<h1>
@@ -77,20 +74,17 @@
 
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加用户</a>
+					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加用户</a>
 				</div>
 				<!-- /.col -->
 			</div>
 			<!-- /.row -->
 		</section>
-	</div>
-</div>
 </body>
 <script type="text/javascript">
 	let viewModel;
 	let tree;
 	$(document).ready(function() {
-		initMenu('sys_user_menu');
 		viewModel = {
 			groupName: ko.observable(''),
 			groupId: ko.observable('${groupId!}'),
@@ -99,7 +93,7 @@
 				if (this.groupId() != null && this.groupId() !== "") {
 					url += "?groupId=" + this.groupId();
 				}
-				showMyModel(url,'添加用户', '800px', '60%', callBackAction);
+				top.showMyModel(url,'添加用户', '800px', '60%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -109,7 +103,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/user/edit/" + id;
-				showMyModel(url,'编辑用户', '800px', '60%', callBackAction);
+				top.showMyModel(url,'编辑用户', '800px', '60%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -283,6 +277,11 @@
 		html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + data.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> | ";
 		html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";
 		return html;
+	}
+
+	function say(name) {
+		name += '..'
+		console.log('hello' + name)
 	}
 </script>
 </html>

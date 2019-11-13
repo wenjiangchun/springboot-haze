@@ -55,7 +55,8 @@ public class ShiroConfiguration {
         chainDefinition.addPathDefinition("/v2/**", "anon");
         chainDefinition.addPathDefinition("/crsf", "anon");
         chainDefinition.addPathDefinition("/webjars/**", "anon");
-        chainDefinition.addPathDefinition("/", "anon");
+        chainDefinition.addPathDefinition("/websocket/**", "anon");
+        chainDefinition.addPathDefinition("/**", "authc");
         chainDefinition.addPathDefinitions(shiroFilterChainDBDefinition().getFilterChainDefinitions());
         return chainDefinition;
     }

@@ -6,9 +6,6 @@
 	<#include "../../common/datatable.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-	<#include "../../common/nav.ftl"/>
-	<div class="content-wrapper">
 		<section class="content-header">
 			<h1>
 				角色管理
@@ -61,23 +58,20 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加角色</a>
+					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加角色</a>
 				</div>
 				<!-- /.col -->
 			</div>
 			<!-- /.row -->
 		</section>
-	</div>
-</div>
 </body>
 <script type="text/javascript">
 	let viewModel;
 	$(document).ready(function() {
-		initMenu('sys_role_menu');
 		viewModel = {
 			add: function() {
 				let url = "${ctx}/system/role/add";
-				showMyModel(url,'添加角色', '900px', '50%', callBackAction);
+				top.showMyModel(url,'添加角色', '900px', '50%', callBackAction);
 			},
 			reset: function() {
 				$(".datatable_query").val('');
@@ -87,7 +81,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/system/role/edit/" + id;
-				showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
+				top.showMyModel(url,'编辑角色', '900px', '50%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -100,7 +94,7 @@
 						$.post({
 							url:'${ctx}/system/role/delete/'+ids,
 							success:function(data) {
-								if (data.messageType == 'SUCCESS') {
+								if (data.messageType === 'SUCCESS') {
 									layer.alert('删除成功');
 									callBackAction(data);
 								} else {

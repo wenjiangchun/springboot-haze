@@ -59,6 +59,7 @@ public class UserController extends BaseCrudController<User, Long> {
 			Long groupId = Long.valueOf(queryVariables.get("group.id").toString()) ;
 			queryVariables.put("group.id",groupId);
 		}
+		queryVariables.put("loginName_notEq", User.ADMIN);
 	}
 
 	@Override

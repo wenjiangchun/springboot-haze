@@ -97,7 +97,7 @@ public class HazeSpecification<T> implements Specification<T> {
                             predicate = cb.isTrue(expression);
                         } else if ("isFalse".equalsIgnoreCase(operator)) {
                             predicate = cb.isFalse(expression);
-                        } else if ("notEqual".equalsIgnoreCase(operator)) {
+                        } else if ("notEq".equalsIgnoreCase(operator)) {
                             predicate = cb.notEqual(expression, queryValue);
                         } else if ("in".equalsIgnoreCase(operator)) {
                             if (expression != null) {

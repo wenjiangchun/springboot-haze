@@ -5,9 +5,6 @@
 	<#include "../../common/head.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-	<#include "../../common/nav.ftl"/>
-	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
 			<h1>
@@ -64,8 +61,6 @@
 			</div>
 			<!-- /.row -->
 		</section>
-	</div>
-</div>
 </body>
 
 <script type="text/javascript">

@@ -7,9 +7,6 @@
 	<#include "../../common/ztree.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-	<#include "../../common/nav.ftl"/>
-	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
 			<h1>
@@ -74,21 +71,17 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加机构</a>
+					<a href="#" class="btn btn-primary" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加机构</a>
 				</div>
 				<!-- /.col -->
 			</div>
 			<!-- /.row -->
 		</section>
-	</div>
-</div>
 </body>
-
 <script type="text/javascript">
 	let currentViewModel;
 	let tree;
 	$(document).ready(function() {
-		initMenu('sys_group_menu');
 		currentViewModel = {
 			groupName: ko.observable(''),
 			groupId: ko.observable('${parentId!}'),
@@ -97,7 +90,7 @@
 				if (this.groupId() != null && this.groupId() !== "") {
 					url += "?parentId=" + this.groupId();
 				}
-				showMyModel(url,'添加机构', '800px', '60%', callBackAction);
+				top.showMyModel(url,'添加机构', '800px', '60%', callBackAction);
 		    }
 		};
 		ko.applyBindings(currentViewModel);
@@ -178,7 +171,7 @@
 	}
 
 	function deleteGroup(id){
-		$.get("${ctx}/system/group/delete/"+id, function(data){
+		$.post("${ctx}/system/group/delete/"+id, function(data){
 			if(data.messageType == "SUCCESS"){
 				alert("操作成功!");
 			}else{
@@ -247,7 +240,7 @@
 
 	function editGroup(groupId) {
 		let url = "${ctx}/system/group/edit/ "+ groupId;
-		showMyModel(url,'修改机构', '800px', '60%', callBackAction);
+		top.showMyModel(url,'修改机构', '800px', '60%', callBackAction);
 	}
 	function formatOperator(data) {
 		var html = "";

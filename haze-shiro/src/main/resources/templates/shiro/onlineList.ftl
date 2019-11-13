@@ -7,10 +7,7 @@
     <link href="${ctx}/resources/zTree/css/bootstrapStyle/bootstrapStyle.css" type="text/css" rel="stylesheet" />
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-<#include "../common/nav.ftl"/>
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
@@ -72,11 +69,7 @@
             <!-- /.row -->
         </section>
         <!-- /.content -->
-    </div>
     <!-- /.content-wrapper -->
-<#include "../common/foot.ftl"/>
-<#include "../common/left.ftl"/>
-</div>
 <script src="${ctx}/resources/adminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="${ctx}/resources/adminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script>

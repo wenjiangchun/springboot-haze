@@ -29,7 +29,7 @@ public class HazeApplication {
 			e.printStackTrace();
 		}*/
 		for (String beanDefinitionName : ctx.getBeanDefinitionNames()) {
-			System.out.println(beanDefinitionName);
+			//System.out.println(beanDefinitionName);
 		}
 	}
 

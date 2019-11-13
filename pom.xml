@@ -14,7 +14,7 @@
         <module>haze-test</module>
         <module>haze-ehcache</module>
         <module>haze-webapp</module>
-        <module>haze-vsail-web</module>
+        <module>haze-webapp-vsail</module>
         <module>haze-redis</module>
         <module>haze-demo</module>
     </modules>

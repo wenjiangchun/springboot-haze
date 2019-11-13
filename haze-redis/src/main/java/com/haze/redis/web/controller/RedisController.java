@@ -2,13 +2,14 @@ package com.haze.redis.web.controller;
 
 import com.haze.common.util.HazeJsonUtils;
 import com.haze.redis.manage.RedisManager;
+import com.haze.web.BaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/m/redis")
-public class RedisController {
+public class RedisController extends BaseController {
 
     private RedisManager redisManager;
 

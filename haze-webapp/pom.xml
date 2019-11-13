@@ -12,16 +12,6 @@
     <dependencies>
         <dependency>
             <groupId>com.haze</groupId>
-            <artifactId>haze-system</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.haze</groupId>
-            <artifactId>haze-spatial</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.haze</groupId>
             <artifactId>haze-swagger</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -32,12 +22,8 @@
         </dependency>
         <dependency>
             <groupId>com.haze</groupId>
-            <artifactId>haze-web</artifactId>
+            <artifactId>haze-spatial</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
         <dependency>
             <groupId>p6spy</groupId>

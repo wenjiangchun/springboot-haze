@@ -26,6 +26,10 @@ public class RedisManager {
         return redisTemplate.keys("*");
     }
 
+    public Set<String> listRedis(String pattern) {
+        return redisTemplate.keys(pattern);
+    }
+
     public Object getKey(String key) {
         DataType dataType = redisTemplate.type(key);
         assert dataType != null;
@@ -33,9 +37,9 @@ public class RedisManager {
             case STRING:
                 return redisTemplate.opsForValue().get(key);
             case HASH:
-                Map<Object, Object> result = new LinkedHashMap<>();
+                Map<String, Object> result = new LinkedHashMap<>();
                 redisTemplate.opsForHash().keys(key).forEach(k -> {
-                    result.put(k, redisTemplate.opsForHash().get(key, k));
+                    result.put(k.toString(), redisTemplate.opsForHash().get(key, k));
                 });
                 return result;
             case SET:
@@ -49,13 +53,22 @@ public class RedisManager {
     }
 
     public void deleteKey(String key) {
-        redisTemplate.delete(key);
+        if (hasKey(key)) {
+            redisTemplate.delete(key);
+        }
     }
 
     public void setKey(String key, Object value) {
         redisTemplate.opsForValue().set(key, value);
     }
 
+    public void setHash(String key, Map<String, Object> value) {
+        redisTemplate.opsForHash().putAll(key, value);
+    }
+
+    public void setHashKey(String key, String hk, Object hvalue) {
+        redisTemplate.opsForHash().put(key, hk, hvalue);
+    }
 
     public boolean expire(String key, long time) {
         if (time > 0) {

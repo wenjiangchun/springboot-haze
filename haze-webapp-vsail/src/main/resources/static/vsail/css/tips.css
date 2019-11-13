@@ -1,0 +1,113 @@
+.control-label {
+	width: 41.66666667%;
+	font-size: 14px;
+	color: #7dcbf7;
+	margin-top: 4px;
+	padding-top: 0px !important;
+}
+
+.control-text {
+	font-size: 14px;
+}
+
+.form-group {
+	margin-bottom: 0px;
+}
+
+.ibox {
+	margin-bottom: 10px;
+}
+
+.col-sm-6 {
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.img-number {
+	position: relative;
+	width: 398px;
+	height: 120px;
+	margin: 10px auto;
+}
+
+.img-number a {
+	position: absolute;
+	width: 41px;
+	height: 22px;
+	background-color: #10b413;
+	line-height: 22px;
+	display: block;
+}
+
+.img-number span {
+	width: 20px;
+	height: 20px;
+	background-color: #076d09;
+	display: block;
+	margin: 0 auto;
+	color: #FFFFFF;
+	border-radius: 20px;
+	line-height: 20px;
+}
+
+.img-number a:nth-child(2) {
+	top: 47px;
+}
+
+.img-number a:nth-child(3) {
+	top: 72px;
+}
+
+.img-number a:nth-child(4) {
+	top: 72px;
+	left: 180px;
+}
+
+.img-number a:nth-child(5) {
+	top: 72px;
+	left: 224px;
+}
+
+.img-number1 a:nth-child(2) {
+	top: 72px;
+	left: 145px;
+}
+
+.img-number1 a:nth-child(3) {
+	top: 72px;
+	left: 188px;
+}
+.echarts-text{
+	position: relative;
+	width: 100%;
+}
+.echarts-title{
+	position: absolute;
+	top: 10px;
+	z-index: 99999;
+	font-size: 18px;
+	color: #FFFFFF;
+	padding-left: 12px;
+}
+.state{
+	font-size: 14px;
+	color: #FFFFFF;
+	padding-left: 20px;
+}
+.state em{
+	width: 12px;
+	height: 13px;
+	border-radius:10px ;
+	display: inline-block;
+	margin-right: 5px;
+}
+.state-zt1 em{
+	background: #ec5252;
+}
+.state-zt2 em{
+	background: #5bde55;
+}
+.state-zt3 em{
+	background: #ec5252;
+}
+

@@ -11,10 +11,10 @@ public class IndexController {
 
     @Autowired
     private DictService dictService;
+
     @GetMapping("/")
-    public String index(Model model) {
+    public String main(Model model) {
         dictService.findChildsByRootCode("GROUP_TYPE");
         return "index";
     }
-
 }
