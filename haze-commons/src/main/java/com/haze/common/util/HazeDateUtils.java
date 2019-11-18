@@ -1,6 +1,9 @@
 package com.haze.common.util;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -91,5 +94,37 @@ public class HazeDateUtils extends DateUtils {
             }
         }
         return newDays != 0 ? newDays : 1;
+    }
+
+    public static LocalDate toLocalDate(Date d) {
+        if (d != null) {
+            return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else {
+            return LocalDate.now();
+        }
+    }
+
+    public static LocalDateTime toLocalDateTime(Date d) {
+        if (d != null) {
+            return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        } else {
+            return LocalDateTime.now();
+        }
+    }
+
+    public static Date fromLocalDate(LocalDate d) {
+        if (d != null) {
+            return Date.from(d.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        } else {
+            return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
+    }
+
+    public static Date fromLocalDateTime(LocalDateTime d) {
+        if (d != null) {
+            return Date.from(d.atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
     }
 }

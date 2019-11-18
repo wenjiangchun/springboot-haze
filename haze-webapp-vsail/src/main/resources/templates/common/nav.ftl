@@ -28,12 +28,12 @@
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/onoff">车辆上线/下线记录</a>
                     </li>
-                    <li>
+                   <#-- <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/fire">火警记录</a>
                     </li>
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/breakdown">故障记录</a>
-                    </li>
+                    </li>-->
                 </ul>
             </li>
             <li>
@@ -42,29 +42,29 @@
                     <span class="nav-label">统计分析</span>
                     <span class="fa arrow"></span>
                 </a>
-                <ul class="nav nav-second-level">
+               <#-- <ul class="nav nav-second-level">
                     <li>
                         <a class="J_menuItem"href="javascript:void(0)" url="${ctx}/v/stat/chart">统计分析</a>
                     </li>
-                </ul>
+                </ul>-->
             </li>
             <li>
                 <a href="#">
                     <i class="fa fa-desktop"></i>
-                    <span class="nav-label">信息管理</span>
+                    <span class="nav-label">基础数据管理</span>
                     <span class="fa arrow"></span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <#--<li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/bus/view" id="sys_user_menu"><i
+                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/bus/view" id="sys_user_menu"><i
                                     class="fa fa-wrench"></i>产品管理</a>
                     </li>
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/model/view" id="sys_group_menu"><i
                                     class="fa fa-users"></i>车辆配置管理</a>
-                    </li>-->
-                    <#--<li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/engine/view" id="sys_role_menu"><i class="fa fa-gears"></i>主机厂管理</a>
+                    </li>
+                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/engine/view" id="sys_role_menu"><i class="fa fa-gears"></i>主机厂管理</a>
                     </li>
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/product/view" id="sys_res_menu"><i class="fa fa-database"></i>供应商管理</a>
-                    </li>-->
+                    </li>
                 </ul>
             </li>
             <li>

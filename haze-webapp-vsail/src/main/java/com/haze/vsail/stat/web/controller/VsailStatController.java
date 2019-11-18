@@ -106,9 +106,22 @@ public class VsailStatController {
     }
 
 
-    @PostMapping(value = "getStateCount")
+    @PostMapping(value = "getStatCount")
     @ResponseBody
-    public Map<String, Object> getStateCount(Date startDay, Date endDay) {
-        return null;
+    public Map<String, List<Object[]>> getStatCount(Long rootGroupId, Date startDay, Date endDay) {
+        //不同车型火警数量
+        List<Object[]> modelFireCount = vsailStatService.getFireCountByBusModel(rootGroupId, startDay,endDay);
+        //不同车型故障数量
+        List<Object[]> modelbdCount = vsailStatService.getBreakDownCountByBusModel(rootGroupId, startDay,endDay);
+        //不同线路火警数量
+        List<Object[]> groupFireCount = vsailStatService.getFireCountByGroup(rootGroupId, startDay,endDay);
+        //不同线路故障数量
+        List<Object[]> groupbdCount = vsailStatService.getBreakDownCountByGroup(rootGroupId, startDay,endDay);
+        Map<String, List<Object[]>> result = new HashMap<>();
+        result.put("modelFireCount", modelFireCount);
+        result.put("modelbdCount", modelbdCount);
+        result.put("groupFireCount", groupFireCount);
+        result.put("groupbdCount", groupbdCount);
+        return result;
     }
 }
