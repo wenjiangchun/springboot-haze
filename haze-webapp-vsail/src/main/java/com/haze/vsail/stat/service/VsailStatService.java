@@ -1,6 +1,7 @@
 package com.haze.vsail.stat.service;
 
 import com.haze.common.util.HazeDateUtils;
+import com.haze.common.util.HazeStringUtils;
 import com.haze.core.jpa.repository.HazeSpecification;
 import com.haze.vsail.stat.dao.BusBreakDownLogDao;
 import com.haze.vsail.stat.dao.BusFireLogDao;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -23,6 +25,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 public class VsailStatService {
 
     private BusOnOffLogDao busOnOffLogDao;
@@ -121,6 +124,11 @@ public class VsailStatService {
         return queryBusStat(sql, "group_name", rootGroupId, processDate(startDay, endDay));
     }
 
+    public List<Object[]> getFireCount(Long rootGroupId, Date startDay, Date endDay) {
+        StringBuilder sql = new StringBuilder("select log_year, log_month, log_day,count(1) ct from v_bus_fire_log f where log_year>=:startYear and log_year<=:endYear and log_month>=:startMonth and log_month<=:endMonth and log_day>=:startDay and log_day<=:endDay");
+        return queryBusStat(sql, null, rootGroupId, processDate(startDay, endDay));
+    }
+
     @SuppressWarnings("unchecked")
     private List<Object[]> queryBusStat(StringBuilder sql, String groupBy, Long rootGroupId, Map<String, Object> queryParams) {
         if (rootGroupId != null) {
@@ -128,8 +136,11 @@ public class VsailStatService {
             queryParams.put("rootGroupId", rootGroupId);
         }
         sql.append(" group by ");
-        sql.append(groupBy);
-        sql.append(",log_year, log_month, log_day");
+        if (HazeStringUtils.isNotBlank(groupBy)) {
+            sql.append(groupBy);
+            sql.append(",");
+        }
+        sql.append("log_year, log_month, log_day");
         Query query = em.createNativeQuery(sql.toString());
         setParams(queryParams, query);
         return query.getResultList();
@@ -175,5 +186,40 @@ public class VsailStatService {
                 throw new IllegalArgumentException("Query查询语句命名参数不能为空");
             }
         }
+    }
+
+    public List<BusOnOffLog> queryOnOffLog(Date startDay, Date endDay) {
+        return this.busOnOffLogDao.findAll(new HazeSpecification<>(processParams(startDay, endDay)));
+    }
+
+    public List<BusFireLog> queryFireLog(Date startDay, Date endDay) {
+        return this.busFireLogDao.findAll(new HazeSpecification<>(processParams(startDay, endDay)));
+    }
+
+    public List<BusBreakDownLog> queryBreakDownLog(Date startDay, Date endDay) {
+        return this.busBreakDownLogDao.findAll(new HazeSpecification<>(processParams(startDay, endDay)));
+    }
+
+    private Map<String, Object> processParams(Date startDay, Date endDay) {
+        LocalDate startDate = LocalDate.ofYearDay(1970, 1);
+        LocalDate endDate = LocalDate.now();
+        if (startDay != null) {
+            startDate = HazeDateUtils.toLocalDate(startDay);
+        }
+        if (endDay != null) {
+            endDate = HazeDateUtils.toLocalDate(endDay);
+        }
+        Map<String, Object> queryParams = new HashMap<>();
+        queryParams.put("year_between", new Object[]{startDate.getYear(), endDate.getYear()});
+        queryParams.put("month_between", new Object[]{startDate.getMonthValue(), endDate.getMonthValue()});
+        queryParams.put("day_between", new Object[]{startDate.getDayOfMonth(), endDate.getDayOfMonth()});
+        return queryParams;
+    }
+
+
+    public List<Object[]> getTestData() {
+        String sql = " select upload_time, bus_data, data from v_bus_data_log order by upload_time desc limit 500";
+        Query query = em.createNativeQuery(sql);
+        return query.getResultList();
     }
 }

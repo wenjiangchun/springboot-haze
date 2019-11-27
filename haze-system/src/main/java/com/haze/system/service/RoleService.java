@@ -54,7 +54,7 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 	 */
 	@CacheEvict(value="shiroCache",allEntries=true)
 	public Role saveOrUpdate(Role role) throws RoleExistException {
-		Assert.notNull(role.getName());
+		Objects.requireNonNull(role.getName(), "角色不能为空");
 		Date date = new Date();
 		role.setUpdateTime(date);
 		Role r = this.roleDao.findByCode(role.getCode());
@@ -68,7 +68,7 @@ public class RoleService extends AbstractBaseService<Role, Long> {
 				role.setCreateTime(date);
 			}
 		} else {
-			if (r != null && r.getId() != role.getId()) {
+			if (r != null && !r.getId().equals(role.getId())) {
 				logger.error("角色保存失败，角色代码{}已存在！" + role.getCode());
 			} else {
 				//执行更新操作 对原先角色资源重新授权

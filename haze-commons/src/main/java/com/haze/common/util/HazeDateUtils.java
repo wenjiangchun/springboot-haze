@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 /**
  * 日期时间辅助功能类
@@ -69,7 +71,17 @@ public class HazeDateUtils extends DateUtils {
     }
 
     /**
-     * 获取两个日期差天数.
+     * 计算两个日期相隔天数
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return 日期天数差
+     */
+    public static int getDiffDay(Date startDate, Date endDate) {
+        return Days.daysBetween(new DateTime(startDate), new DateTime(endDate)).getDays();
+    }
+
+    /**
+     * 获取两个日期差天数. 排除周六周日
      * @param startTime 开始日期
      * @param endTime 结束日期
      * @return 排除周六周日后的天数

@@ -1,6 +1,7 @@
 package com.haze.vsail.stat.entity;
 
-import com.haze.vsail.bus.util.BusEventType;
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,28 +19,40 @@ public class BusBreakDownLog implements Serializable {
     /**
      * 唯一标识
      */
+    @ExcelProperty("编号")
     protected Long id;
 
+    @ExcelProperty("vin码")
     private String vin;
 
+    @ExcelProperty("车号")
     private String busNum;
 
+    @ExcelProperty("公交自编号")
     private String registNum;
 
+    @ExcelProperty("发动机编号")
     private String engineNum;
 
+    @ExcelProperty("车牌号")
     private String drivingNum;
 
+    @ExcelProperty("所属线路")
     private String groupName;
 
+    @ExcelProperty("客户名称")
     private String rootGroupName;
 
+    @ExcelProperty("故障时间")
     private Date logTime;
 
+    @ExcelIgnore
     private Integer year;
 
+    @ExcelIgnore
     private Integer month;
 
+    @ExcelIgnore
     private Integer day;
 
 

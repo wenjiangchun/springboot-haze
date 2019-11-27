@@ -46,4 +46,6 @@ public class VsailController extends BaseController {
     public List<BusInfo> sendMessage() {
         return busService.getBusData();
     }
+
+
 }

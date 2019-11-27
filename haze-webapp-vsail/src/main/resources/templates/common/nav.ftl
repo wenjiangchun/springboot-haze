@@ -28,12 +28,12 @@
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/onoff">车辆上线/下线记录</a>
                     </li>
-                   <#-- <li>
+                    <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/fire">火警记录</a>
                     </li>
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/breakdown">故障记录</a>
-                    </li>-->
+                    </li>
                 </ul>
             </li>
             <li>
@@ -42,11 +42,11 @@
                     <span class="nav-label">统计分析</span>
                     <span class="fa arrow"></span>
                 </a>
-               <#-- <ul class="nav nav-second-level">
+               <ul class="nav nav-second-level">
                     <li>
                         <a class="J_menuItem"href="javascript:void(0)" url="${ctx}/v/stat/chart">统计分析</a>
                     </li>
-                </ul>-->
+                </ul>
             </li>
             <li>
                 <a href="#">

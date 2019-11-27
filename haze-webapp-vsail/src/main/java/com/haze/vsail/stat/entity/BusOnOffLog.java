@@ -1,5 +1,12 @@
 package com.haze.vsail.stat.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.converters.Converter;
+import com.alibaba.excel.enums.CellDataTypeEnum;
+import com.alibaba.excel.metadata.CellData;
+import com.alibaba.excel.metadata.GlobalConfiguration;
+import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.haze.vsail.bus.util.BusEventType;
 
 import javax.persistence.*;
@@ -15,30 +22,43 @@ public class BusOnOffLog implements Serializable {
     /**
      * 唯一标识
      */
+    @ExcelProperty("编号")
     protected Long id;
 
+    @ExcelProperty("vin码")
     private String vin;
 
+    @ExcelProperty("车号")
     private String busNum;
 
+    @ExcelProperty("公交自编号")
     private String registNum;
 
+    @ExcelProperty("发动机编号")
     private String engineNum;
 
+    @ExcelProperty("车牌号")
     private String drivingNum;
 
+    @ExcelProperty("所属线路")
     private String groupName;
 
+    @ExcelProperty("客户名称")
     private String rootGroupName;
 
+    @ExcelProperty("上/下线时间")
     private Date logTime;
 
+    @ExcelIgnore
     private Integer year;
 
+    @ExcelIgnore
     private Integer month;
 
+    @ExcelIgnore
     private Integer day;
 
+    @ExcelProperty(value = "上/下线", converter = OnOffConverter.class)
     private Integer flag = BusEventType.BUS_EVENT_ON.getEventCode();
 
     @Id
@@ -166,5 +186,41 @@ public class BusOnOffLog implements Serializable {
                 ", flag=" + flag +
                 ", id=" + id +
                 '}';
+    }
+
+
+    public static class OnOffConverter implements Converter<Integer> {
+
+        private final Integer ONE = 1;
+
+        private final Integer ZERO = 0;
+
+        @Override
+        public Class supportJavaTypeKey() {
+            return Integer.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return CellDataTypeEnum.BOOLEAN;
+        }
+
+        @Override
+        public Integer convertToJavaData(CellData cellData, ExcelContentProperty contentProperty,
+                                         GlobalConfiguration globalConfiguration) {
+            if (cellData.getBooleanValue()) {
+                return ONE;
+            }
+            return ZERO;
+        }
+
+        @Override
+        public CellData convertToExcelData(Integer value, ExcelContentProperty contentProperty,
+                                           GlobalConfiguration globalConfiguration) {
+            if (ONE.equals(value)) {
+                return new CellData("上线");
+            }
+            return new CellData("下线");
+        }
     }
 }

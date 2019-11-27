@@ -8,10 +8,6 @@
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
-			<h1>
-				资源管理
-				<small><i class="fa fa-database"></i></small>
-			</h1>
 			<ol class="breadcrumb">
 				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">系统管理</a></li>

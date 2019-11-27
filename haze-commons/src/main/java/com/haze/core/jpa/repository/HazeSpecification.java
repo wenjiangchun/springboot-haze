@@ -108,7 +108,14 @@ public class HazeSpecification<T> implements Specification<T> {
                         } else if ("between".equalsIgnoreCase(operator)){
                             if (queryValue instanceof Object[] && ((Object[]) queryValue).length == 2) {
                                 Object[] b = (Object[]) queryValue;
-                                predicate = cb.between(expression, (Date)b[0],(Date)b[1]);
+                                if (b[0] instanceof Date) {
+                                    predicate = cb.between(expression, (Date)b[0],(Date)b[1]);
+                                } else if (b[0] instanceof Integer) {
+                                    predicate = cb.between(expression, (int)b[0],(int)b[1]);
+                                } else {
+                                    //TODO 暂不处理
+                                }
+
                             } else {
                                 String errorMessage = "between参数设置错误，key=s%,value=s%";
                                 errorMessage = String.format(errorMessage, key, queryValue.toString());

@@ -1,164 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>上线下线信息</title>
-	<#include "../../common/v-head.ftl"/>
+	<title>上线下线信息</title>
+	<#include "../../common/head.ftl"/>
 	<#include "../../common/datatable.ftl"/>
-	<style>
-		.wrapper-content {
-			padding: 20px;
-			overflow: auto;
-		}
-	</style>
 </head>
-<body >
-<div id="wrapper">
-	<!--左侧导航开始-->
-
-	<!--左侧导航结束-->
-	<!--右侧部分开始-->
-
-
-	<div class="row J_mainContent" id="content-main">
-		<div class="wrapper wrapper-content animated fadeInRight wrapper-background">
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="ibox ibox-background float-e-margins">
-						<div class="ibox-title">
-							<h5><img src="img/title.png">自定义响应式表格</h5>
-
-						</div>
-						<div class="ibox-content">
-							<div class="row">
-								<div class="col-sm-2 m-b-xs">
-									<div class="form-group">
-										<label class="control-label">VIN码</label>
-										<div class="control-div">
-											<select class="form-control m-b" name="account">
-												<option>选项 1</option>
-												<option>选项 2</option>
-												<option>选项 3</option>
-												<option>选项 4</option>
-											</select>
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-2 m-b-xs">
-									<div class="form-group">
-										<label class="control-label">公交自编号</label>
-										<div class="control-div">
-											<input type="text" class="form-control" name="text">
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-2 m-b-xs">
-									<div class="form-group">
-										<label class="control-label">开始时间</label>
-										<div class="control-div">
-											<input type="" placeholder="选择开始日期" class="form-control" name="">
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-2 m-b-xs">
-									<div class="form-group">
-										<label class="control-label">结束时间</label>
-										<div class="control-div">
-											<input type="" placeholder="选择结束日期" class="form-control" name="">
-										</div>
-									</div>
-								</div>
-								<div class="form-button">
-									<button type="button" class="btn btn-w-m btn-info"><img src="img/btn1.png">查询</button>
-									<button type="button" class="btn btn-w-m btn-warning"><img src="img/btn2.png">导出数据</button>
-								</div>
-
-							</div>
-							<div class="table-responsive">
-								<table class="table table-bordered table-hover">
-									<thead>
-									<tr>
-
-										<th>序号</th>
-										<th>编号</th>
-										<th>vin码</th>
-										<th>录入时间</th>
-										<th>登陆情况</th>
-
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td>1</td>
-										<td>165313424
-										</td>
-										<td>BJSRDZNMKV1010012</td>
-										<td>2019-10-28 14:54:50</td>
-										<td>
-											<a href="table_basic.html#"><i><img src="img/k1.png"></i>已登陆</a>
-										</td>
-									</tr>
-									</tbody>
-								</table>
-							</div>
-							<nav aria-label="Page navigation" style="text-align: right;">
-								<ul class="pagination">
-									<li>
-										<a href="#" aria-label="Previous">
-											<span aria-hidden="true">&laquo;</span>
-										</a>
-									</li>
-									<li><a href="#">1</a></li>
-									<li><a href="#">2</a></li>
-									<li><a href="#">3</a></li>
-									<li><a href="#">4</a></li>
-									<li><a href="#">5</a></li>
-									<li>
-										<a href="#" aria-label="Next">
-											<span aria-hidden="true">&raquo;</span>
-										</a>
-									</li>
-								</ul>
-							</nav>
-
-						</div>
+<body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+	<ol class="breadcrumb">
+		<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
+		<li><a href="#">统计查询</a></li>
+		<li class="active">上下线日志</li>
+	</ol>
+</section>
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">上下线日志列表</h3>
+					<div class="box-tools">
 					</div>
+					<form class="form-inline">
+						<div class="box-body">
+							<div class="col-sm-3 m-b-xs">
+								<div class="form-group">
+									<label class="control-label">vin码</label>
+									<div class="control-div">
+										<input type="text" placeholder="开始日期" class="form-control" name="vin_like" data-bind="value: vin">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3 m-b-xs">
+								<div class="form-group">
+									<label class="control-label">开始时间</label>
+									<div class="control-div" style="width: 220px">
+										<input type="date" placeholder="开始日期" class="form-control" name="" data-bind="value: startDay">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3 m-b-xs">
+								<div class="form-group">
+									<label class="control-label">结束时间</label>
+									<div class="control-div" style="width: 220px">
+										<input type="date" placeholder="结束日期" class="form-control" name="" data-bind="value: endDay">
+									</div>
+								</div>
+							</div>
+							<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
+								<i class="fa fa-search"></i> 查询
+							</button>
+							<button type="button" class="btn btn-sm btn-warning" data-bind='click: exportExcel' style="margin-left:10px;"><i class="fa fa-file-excel-o"></i> 导出</button>
+						</div>
+					</form>
 				</div>
-
+				<!-- /.box-header -->
+				<div class="box-body">
+					<table id="contentTable" class="table table-bordered table-striped table-hover">
+						<thead>
+						<tr>
+							<th sName="id">编号</th>
+							<th sName="vin">vin码</th>
+							<th sName="busNum">车辆编号</th>
+							<th sName="registNum">注册编号</th>
+							<th sName="engineNum">主机编号</th>
+							<th sName="drivingNum">行驶证号</th>
+							<th sName="groupName">运营线路</th>
+							<th sName="rootGroupName">运营公司</th>
+							<th sName="flag">上/下线</th>
+							<th sName="logTime">上/下线时间</th>
+							<#--<th sName="operate" columnRender="formatOperator">操作</th>-->
+						</tr>
+						</thead>
+					</table>
+				</div>
+				<!-- /.box-body -->
 			</div>
 		</div>
-
+		<!-- /.col -->
 	</div>
-</div>
-<!--右侧部分结束-->
-</div>
-<script>
-	$(".nav-content li").click(function() {
-		$(".sortable-list-box").show();
-		$(".div-dw").show();
-	})
-	$(".btn.btn-sm.btn-white").click(function() {
-		$(".sortable-list-box").show();
-		$(".div-dw").show();
-	})
-	$(".div-dw").click(function() {
-		$(this).hide();
-		$(".sortable-list-box").hide();
-	})
-</script>
+	<!-- /.row -->
+</section>
 </body>
 <script type="text/javascript">
 	let viewModel;
 	$(document).ready(function() {
 		viewModel = {
-			reset: function() {
-				$(".datatable_query").val('');
-			},
+			startDay: ko.observable(),
+			endDay:ko.observable(),
+			vin: ko.observable(),
 			query: function() {
 				refreshTable();
 			},
-			show: function(id) {
-				let url = "${ctx}/v/${name!}/edit/" + id;
-				showMyModel(url,'编辑${cname!}', '900px', '50%');
+			exportExcel: function() {
+				let url = "${ctx}/v/stat/exportExcel?type=0";
+				if (this.startDay() != undefined) {
+					url += '&startDay=' + this.startDay();
+				}
+				if (this.endDay() != undefined) {
+					url += '&endDay=' + this.endDay();
+				}
+				window.location.href=url;
 			}
 		};
 		ko.applyBindings(viewModel);

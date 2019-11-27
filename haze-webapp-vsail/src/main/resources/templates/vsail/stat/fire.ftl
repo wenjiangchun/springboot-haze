@@ -7,10 +7,6 @@
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
-			<h1>
-				火警日志
-				<small><i class="fa fa-wrench"></i></small>
-			</h1>
 			<ol class="breadcrumb">
 				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">统计查询</a></li>
@@ -25,18 +21,38 @@
 							<h3 class="box-title">火警日志列表</h3>
 							<div class="box-tools">
 							</div>
-								<form class="form-inline">
-									<div class="box-body">
+							<form class="form-inline">
+								<div class="box-body">
+									<div class="col-sm-3 m-b-xs">
 										<div class="form-group">
-											<label for="vin_like">vin码</label>
-											<input type="text" name="vin_like" class="datatable_query form-control">
+											<label class="control-label">vin码</label>
+											<div class="control-div">
+												<input type="text" placeholder="开始日期" class="form-control" name="vin_like" data-bind="value: vin">
+											</div>
 										</div>
-										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
-											<i class="fa fa-search"></i> 查询
-										</button>
-										<button type="button" class="btn btn-sm btn-danger" data-bind='click: reset' style="margin-left:10px;">清空</button>
 									</div>
-								</form>
+									<div class="col-sm-3 m-b-xs">
+										<div class="form-group">
+											<label class="control-label">开始时间</label>
+											<div class="control-div" style="width: 220px">
+												<input type="date" placeholder="开始日期" class="form-control" name="" data-bind="value: startDay">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3 m-b-xs">
+										<div class="form-group">
+											<label class="control-label">结束时间</label>
+											<div class="control-div" style="width: 220px">
+												<input type="date" placeholder="结束日期" class="form-control" name="" data-bind="value: endDay">
+											</div>
+										</div>
+									</div>
+									<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
+										<i class="fa fa-search"></i> 查询
+									</button>
+									<button type="button" class="btn btn-sm btn-warning" data-bind='click: exportExcel' style="margin-left:10px;"><i class="fa fa-file-excel-o"></i> 导出</button>
+								</div>
+							</form>
 						</div>
 						<!-- /.box-header -->
 						<div class="box-body">
@@ -51,6 +67,7 @@
 									<th sName="drivingNum">行驶证号</th>
 									<th sName="groupName">运营线路</th>
 									<th sName="rootGroupName">运营公司</th>
+									<th sName="logTime">火警时间</th>
 									<#--<th sName="operate" columnRender="formatOperator">操作</th>-->
 								</tr>
 								</thead>
@@ -68,15 +85,21 @@
 	let viewModel;
 	$(document).ready(function() {
 		viewModel = {
-			reset: function() {
-				$(".datatable_query").val('');
-			},
+			startDay: ko.observable(),
+			endDay:ko.observable(),
+			vin: ko.observable(),
 			query: function() {
 				refreshTable();
 			},
-			show: function(id) {
-				let url = "${ctx}/v/${name!}/edit/" + id;
-				showMyModel(url,'编辑${cname!}', '900px', '50%');
+			exportExcel: function() {
+				let url = "${ctx}/v/stat/exportExcel?type=1";
+				if (this.startDay() != undefined) {
+					url += '&startDay=' + this.startDay();
+				}
+				if (this.endDay() != undefined) {
+					url += '&endDay=' + this.endDay();
+				}
+				window.location.href=url;
 			}
 		};
 		ko.applyBindings(viewModel);
