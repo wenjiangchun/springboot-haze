@@ -8,7 +8,7 @@
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
 			<ol class="breadcrumb">
-				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
+				<li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">车辆管理</a></li>
 				<li class="active">${cname!}管理</li>
 			</ol>
@@ -44,7 +44,7 @@
 									<th sName="name">型号名称</th>
 									<th sName="busEngine.name">主机厂名称</th>
 									<th sName="createTime">创建时间</th>
-									<th sName="operate" columnRender="formatOperator">操作</th>
+									<#--<th sName="operate" columnRender="formatOperator">操作</th>-->
 								</tr>
 								</tr>
 								</thead>
@@ -53,7 +53,7 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-upload"></i>上传${cname!}</a>
+					<a href="#" class="btn btn-info" data-bind='click: uploadBusModel'><i class="fa fa-upload"></i>上传${cname!}</a>
 				</div>
 				<!-- /.col -->
 			</div>
@@ -65,9 +65,8 @@
 	$(document).ready(function() {
 		viewModel = {
 			dictName: ko.observable(''),
-			add: function() {
-				let url = "${ctx}/v/${name}/add";
-				showMyModel(url,'添加${cname!}', '900px', '50%', callBackAction);
+			uploadBusModel: function() {
+				//上传模型配置excel TODO
 			},
 			reset: function() {
 				$(".datatable_query").val('');

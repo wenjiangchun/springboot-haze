@@ -3,7 +3,15 @@
 <head>
     <title>智能车联网大数据管理平台</title>
     <#include "common/v-head.ftl"/>
+    <link rel="stylesheet" href="${ctx}/res/toastr/toastr.css" />
+    <link rel="stylesheet" href="${ctx}/res/vsail/css/layer.css" />
     <script src="${ctx}/res/vsail/js/hplus.min.js?v=4.0.0" type="text/javascript"></script>
+    <script type="text/javascript" src="${ctx}/res/toastr/toastr1.js"></script>
+    <style>
+        .layui-layer-border {
+
+        }
+    </style>
 </head>
 <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
 <div id="wrapper">
@@ -34,33 +42,49 @@
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="user">
                         <span><img src="${ctx}/res/vsail/img/user-img.png"></span>
-                        <h3>欢迎您！<@shiro.principal/> </h3>
+                        <h3>欢迎您！<@shiro.principal/>  </h3>
+                        <div class="user-content">
+                            <ul>
+                                <li><a href="javascript:void(0)" data-bind="click:updatePassword">修改密码</a></li>
+                                <li><a href="${ctx}/logout">退出</a></li>
+                            </ul>
+                        </div>
                     </li>
-                    <li class="dropdown">
+                    <#--<li class="dropdown">
                         <a href="#">
                             <i><img src="${ctx}/res/vsail/img/news.png"></i><span class="label label-primary">12</span>
                         </a>
-                    </li>
+                    </li>-->
                 </ul>
             </nav>
         </div>
-
         <div class="row J_mainContent" id="content-main">
             <iframe src="" width="100%" height="922.8px" id="content" frameborder="0" name="myframe"></iframe>
         </div>
     </div>
     <!--右侧部分结束-->
 </div>
+<div id="audio1">
+</div>
 <script>
-
     let viewModel = {
+        eventCodeConstants:{
+            ON: 1, //上线
+            OFF: 2, //下线
+            REAL: 3, //实时位置
+            REGIST: 4, //注册
+            UPDATE: 5, //更新
+            DELETE: -1 //删除
+        },
+        fireVinData:ko.observableArray([]),
 		totalData: ko.observableArray([]),
 		onlineData: ko.observableArray([]),
 		fireData: ko.observableArray([]),
 		breakdownData: ko.observableArray([]),
+        currentTab: ko.observable(-1),
         updateBusData: function (data) {
             const eventCode = data.eventCode;
-            if (eventCode === -1) { //删除信息
+            if (eventCode === this.eventCodeConstants.DELETE) { //删除信息
                 if (existBusData(this.totalData(), data)) {
                     this.totalData(deleteBusData(this.totalData(), data));
                 }
@@ -80,6 +104,7 @@
         },
         invokeFrame: function(showCode) {
             if (myframe.initBusData !== undefined) {
+                this.currentTab(showCode);
                 switch (showCode) {
                     case 1:
                         myframe.initBusData(this.onlineData(), showCode);
@@ -93,15 +118,29 @@
                     default:
                         //首先进行排序
                         const sortedData = _.sortBy(this.totalData(), 'sortCode');
-                        console.log(sortedData);
                         myframe.initBusData(sortedData, showCode);
                 }
-
             }
+        },
+        updateFrame: function(data) {
+            if (myframe.initBusData !== undefined) {
+                myframe.updateBusData(this.totalData());
+            }
+        },
+        updatePassword: function() {
+            layer.prompt({title: '请输入新密码', formType: 1}, function(val, index){
+                $.post('${ctx}/system/user/updatePassword',{newPassword:val, id:<@shiro.principal property="userId" />}, function(data) {
+                    if(data === "SUCCESS") {
+                        layer.alert('密码修改成功');
+                        layer.close(index);
+                    }
+                });
+            });
         }
     };
 
     let websocket = null;
+    let hasFire = 0;
     $(function () {
         ko.applyBindings(viewModel);
         //首先加载所属车辆信息
@@ -110,10 +149,11 @@
             _.each(data, processData);
             //加载完成后建立websocket链接
             if ('WebSocket' in window) {
-                websocket = new WebSocket("${config.value!}/websocket/<@shiro.principal/>");
+                //websocket = new WebSocket("${config.value!}/websocket/<@shiro.principal/>");
+                websocket = new WebSocket("ws://localhost:8080/websocket/<@shiro.principal/>");
                 websocket.onopen = function () {
                     console.log("连接成功");
-                    viewModel.invokeFrame(0);
+                    viewModel.invokeFrame(-1);
                 };
 
                 websocket.onclose = function () {
@@ -121,13 +161,16 @@
                 };
 
                 websocket.onmessage = function (event) {
-                    console.log("收到消息" + $.parseJSON(event.data));
+                    console.log("收到消息" + event.data);
                     //更新数值, 同时将收到的数据传送到地图界面
-					viewModel.updateBusData($.parseJSON(event.data));
+                    //判断是否需要更新map页面
+                    const busData = $.parseJSON(event.data);
+					viewModel.updateBusData(busData);
+                    viewModel.invokeFrame(viewModel.currentTab());
 					//TODO 待完善
-                    if (myframe.window.addMarker !== undefined) {
+                    /*if (myframe.window.addMarker !== undefined) {
                         myframe.window.addMarker($.parseJSON(event.data))
-                    }
+                    }*/
                 };
 
                 websocket.onerror = function () {
@@ -141,22 +184,35 @@
                 console.warn('当前浏览器不支持websocket')
             }
         });
+
+        setInterval(function() {
+            console.log(_.size(viewModel.fireVinData()));
+            if (_.size(viewModel.fireVinData()) > 0) {
+                let alarm = $('#audio1');
+                alarm.html('<audio src="${ctx}/res/vsail/file/fireAlarm.wav" autoplay="autoplay"></audio>');
+            } else {
+                let alarm = $('#audio1');
+                alarm.html('');
+            }
+        },5000)
     });
 
     function processData(busData) {
         viewModel.totalData(addOrUpdateBusData(viewModel.totalData(), busData));
         switch (busData.eventCode) {
-            case 1: //上线
+            case viewModel.eventCodeConstants.ON: //上线
                 viewModel.onlineData(addOrUpdateBusData(viewModel.onlineData(), busData));
                 break;
-            case 2: //下线
+            case viewModel.eventCodeConstants.OFF: //下线
                 viewModel.onlineData(deleteBusData(viewModel.onlineData(), busData));
                 break;
-            case 3: //实时运行
-                const isFire = busData.isFire;
-                const isBreakdown = busData.isBreakDown;
+            case viewModel.eventCodeConstants.REAL: //实时运行
+                viewModel.onlineData(addOrUpdateBusData(viewModel.onlineData(), busData));
+                const isFire = busData.fire;
+                const isBreakdown = busData.breakDown;
                 if (isFire) {
                     viewModel.fireData(addOrUpdateBusData(viewModel.fireData(), busData));
+                    showFireNotify(busData);
                 } else {
                     viewModel.fireData(deleteBusData(viewModel.fireData(), busData));
                 }
@@ -167,7 +223,7 @@
                 }
 
                 break;
-            case 5: //更新车辆基本信息
+            case viewModel.eventCodeConstants.UPDATE: //更新车辆基本信息
                 viewModel.onlineData(updateBusDataIfExist(viewModel.onlineData(), busData));
                 viewModel.fireData(updateBusDataIfExist(viewModel.fireData(), busData));
                 viewModel.breakdownData(updateBusDataIfExist(viewModel.breakdownData(), busData));
@@ -179,10 +235,10 @@
     }
 
     function existBusData(busData, data) {
-        const busId = data.id;
+        const busId = data.vin;
         for (let i = 0; i < busData.length; i++) {
 			const dt = busData[i];
-            if (dt.id === busId) {
+            if (dt.vin === busId) {
                 return true;
             }
         }
@@ -190,10 +246,10 @@
     }
 
     function deleteBusData(busData, data) {
-		const busId = data.id;
+		const busId = data.vin;
         for (let i = 0; i < busData.length; i++) {
 			const dt = busData[i];
-            if (dt.id === busId) {
+            if (dt.vin === busId) {
                 busData.splice(i, 1);
                 break;
             }
@@ -202,14 +258,17 @@
     }
 
     function addOrUpdateBusData(busData, data) {
-		const busId = data.id;
+		const busId = data.vin;
         if (!existBusData(busData, data)) {
             busData.push(data);
         } else {
             for (let i = 0; i < busData.length; i++) {
 				const dt = busData[i];
-                if (dt.id === busId) {
-                    busData[i] === data;
+                if (dt.vin === busId) {
+                    if (data.eventCode === viewModel.eventCodeConstants.UPDATE) {
+                        data.eventCode = dt.eventCode;
+                    }
+                    busData[i] = data;
                     break;
                 }
             }
@@ -221,11 +280,11 @@
      * 如果data存在于busData则更新，否则不做操作
      */
     function updateBusDataIfExist(busData, data) {
-        const busId = data.id;
+        const busId = data.vin;
         for (let i = 0; i < busData.length; i++) {
             const dt = busData[i];
-            if (dt.id === busId) {
-                busData[i] === data;
+            if (dt.vin === busId) {
+                busData[i] = data;
                 break;
             }
         }
@@ -238,7 +297,34 @@
     function getBusData() {
         return viewModel.totalData();
     }
+
+
+    function showFireNotify(data) {
+        //判断当前火警是否已存在弹窗中
+        let fireVinData = viewModel.fireVinData();
+        if (! _.contains(fireVinData, data.vin))  {
+            fireVinData.push(data.vin);
+            viewModel.fireVinData(fireVinData);
+            toastr.options = {
+                closeButton: true,
+                positionClass: 'toast-bottom-right',
+                timeOut: 5000000,
+                onclick:function() {
+                    viewModel.fireVinData(_.reject(fireVinData, function(vin){ return vin === data.vin; }));
+                    if (myframe.initBusData !== undefined) {
+                        myframe.showFire(data);
+                    }
+                },
+                onCloseClick:function() {
+                    viewModel.fireVinData(_.reject(fireVinData, function (vin) {
+                        return vin === data.vin;
+                    }));
+                }
+            };
+            toastr.error('vin=.'+ data.vin, '监测到火警信息 ' + data.sendTime + '');
+        }
+    }
+
 </script>
 </body>
-
 </html>

@@ -3,6 +3,7 @@ package com.haze.vsail;
 import com.haze.vsail.bus.service.BusService;
 import com.haze.vsail.bus.util.BusEventType;
 import com.haze.vsail.bus.util.BusInfo;
+import com.haze.vsail.stat.service.VsailStatService;
 import com.haze.web.BaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +17,11 @@ public class VsailController extends BaseController {
 
     private BusService busService;
 
-    public VsailController(BusService busService) {
+    private VsailStatService vsailStatService;
+
+    public VsailController(BusService busService, VsailStatService vsailStatService) {
         this.busService = busService;
+        this.vsailStatService = vsailStatService;
     }
 
     @GetMapping("/map")
@@ -26,9 +30,10 @@ public class VsailController extends BaseController {
         return "vsail/map";
     }
 
-    @GetMapping("/monitorCell/{busId}")
-    public String monitorCell(@PathVariable Long busId, Model model) {
+    @GetMapping("/monitorCell/{busId}/{vin}")
+    public String monitorCell(@PathVariable Long busId, @PathVariable String vin, Model model) {
         model.addAttribute("busId", busId);
+        model.addAttribute("vin", vin);
         return "vsail/cell";
     }
 
@@ -36,7 +41,8 @@ public class VsailController extends BaseController {
      * 发送信息至当前已连接的websocket客户端
      * @param vin 信息内容
      */
-    @PostMapping("/sendBusMessage")
+    @PostMapping("/public/sendBusMessage")
+    @ResponseBody
     public void sendMessage(@RequestParam String vin) {
         busService.sendMessage(vin);
     }
@@ -48,4 +54,9 @@ public class VsailController extends BaseController {
     }
 
 
+    @GetMapping("/public/testData")
+    public String getTestData(Model model) {
+        model.addAttribute("dts", vsailStatService.getTestData());
+        return "vsail/stat/test";
+    }
 }

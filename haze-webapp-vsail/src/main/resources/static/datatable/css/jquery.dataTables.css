@@ -151,7 +151,7 @@ th:active {
     border: 1px solid #D5D5D5;
     cursor: pointer;
     margin: 0 3px;
-    color:#737373;
+    /*color:#737373;*/
     padding: 2px 5px;
 }
 .paging_full_numbers a.paginate_button {

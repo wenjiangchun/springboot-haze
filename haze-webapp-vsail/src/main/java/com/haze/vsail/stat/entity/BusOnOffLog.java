@@ -28,14 +28,8 @@ public class BusOnOffLog implements Serializable {
     @ExcelProperty("vin码")
     private String vin;
 
-    @ExcelProperty("车号")
-    private String busNum;
-
     @ExcelProperty("公交自编号")
-    private String registNum;
-
-    @ExcelProperty("发动机编号")
-    private String engineNum;
+    private String busNum;
 
     @ExcelProperty("车牌号")
     private String drivingNum;
@@ -84,22 +78,6 @@ public class BusOnOffLog implements Serializable {
 
     public void setBusNum(String busNum) {
         this.busNum = busNum;
-    }
-
-    public String getRegistNum() {
-        return registNum;
-    }
-
-    public void setRegistNum(String registNum) {
-        this.registNum = registNum;
-    }
-
-    public String getEngineNum() {
-        return engineNum;
-    }
-
-    public void setEngineNum(String engineNum) {
-        this.engineNum = engineNum;
     }
 
     public String getDrivingNum() {
@@ -174,8 +152,6 @@ public class BusOnOffLog implements Serializable {
         return "BusOnOffLog{" +
                 "vin='" + vin + '\'' +
                 ", busNum='" + busNum + '\'' +
-                ", registNum='" + registNum + '\'' +
-                ", engineNum='" + engineNum + '\'' +
                 ", drivingNum='" + drivingNum + '\'' +
                 ", groupName='" + groupName + '\'' +
                 ", rootGroupName='" + rootGroupName + '\'' +

@@ -8,7 +8,7 @@
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
 			<ol class="breadcrumb">
-				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
+				<li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">统计查询</a></li>
 				<li class="active">车辆故障日志</li>
 			</ol>
@@ -25,9 +25,9 @@
 									<div class="box-body">
 										<div class="col-sm-3 m-b-xs">
 											<div class="form-group">
-												<label class="control-label">vin码</label>
+												<label class="control-label">VIN</label>
 												<div class="control-div">
-													<input type="text" placeholder="开始日期" class="form-control" name="vin_like" data-bind="value: vin">
+													<input type="text" class="form-control" name="vin_like" data-bind="value: vin">
 												</div>
 											</div>
 										</div>
@@ -60,11 +60,9 @@
 								<thead>
 								<tr>
 									<th sName="id">编号</th>
-									<th sName="vin">vin码</th>
-									<th sName="busNum">车辆编号</th>
-									<th sName="registNum">注册编号</th>
-									<th sName="engineNum">主机编号</th>
-									<th sName="drivingNum">行驶证号</th>
+									<th sName="vin">VIN</th>
+									<th sName="busNum">公交自编号</th>
+									<th sName="drivingNum">车牌号</th>
 									<th sName="groupName">运营线路</th>
 									<th sName="rootGroupName">运营公司</th>
 									<th sName="logTime">故障时间</th>

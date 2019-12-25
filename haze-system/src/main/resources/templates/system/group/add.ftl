@@ -67,6 +67,18 @@
                                     <input type="text" id="address" name="address" class="form-control"/>
                                 </div>
                             </div>
+                            <div class="form-group generic">
+                                <label for="linker" class="col-sm-2 control-label">联系人</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="tel" name="linker" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group generic">
+                                <label for="linkerMobile" class="col-sm-2 control-label">联系人电话</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="linkerMobile" name="linkerMobile" class="form-control"/>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label for="description" class="col-sm-2 control-label">描述:</label>
                                 <div class="col-xs-10">

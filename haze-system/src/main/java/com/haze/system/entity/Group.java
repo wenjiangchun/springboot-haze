@@ -83,6 +83,8 @@ public class Group extends AbstractBaseEntity<Long> {
      */
     private String description;
 
+    private String linker;
+    private String linkerMobile;
     /**
      * 机构状态
      */
@@ -196,6 +198,22 @@ public class Group extends AbstractBaseEntity<Long> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLinker() {
+        return linker;
+    }
+
+    public void setLinker(String linker) {
+        this.linker = linker;
+    }
+
+    public String getLinkerMobile() {
+        return linkerMobile;
+    }
+
+    public void setLinkerMobile(String linkerMobile) {
+        this.linkerMobile = linkerMobile;
     }
 
     /**

@@ -1,39 +1,37 @@
 package com.haze.vsail.bus.util;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.haze.common.util.HazeDateUtils;
 import com.haze.common.util.HazeJsonUtils;
 import com.haze.vsail.bus.entity.Bus;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.util.*;
 
 public class BusInfo implements Serializable {
 
     private String id;
-
     private String vin;
-
     private String busNum;
-
     private String drivingNum;
-
-    private String registNum;
-
-    private String motorNum;
-
-    private String motorName;
-
-    private String groupId;
-
-    private String groupName;
-
+    private String productNum;
     private String rootGroupId;
-
+    private String modelName;
     private String rootGroupName;
-
+    private String branchGroupId;
+    private String branchGroupName;
+    private String siteGroupId;
+    private String siteGroupName;
+    private String lineGroupId;
+    private String lineGroupName;
+    private String address;
+    private String linker;
+    private String linkerMobile;
     private String x;
-
     private String y;
-
     private int eventCode = BusEventType.BUS_EVENT_REGISTER.getEventCode();
 
     /**
@@ -51,25 +49,13 @@ public class BusInfo implements Serializable {
      */
     private boolean isOnline = false;
 
+    private List<Sensor> sensores = new ArrayList<>();
 
-    private List<?> sensores = new ArrayList<>();
-
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date sendTime;
 
-    private int sortCode;
-
     public BusInfo(Bus bus, int eventCode) {
-        this.setId(String.valueOf(bus.getId()));
-        this.setVin(bus.getVin());
-        this.setBusNum(bus.getBusNum());
-        this.setDrivingNum(bus.getDrivingNum());
-        this.setGroupId(String.valueOf(bus.getGroup().getId()));
-        this.setGroupName(String.valueOf(bus.getGroup().getFullName()));
-        this.setMotorName(bus.getMotorName());
-        this.setMotorNum(bus.getMotorNum());
-        this.setRootGroupId(String.valueOf(bus.getRootGroup().getId()));
-        this.setRootGroupName(String.valueOf(bus.getRootGroup().getFullName()));
-        this.setRegistNum(bus.getRegistNum());
+        this(BusInfo.fromBus(bus));
         this.eventCode = eventCode;
     }
 
@@ -87,28 +73,20 @@ public class BusInfo implements Serializable {
             this.setDrivingNum((String) map.get("drivingNum"));
         }
 
-        if (map.containsKey("engineNum")) {
-            this.setDrivingNum((String) map.get("engineNum"));
-        }
-
-        if (map.containsKey("motorName")) {
-            this.setMotorName((String) map.get("motorName"));
-        }
-
-        if (map.containsKey("motorNum")) {
-            this.setMotorNum((String) map.get("motorNum"));
-        }
-
-        if (map.containsKey("registNum")) {
-            this.setRegistNum((String) map.get("registNum"));
-        }
-
-        if (map.containsKey("groupName")) {
-            this.setGroupName((String) map.get("groupName"));
-        }
-
         if (map.containsKey("rootGroupName")) {
             this.setRootGroupName((String) map.get("rootGroupName"));
+        }
+
+        if (map.containsKey("lineGroupName")) {
+            this.setLineGroupName((String) map.get("lineGroupName"));
+        }
+
+        if (map.containsKey("siteGroupName")) {
+            this.setSiteGroupName((String) map.get("siteGroupName"));
+        }
+
+        if (map.containsKey("branchGroupName")) {
+            this.setBranchGroupName((String) map.get("branchGroupName"));
         }
 
         if (map.containsKey("eventCode")) {
@@ -122,12 +100,34 @@ public class BusInfo implements Serializable {
             int breakDown = Integer.parseInt(map.get("isBreakDown").toString());
             this.isBreakDown = breakDown == 1;
         }
-        if (map.containsKey("sendTime")) {
-            this.sendTime = (Date) map.get("sendTime");
+        if (map.containsKey("stime")) {
+            try {
+                this.sendTime = HazeDateUtils.parseDate((String)map.get("stime"), "yyyy-MM-dd hh:mm:ss") ;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         if (map.containsKey("x") && map.containsKey("y")) {
             this.x = (String) map.get("x");
             this.y = (String) map.get("y");
+        }
+        if (map.containsKey("modelName")) {
+            this.modelName = (String)map.get("modelName");
+        }
+        if (map.containsKey("address")) {
+            this.address = (String)map.get("address");
+        }
+        if (map.containsKey("linker")) {
+            this.linker = (String)map.get("linker");
+        }
+        if (map.containsKey("linkerMobile")) {
+            this.linkerMobile = (String)map.get("linkerMobile");
+        }
+        if (map.containsKey("sensores")) {
+            String str = (String)map.get("sensores");
+            str = str.replaceAll("'","\"");
+            //Sensor[] a = HazeJsonUtils.readFromString(str, Sensor[].class);
+            this.sensores = HazeJsonUtils.readFromString(str, sensores.getClass());
         }
     }
 
@@ -163,44 +163,60 @@ public class BusInfo implements Serializable {
         this.drivingNum = drivingNum;
     }
 
-    public String getRegistNum() {
-        return registNum;
+    public String getProductNum() {
+        return productNum;
     }
 
-    public void setRegistNum(String registNum) {
-        this.registNum = registNum;
+    public void setProductNum(String productNum) {
+        this.productNum = productNum;
     }
 
-    public String getMotorNum() {
-        return motorNum;
+    public String getBranchGroupId() {
+        return branchGroupId;
     }
 
-    public void setMotorNum(String motorNum) {
-        this.motorNum = motorNum;
+    public void setBranchGroupId(String branchGroupId) {
+        this.branchGroupId = branchGroupId;
     }
 
-    public String getMotorName() {
-        return motorName;
+    public String getBranchGroupName() {
+        return branchGroupName;
     }
 
-    public void setMotorName(String motorName) {
-        this.motorName = motorName;
+    public void setBranchGroupName(String branchGroupName) {
+        this.branchGroupName = branchGroupName;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public String getSiteGroupId() {
+        return siteGroupId;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
+    public void setSiteGroupId(String siteGroupId) {
+        this.siteGroupId = siteGroupId;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getSiteGroupName() {
+        return siteGroupName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setSiteGroupName(String siteGroupName) {
+        this.siteGroupName = siteGroupName;
+    }
+
+    public String getLineGroupId() {
+        return lineGroupId;
+    }
+
+    public void setLineGroupId(String lineGroupId) {
+        this.lineGroupId = lineGroupId;
+    }
+
+    public String getLineGroupName() {
+        return lineGroupName;
+    }
+
+    public void setLineGroupName(String lineGroupName) {
+        this.lineGroupName = lineGroupName;
     }
 
     public String getRootGroupId() {
@@ -263,11 +279,11 @@ public class BusInfo implements Serializable {
         isBreakDown = breakDown;
     }
 
-    public List<?> getSensores() {
+    public List<Sensor> getSensores() {
         return sensores;
     }
 
-    public void setSensores(List<?> sensores) {
+    public void setSensores(List<Sensor> sensores) {
         this.sensores = sensores;
     }
 
@@ -283,6 +299,38 @@ public class BusInfo implements Serializable {
         return HazeJsonUtils.writeToString(this);
     }
 
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getLinker() {
+        return linker;
+    }
+
+    public void setLinker(String linker) {
+        this.linker = linker;
+    }
+
+    public String getLinkerMobile() {
+        return linkerMobile;
+    }
+
+    public void setLinkerMobile(String linkerMobile) {
+        this.linkerMobile = linkerMobile;
+    }
+
     public boolean isOnline() {
         if (this.eventCode == BusEventType.BUS_EVENT_ON.getEventCode() || this.eventCode == BusEventType.BUS_EVENT_REAL.getEventCode()) {
             return true;
@@ -290,32 +338,75 @@ public class BusInfo implements Serializable {
         return false;
     }
 
-    public int getSortCode() {
-        if (isFire) {
-            return 1;
-        }
-        if (isBreakDown) {
-            return 2;
-        }
-        if (isOnline) {
-            return 3;
-        }
-        return 4;
-    }
-
     public static Map<String, Object> fromBus(Bus bus) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", bus.getId().toString());
         map.put("vin", bus.getVin());
         map.put("busNum", bus.getBusNum());
+        map.put("modelName", bus.getModelName());
+        map.put("factoryName", bus.getFactoryName());
         map.put("drivingNum", bus.getDrivingNum());
-        map.put("engineNum", bus.getEngineNum());
-        map.put("motorName", bus.getMotorName());
-        map.put("motorNum", bus.getMotorNum());
-        map.put("groupId", bus.getGroup().getId().toString());
-        map.put("rootGroupId", bus.getRootGroup().getId().toString());
-        map.put("groupName", bus.getGroup().getFullName());
+        map.put("productNum", bus.getProductNum());
+        map.put("rootGroupId", bus.getRootGroup().getId());
         map.put("rootGroupName", bus.getRootGroup().getFullName());
+        map.put("branchGroupId", bus.getBranchGroup().getId());
+        map.put("branchGroupName", bus.getBranchGroup().getFullName());
+        map.put("siteGroupId", bus.getSiteGroup().getId());
+        map.put("siteGroupName", bus.getSiteGroup().getFullName());
+        map.put("lineGroupId", bus.getLineGroup().getId());
+        map.put("lineGroupName", bus.getLineGroup().getFullName());
+        map.put("address", bus.getSiteGroup().getAddress());
+        map.put("linker", bus.getSiteGroup().getLinker());
+        map.put("linkerMobile", bus.getSiteGroup().getLinkerMobile());
         return map;
+    }
+
+
+    public static class Sensor {
+        private int sn;
+        private String fire;
+        private String error;
+        private int concen;
+        private int temp;
+
+        public int getSn() {
+            return sn;
+        }
+
+        public void setSn(int sn) {
+            this.sn = sn;
+        }
+
+        public String getFire() {
+            return fire;
+        }
+
+        public void setFire(String fire) {
+            this.fire = fire;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+
+        public int getConcen() {
+            return concen;
+        }
+
+        public void setConcen(int concen) {
+            this.concen = concen;
+        }
+
+        public int getTemp() {
+            return temp;
+        }
+
+        public void setTemp(int temp) {
+            this.temp = temp;
+        }
     }
 }

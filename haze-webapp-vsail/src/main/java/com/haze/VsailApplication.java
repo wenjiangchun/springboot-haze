@@ -1,7 +1,9 @@
 package com.haze;
 
 import com.haze.core.jpa.repository.SimpleBaseRepository;
+import com.haze.shiro.util.ShiroUtils;
 import com.jagregory.shiro.freemarker.ShiroTags;
+import freemarker.template.TemplateModelException;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

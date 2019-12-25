@@ -1,6 +1,7 @@
 package com.haze.vsail.stat.service;
 
 import com.haze.common.util.HazeDateUtils;
+import com.haze.common.util.HazeJsonUtils;
 import com.haze.common.util.HazeStringUtils;
 import com.haze.core.jpa.repository.HazeSpecification;
 import com.haze.vsail.stat.dao.BusBreakDownLogDao;
@@ -217,8 +218,25 @@ public class VsailStatService {
     }
 
 
+    /**
+     * 根据车辆vin码获取最后10条传感器数据
+     * @param vin 车辆vin码
+     * @return [vin, 数据发送时间, 传感器数量, 是否火警, 是否故障, 传感器编号,传感器温度,传感器一氧化碳浓度, 传感器报文[1-6]]
+     */
+    public List<Object[]> getSensor(String vin) {
+        String sql = "select * from (select vin, upload_time, array_length(sensores,1) ct, bus_data->>'isFire' as isFire,bus_data->>'isError' as isError";
+        for (int i = 1; i <=6; i++) {
+            sql += ",sensores["+i+"]->>'sn' as sn"+i+", sensores["+i+"]->>'temp' as temp"+i+", sensores["+i+"]->>'concen' as concen"+i+", sensores["+i+"]->>'fire' as fire"+i+", sensores["+i+"]->>'error' as error"+i;
+        }
+        sql += " from v_bus_data_log where array_length(sensores,1) is not null  and vin=:vin order by upload_time desc limit 10)b order by upload_time asc";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("vin", vin);
+        return query.getResultList();
+    }
+
+
     public List<Object[]> getTestData() {
-        String sql = " select upload_time, bus_data, data from v_bus_data_log order by upload_time desc limit 500";
+        String sql = " select upload_time, data from v_bus_data_log order by upload_time desc limit 500";
         Query query = em.createNativeQuery(sql);
         return query.getResultList();
     }

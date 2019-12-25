@@ -15,33 +15,63 @@
                 <form id="inputForm" class="form-horizontal" action="${ctx}/v/${name}/save/" method="post">
                     <div class="box-body">
                         <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">产品名称</label>
+                            <label for="productNum" class="col-sm-2 control-label">主机ID</label>
                             <div class="col-sm-10">
-                                <input type="text" id="name" name="name" class="form-control" maxlength="20" value="${product.name!}" required/>
+                                <input type="text" id="productNum" name="productNum" class="form-control" maxlength="20" value="${product.productNum!}" required/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="supplyName" class="col-sm-2 control-label">${cname!}名称</label>
+                            <label for="vin" class="col-sm-2 control-label">VIN</label>
                             <div class="col-sm-10">
-                                <input type="text" id="supplyName" name="supplyName" class="form-control" maxlength="20" value="${product.supplyName!}" required/>
+                                <input type="text" id="vin" name="vin" class="form-control" maxlength="20" value="${product.vin!}" required/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="busNum" class="col-sm-2 control-label">车辆自编号</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="busNum" name="busNum" class="form-control" maxlength="20" value="${product.busNum!}" required/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="control" class="col-sm-2 control-label">控制模块</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="control" name="control" class="form-control" maxlength="50" value="${product.control!}" required/>
                             </div>
                         </div>
                         <div class="form-group db">
-                            <label for="supplyAddress" class="col-sm-2 control-label">${cname!}地址</label>
+                            <label for="supplyAddress" class="col-sm-2 control-label">显示模块</label>
                             <div class="col-sm-10">
-                                <input type="text" id="supplyAddress" name="supplyAddress" class="form-control" maxlength="200" value="${product.supplyAddress!}" required/>
+                                <input type="text" id="display" name="display" class="form-control" maxlength="200" value="${product.display!}" required/>
                             </div>
                         </div>
                         <div class="form-group db">
-                            <label for="linker" class="col-sm-2 control-label">联系人</label>
+                            <label for="probe" class="col-sm-2 control-label">探测启动模块</label>
                             <div class="col-sm-10">
-                                <input type="text" id="linker" name="linker" class="form-control" maxlength="20" value="${product.linker!}" required/>
+                                <input type="text" id="probe" name="probe" class="form-control" maxlength="50" value="${product.probe!}" required/>
                             </div>
                         </div>
                         <div class="form-group db">
-                            <label for="mobile" class="col-sm-2 control-label">联系电话</label>
+                            <label for="outfire" class="col-sm-2 control-label">气溶胶灭火装置</label>
                             <div class="col-sm-10">
-                                <input type="text" id="mobile" name="mobile" class="form-control" maxlength="11" value="${product.mobile!}" required/>
+                                <input type="text" id="outfire" name="outfire" class="form-control" maxlength="50" value="${product.outfire!}" required/>
+                            </div>
+                        </div>
+                        <div class="form-group db">
+                            <label for="line" class="col-sm-2 control-label">感温电缆</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="line" name="line" class="form-control" maxlength="50" value="${product.line!}" required/>
+                            </div>
+                        </div>
+                        <div class="form-group db">
+                            <label for="transfer" class="col-sm-2 control-label">智能传输模块</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="transfer" name="transfer" class="form-control" maxlength="50" value="${product.transfer!}" required/>
+                            </div>
+                        </div>
+                        <div class="form-group db">
+                            <label for="sim" class="col-sm-2 control-label">SIM卡</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="sim" name="sim" class="form-control" maxlength="50" value="${product.sim!}" required/>
                             </div>
                         </div>
                         <div class="form-group db">

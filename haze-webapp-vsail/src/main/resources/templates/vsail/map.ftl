@@ -2,9 +2,11 @@
 <html lang="zh">
 <head>
     <#include "../common/v-head.ftl"/>
+    <link rel="stylesheet" href="${ctx}/res/toastr/toastr.css" />
+    <link rel="stylesheet" href="${ctx}/res/vsail/css/layer.css" />
     <style type="text/css">
         #allmap {
-            width: 100%;
+            width: 99%;
             height: 923px;
         }
         .infoBoxContent{font-size:12px;background: royalblue;}
@@ -17,9 +19,9 @@
             <div id="allmap"></div>
             <div class="input-serch">
                 <div class="input-group">
-                    <input type="text" class="input input-sm form-control" id="query" data-bind="value:keyWorld"/>
+                    <input type="text" class="input input-sm form-control" id="query" data-bind="value:keyWorld" placeholder="VIN码/公交自编号/车牌号"/>
                     <span class="input-group-btn">
-                          <button type="button" class="btn btn-sm btn-white" data-bind="click:function(){busViewModel.query(0)}"><i><img src="${ctx}/res/vsail/img/souser.png"></i></button>
+                          <button type="button" class="btn btn-sm btn-white" data-bind="click:function(){busViewModel.query(1)}"><i><img src="${ctx}/res/vsail/img/souser.png"></i></button>
                     </span>
                 </div>
                 <div class="ibox list-news">
@@ -30,7 +32,7 @@
                             <span>报警情况</span>
                         </div>
                         <ul class="sortable-list connectList agile-list ui-sortable" data-bind="foreach:showBusData">
-                            <li data-bind="attr: {'id':id,'vin':vin}, visible:show, class:className, click:function(){myMap.selectMarker($data.id)}">
+                            <li data-bind="attr: {'id':id,'vin':vin}, visible:show, class:className, click:function(){busViewModel.openLayer($data.id,$data.vin)}">
                                 <span class="lable-name" data-bind="text: vin"></span>
                                 <span class="lable-state" data-bind="text: state"></span>
                                 <span class="lable-give" data-bind="text: desc"></span>
@@ -63,28 +65,39 @@
         </div>
     </div>
 </div>
+<div id="audio1">
+</div>
+
 <script type="text/template" id="tpl">
     <div class="infoBoxContent">
         <table class="table table-bordered">
             <tr>
-                <th>vin码</th>
+                <th>VIN码</th>
                 <td><%=vin%></td>
             </tr>
             <tr>
                 <th>车牌号</th>
-                <td><%=registNum%></td>
-            </tr>
-            <tr>
-                <th>行驶证</th>
                 <td><%=drivingNum%></td>
             </tr>
             <tr>
-                <th>发动机编号</th>
-                <td><%=motorNum%></td>
+                <th>公交自编号</th>
+                <td><%=busNum%></td>
             </tr>
             <tr>
-                <th>发动机型号</th>
-                <td><%=motorName%></td>
+                <th>场站</th>
+                <td><%=siteGroupName%></td>
+            </tr>
+            <tr>
+                <th>场站地址</th>
+                <td><%=address%></td>
+            </tr>
+            <tr>
+                <th>联系人</th>
+                <td><%=linker%></td>
+            </tr>
+            <tr>
+                <th>联系人电话</th>
+                <td><%=linkerMobile%></td>
             </tr>
             <tr>
                 <th>所属公司</th>
@@ -92,11 +105,11 @@
             </tr>
             <tr>
                 <th>所属线路</th>
-                <td><%=groupName%></td>
+                <td><%=lineGroupName%></td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <button class="btn btn-xs btn-warning" onclick="busViewModel.openLayer(<%=id%>,'<%=vin%>')">详情</button>
+                    <button class="btn btn-xs btn-warning" onclick="busViewModel.openLayer(<%=id%>,<%=vin%>)">详情</button>
                 </td>
             </tr>
         </table>
@@ -106,7 +119,9 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script>
+<script type="text/javascript" src="${ctx}/res/toastr/toastr.js"></script>
 <script type="text/javascript" src="${ctx}/res/map/InfoBox.js"></script>
+<script type="text/javascript" src="${ctx}/res/vsail/js/jquery.slimscroll.js"></script>
 <script>
     function BusMap(containerId, styleId) {
         let map = new BMap.Map(containerId);
@@ -140,10 +155,18 @@
             this.markerCluster.removeMarker(marker);
         }
         let pt = new BMap.Point(x, y);
-        let icon = new BMap.Icon("${ctx}/res/dot-1.png", new BMap.Size(36, 36));
+        let iconFile = "${ctx}/res/dot-1.png";
+        if (data.breadDown) {
+            iconFile = "${ctx}/res/dot-b.png";
+        }
+        if (data.fire) {
+            iconFile = "${ctx}/res/dot-f.gif";
+        }
+        let icon = new BMap.Icon(iconFile, new BMap.Size(36, 36));
         marker = new BMap.Marker(pt);
         marker.setIcon(icon);
-        marker.id = id;
+        marker.id = data.vin;
+        marker.busId = id;
         marker.busData = data;
         let label = new BMap.Label(name);
         label.setOffset(new BMap.Size(20, -20));
@@ -172,26 +195,38 @@
         this.markerCluster.clearMarkers();
     };
 
+    BusMap.prototype.centerMarker = function(id) {
+        const marker = this.getMarker(id);
+        if (marker != null) {
+            this.map.panTo(new BMap.Point(marker.getPosition().lng, marker.getPosition().lat));
+        }
+    };
     BusMap.prototype.selectMarker = function(id) {
         const marker = this.getMarker(id);
-        const data = marker.busData;
-        this.map.panTo(new BMap.Point(marker.getPosition().lng, marker.getPosition().lat));
-        if (this.infoBox != null) {
-            this.infoBox.close();
+        if (marker != null) {
+            const data = marker.busData;
+            this.map.panTo(new BMap.Point(marker.getPosition().lng, marker.getPosition().lat));
+            if (this.infoBox != null) {
+                this.infoBox.close();
+            }
+            if (data.id == null) {
+                data.id = -1;
+            }
+            this.infoBox = new BMapLib.InfoBox(this.map,this.infoBoxTemplate(data),{
+                boxStyle:{width: "300px"
+                },
+                closeIconMargin: "5px 5px 0 0",
+                closeIconUrl:'${ctx}/res/close5.png',
+                align:INFOBOX_AT_BOTTOM,
+                enableAutoPan: false
+            });
+            this.infoBox.open(marker);
         }
-        this.infoBox = new BMapLib.InfoBox(this.map,this.infoBoxTemplate(data),{
-            boxStyle:{width: "300px"
-            },
-            closeIconMargin: "5px 5px 0 0",
-            closeIconUrl:'${ctx}/res/close5.png',
-            align:INFOBOX_AT_BOTTOM,
-            enableAutoPan: false
-        });
-        this.infoBox.open(marker);
+
     };
 
     let myMap = new BusMap("allmap", '94549fedffbeb65f9e3a99373f691b59');
-    const pageSize = 1;
+    const pageSize = 20;
     /**
      * 当前车辆信息
      * busData:所有车辆信息，当有新的车辆数据进来时更新该数据
@@ -202,16 +237,16 @@
         showBusData:ko.observableArray([]),
         totalPage:ko.observableArray([]),
         pageIndex:ko.observable(1),
-        showCode:ko.observable(0),
+        showCode:ko.observable(-1),
         keyWorld:ko.observable(''),
         validBusData: function(data) {
             switch (this.showCode()) {
                 case 1:
-                    return data.isOnline;
+                    return data.online;
                 case 2:
-                    return data.isBreakDown;
+                    return data.breakDown;
                 case 3:
-                    return data.isOnline;
+                    return data.fire;
                 default:
                     return true;
             }
@@ -229,31 +264,41 @@
                 bus.state = '下线';
                 bus.desc = '正常';
                 bus.className = 'info-element';
-                if (bus.isFire) {
-                    bus.state = '火警';
-                    //TODO
-                    bus.desc = '火警---';
-                    bus.className = 'danger-element';
+                bus.sn = 3;
+                if (bus.online) {
+                    bus.state =  '在线';
+                    bus.className = 'success-element';
+                    bus.sn = 2;
                 }
-                if (bus.isBreakDown) {
+
+                if (bus.breakDown) {
                     bus.state =  '故障';
                     //TODO
                     bus.desc = '故障---';
                     bus.className = 'warning-element';
+                    bus.sn = 1;
                 }
-                if (bus.isOnline) {
-                    bus.state =  '在线';
-                    bus.className = 'success-element';
+                if (bus.fire) {
+                    bus.state = '火警';
+                    //TODO
+                    bus.desc = '火警喷发';
+                    bus.className = 'danger-element';
+                    bus.sn = 0;
                 }
                 const keyWorld = busViewModel.keyWorld();
-                if (bus.vin.indexOf(keyWorld) === -1) {
+                if (bus.vin.indexOf(keyWorld) === -1 && bus.drivingNum.indexOf(keyWorld) === -1 && bus.busNum.indexOf(keyWorld) === -1) {
                     bus.show = false;
                 } else {
                     bus.show = true;
                     showBusDts.push(bus);
-                    map.addMarker(bus);
+                    if (bus.state !== '下线') {
+                        map.addMarker(bus);
+                    }
+
                 }
             });
+            //对showBusDts进行排序
+            showBusDts =  _.sortBy(showBusDts, 'sn');
             //计算共有几页
             const totalPage = showBusDts.length % pageSize === 0 ? showBusDts.length/pageSize : showBusDts.length/pageSize + 1;
             let temp = [];
@@ -263,6 +308,7 @@
             this.totalPage(temp);
             const start = (this.pageIndex() - 1) * pageSize;
             this.showBusData(_.filter(showBusDts, function(data, idx){ return idx >=start && idx < (start + pageSize); }));
+
         },
         query: function(pageSize) {
             this.pageIndex(pageSize);
@@ -277,14 +323,36 @@
             $('#aFloatTools_Hide').show();
         },
         openLayer: function(busId, vin) {
-            let url = "${ctx}/v/monitorCell/" + busId;
-            let $this = this;
-            showMyModel(url,'车辆实时信息【vin=' + vin + '】', '98%', '90%', function() {
+            hideMyModal();
+            /*let url = "${ctx}/v/monitorCell/" + 8 + '/' + vin;
+            showMyModel(url,'车辆实时信息【vin=' + vin + '】', '80%', '80%', function() {
             });
+            return;*/
+            //在地图中心显示该点坐标
+            myMap.centerMarker(vin);
+            if (busId != null && busId !== -1) {
+                let url = "${ctx}/v/monitorCell/" + busId + '/' + vin;
+                let $this = this;
+                showMyModel(url,'车辆实时信息【vin=' + vin + '】', '80%', '95%', function() {
+                });
+
+            } else {
+                alert('该车辆未录入系统，不能查看详情信息');
+            }
+
         },
         clear: function(map) {
-            hideMyModal();
+            //hideMyModal();
             map.clearMarkers();
+        },
+        showFireNotify: function(data) {
+            toastr.options = {
+                closeButton: true,
+                positionClass: 'toast-bottom-right',
+                onclick: null,
+                timeOut: 50000
+            };
+            toastr.error('vin=收到火警信息.', '检测到火警信息')
         }
     };
     ko.applyBindings(busViewModel);
@@ -322,9 +390,18 @@
 
         if (busViewModel.busData().length === 0) {
             busViewModel.busData(parent.getBusData());
-            initBusData(busViewModel.busData(), 0);
+            initBusData(busViewModel.busData(), -1);
         }
-        $("#aFloatTools_Show").click();
+        //$("#aFloatTools_Show").click();
+
+        //TODO 测试
+       /* let alarm = $('#audio1')
+        for (let i = 0; i < 5; i++) {
+            busViewModel.showFireNotify('ttt');
+            alarm.html('<audio src="${ctx}/res/vsail/file/fireAlarm.wav" autoplay="autoplay"></audio>')
+        }*/
+
+
     });
 
 
@@ -334,6 +411,9 @@
         busViewModel.processBusData(dts, showCode, myMap);
         busViewModel.busData(dts);
         busViewModel.showCode(showCode);
+        if (showCode !== -1) {
+            $("#aFloatTools_Show").click();
+        }
     }
 
     function getBusData(busId) {
@@ -358,10 +438,12 @@
         return '下线';
     }
 
-    function updateBus(data) {
-        if (busViewModel.validBusData(data)) {
-
+    function showFire(data) {
+        const marker = myMap.getMarker(data.vin);
+        if (marker == null) {
+            myMap.addMarker(data);
         }
+        myMap.selectMarker(data.vin);
     }
 
 </script>

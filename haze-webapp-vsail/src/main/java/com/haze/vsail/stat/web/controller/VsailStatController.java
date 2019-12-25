@@ -124,6 +124,49 @@ public class VsailStatController {
         return "vsail/stat/chart";
     }
 
+    /**
+     * 获取所有运营公司信息
+     *
+     * @return
+     */
+    @RequestMapping(value = "getUserGroups")
+    @ResponseBody
+    public List<Group> getTopGroups() {
+        Set<Group> newGroup = new HashSet<>();
+        Group root = new Group();
+        root.setFullName("运营公司");
+        ShiroUser shiroUser = ShiroUtils.getCurrentUser();
+        Objects.requireNonNull(shiroUser);
+        List<Group> groupList = new ArrayList<>();
+        if (shiroUser.isSuperAdmin()) {
+            //查询运营公司信息
+            List<Group> groups = busService.getBusGroups();
+            for (Group g : groups) {
+                g.setUsers(null);
+                g.setChilds(null);
+                //g.setGroupType(g.getGroupType().getCode());
+                if (g.getPid() == null) {
+                    g.setParent(root);
+                }
+                newGroup.add(g);
+            }
+            newGroup.add(root);
+        } else {
+            //根据用户机构类型判断
+            Group rootGroup = shiroUser.getGroup().getRootGroup();
+            if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL)) { //vsail机构下用户返回所有车辆
+                groupList = busService.getBusGroups().stream().filter(group -> group.getParent() == null).collect(Collectors.toList());
+            } else if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_BUS)) {
+                //其它机构用户返回本机构信息
+                groupList.add(rootGroup);
+            } else {
+                //TODO 暂不处理
+            }
+        }
+
+
+        return new ArrayList<>(newGroup);
+    }
 
     @PostMapping(value = "getStatCount")
     @ResponseBody
@@ -181,7 +224,7 @@ public class VsailStatController {
             for (Object[] ct : fireCount) {
                 String dy = ct[0] + "-" + ct[1] + "-" + ct[2];
                 if (strDay.equalsIgnoreCase(dy)) {
-                    count = (int) ct[3];
+                    count = Integer.parseInt(ct[3].toString()) ;
                     break;
                 }
             }
@@ -216,9 +259,11 @@ public class VsailStatController {
 
 
 
-    @GetMapping("testData")
-    public String getTestData(Model model) {
-        model.addAttribute("dts", vsailStatService.getTestData());
-       return "vsail/stat/test";
+
+
+    @PostMapping("getSensor/{vin}")
+    @ResponseBody
+    public List<Object[]> getSensor(Model model, @PathVariable String vin) {
+       return vsailStatService.getSensor(vin);
     }
 }

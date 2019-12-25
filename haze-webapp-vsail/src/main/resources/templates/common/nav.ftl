@@ -18,24 +18,34 @@
                     </li>
                 </ul>
             </li>
+            <@shiro.hasPermission name="query:view">
             <li>
-                <a href="#">
-                    <i><img src="${ctx}/res/vsail/img/nav-icon2.png"></i>
-                    <span class="nav-label">信息查询</span>
-                    <span class="fa arrow"></span>
-                </a>
+                    <a href="#">
+                        <i><img src="${ctx}/res/vsail/img/nav-icon2.png"></i>
+                        <span class="nav-label">信息查询</span>
+                        <span class="fa arrow"></span>
+                    </a>
+
                 <ul class="nav nav-second-level">
+                    <@shiro.hasPermission name="query:onoff:view">
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/onoff">车辆上线/下线记录</a>
                     </li>
+                    </@shiro.hasPermission>
+                    <@shiro.hasPermission name="query:fire:view">
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/fire">火警记录</a>
                     </li>
+                    </@shiro.hasPermission>
+                    <@shiro.hasPermission name="query:breakdown:view">
                     <li>
                         <a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/stat/breakdown">故障记录</a>
                     </li>
+                    </@shiro.hasPermission>
                 </ul>
             </li>
+            </@shiro.hasPermission>
+            <@shiro.hasPermission name="stat:view">
             <li>
                 <a href="#">
                     <i><img src="${ctx}/res/vsail/img/nav-icon4.png"></i>
@@ -43,11 +53,15 @@
                     <span class="fa arrow"></span>
                 </a>
                <ul class="nav nav-second-level">
+                   <@shiro.hasPermission name="stat:chart:view">
                     <li>
                         <a class="J_menuItem"href="javascript:void(0)" url="${ctx}/v/stat/chart">统计分析</a>
                     </li>
+                   </@shiro.hasPermission>
                 </ul>
             </li>
+            </@shiro.hasPermission>
+            <@shiro.hasPermission name="vsail:view">
             <li>
                 <a href="#">
                     <i class="fa fa-desktop"></i>
@@ -55,18 +69,30 @@
                     <span class="fa arrow"></span>
                 </a>
                 <ul class="nav nav-second-level">
-                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/bus/view" id="sys_user_menu"><i
-                                    class="fa fa-wrench"></i>产品管理</a>
+                    <@shiro.hasPermission name="vsail:product:view">
+                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/product/view" id="sys_res_menu"><i class="fa fa-database"></i>产品管理</a>
                     </li>
+                    </@shiro.hasPermission>
+                    <@shiro.hasPermission name="vsail:busInfo:view">
+                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/bus/info" id="sys_bus_menu"><i
+                                    class="fa fa-wrench"></i>车辆管理</a>
+                    </li>
+                    </@shiro.hasPermission>
+                    <@shiro.hasPermission name="vsail:bus:view">
+                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/bus/view" id="sys_user_menu"><i
+                                    class="fa fa-wrench"></i>运营管理</a>
+                    </li>
+                    </@shiro.hasPermission>
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/model/view" id="sys_group_menu"><i
                                     class="fa fa-users"></i>车辆配置管理</a>
                     </li>
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/engine/view" id="sys_role_menu"><i class="fa fa-gears"></i>主机厂管理</a>
                     </li>
-                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/product/view" id="sys_res_menu"><i class="fa fa-database"></i>供应商管理</a>
-                    </li>
+
                 </ul>
             </li>
+            </@shiro.hasPermission>
+            <@shiro.hasPermission name="vsail:view">
             <li>
                 <a href="#">
                     <i class="fa fa-desktop"></i>
@@ -88,7 +114,9 @@
                     </li>
                 </ul>
             </li>
-            <#--<li>
+            </@shiro.hasPermission>
+            <@shiro.hasPermission name="monitor:view">
+            <li>
                 <a href="#">
                     <i class="fa fa-eye"></i>
                     <span class="nav-label">系统监控</span>
@@ -97,12 +125,13 @@
                 <ul class="nav nav-second-level">
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/shiro/online/view" id="monitor_online_menu"><i class="fa fa-user"></i>在线用户</a>
                     </li>
-                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/monitor/jvm/view" id="monitor_jvm_menu"><i class="fa fa-coffee"></i>JVM信息</a>
-                    </li>
+                    <#--<li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/monitor/jvm/view" id="monitor_jvm_menu"><i class="fa fa-coffee"></i>JVM信息</a>
+                    </li>-->
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/m/redis/view" id="monitor_redis_menu"><i class="fa fa-cube"></i>redis信息</a>
                     </li>
                 </ul>
-            </li>-->
+            </li>
+            </@shiro.hasPermission>
         </ul>
     </div>
 </nav>

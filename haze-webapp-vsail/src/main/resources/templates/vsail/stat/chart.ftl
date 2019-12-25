@@ -3,12 +3,15 @@
 <head>
     <title>上线下线信息</title>
     <#include "../../common/v-head.ftl"/>
+    <#include "../../common/ztree.ftl"/>
+    <link rel="stylesheet" type="text/css" media="all" href="${ctx}/res/treeSelect/treeSelect.css"/>
     <style>
         .wrapper-content {
             padding: 20px;
             overflow: auto;
         }
     </style>
+    <script src="${ctx}/res/treeSelect/treeSelect.js"></script>
 </head>
 <body >
 <div id="wrapper">
@@ -26,11 +29,13 @@
                                     <div class="form-group">
                                         <label class="control-label">运营公司</label>
                                         <div class="control-div" style="width: 220px">
-                                            <select class="form-control m-b" name="rootGroupId" data-bind="value: rootGroupId">
+                                            <#--<select class="form-control m-b" name="rootGroupId" data-bind="value: rootGroupId">
                                                 <#list groupList as group >
                                                     <option value="${group.id}">${group.fullName}</option>
                                                 </#list>
-                                            </select>
+                                            </select>-->
+                                            <#--<input class="form-control m-b" value="" id="groupBtn">-->
+                                            <div class="treeSelect m-b"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -83,11 +88,11 @@
 <!--右侧部分结束-->
 </div>
 <script type="text/javascript" src="${ctx}/res/echarts/echarts.min.js"></script>
-<script type="text/javascript" src="${ctx}/res/echarts/dark.js"></script>
+<script type="text/javascript" src="${ctx}/res/echarts/chalk.js"></script>
 
 <script type="text/javascript">
     let viewModel = {
-        rootGroupId: ko.observable(),
+        rootGroupId: ko.observable(''),
         startDay: ko.observable('${startDay}'),
         endDay:ko.observable('${endDay}'),
         query: function () {
@@ -118,7 +123,11 @@
     $(function() {
         ko.applyBindings(viewModel);
         console.log(viewModel.rootGroupId());
-        viewModel.query();
+        //viewModel.query();
+        $(".treeSelect").treeSelect({
+            data:{},
+            inputId:"groupBtn"
+        })
     });
 
     function createPieChart(divId, data, title) {
@@ -177,7 +186,7 @@
                 }
             ]
         };
-        let myChart = echarts.init(document.getElementById(divId), 'dark');
+        let myChart = echarts.init(document.getElementById(divId), 'chalk');
         myChart.setOption(option);
     }
 
@@ -235,7 +244,7 @@
             }]
         };
 
-        let myChart = echarts.init(document.getElementById(divId), 'dark');
+        let myChart = echarts.init(document.getElementById(divId), 'chalk');
         myChart.setOption(option);
     }
 
@@ -314,7 +323,7 @@
                 }
             ]
         };
-        let myChart = echarts.init(document.getElementById(divId), 'dark');
+        let myChart = echarts.init(document.getElementById(divId), 'chalk');
         myChart.setOption(option);
     }
 </script>

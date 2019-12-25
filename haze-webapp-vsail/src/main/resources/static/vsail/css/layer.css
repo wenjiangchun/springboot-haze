@@ -1,0 +1,32 @@
+/****弹出框样式***/
+
+.layui-layer-ico {
+    background: url(../img/colse.png) no-repeat !important;
+    width: 20px;
+    height: 20px;
+}
+.layui-layer-setwin a{
+	 width: 27px !important;
+    height: 25px !important;
+    margin-right: 10px;
+}
+
+
+.layui-layer-title{
+	border: none !important;
+	background-color: #001e30 !important;
+	color:#001e30;
+}
+.layui-layer-setwin a cite{
+	background: #FFFFFF !important;
+}
+.layui-layer-content{
+	background-color: #001e30;
+
+}
+
+.layui-layer-border {
+	border: 0px solid #B2B2B2;
+    border: 0px solid rgba(0, 0, 0, .1);
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, .2)
+}

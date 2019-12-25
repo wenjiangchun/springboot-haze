@@ -2,7 +2,6 @@ package com.haze.vsail.bus.entity;
 
 import com.haze.core.jpa.entity.AbstractLoginDeletedEntity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -10,96 +9,121 @@ import javax.persistence.Table;
  * 车辆产品信息
  */
 @Entity
-@Table(name = "v_bus_product")
+@Table(name = "v_product")
 public class Product extends AbstractLoginDeletedEntity<Long> {
 
-    private String name;
-    private String supplyName;
-    private String supplyAddress;
-    private String linker;
-    private String mobile;
-    private String tel;
-    private String description;
+    private String productNum;
+    private String vin;
+    private String busNum;
+    private String control;
+    private String display;
+    private String probe;
+    private String outfire;
+    private String line;
+    private String transfer;
+    private String sim;
 
     public Product() {
     }
 
-    @Column(length = 50)
-    public String getName() {
-        return name;
+    public String getProductNum() {
+        return productNum;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductNum(String productNum) {
+        this.productNum = productNum;
     }
 
-    @Column(length = 100)
-    public String getSupplyName() {
-        return supplyName;
+    public String getVin() {
+        return vin;
     }
 
-    public void setSupplyName(String supplyName) {
-        this.supplyName = supplyName;
+    public void setVin(String vin) {
+        this.vin = vin;
     }
 
-    @Column(length = 200)
-    public String getSupplyAddress() {
-        return supplyAddress;
+    public String getBusNum() {
+        return busNum;
     }
 
-    public void setSupplyAddress(String supplyAddress) {
-        this.supplyAddress = supplyAddress;
+    public void setBusNum(String busNum) {
+        this.busNum = busNum;
     }
 
-    @Column(length = 20)
-    public String getTel() {
-        return tel;
+    public String getControl() {
+        return control;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setControl(String control) {
+        this.control = control;
     }
 
-    @Column(length = 20)
-    public String getLinker() {
-        return linker;
+    public String getDisplay() {
+        return display;
     }
 
-    public void setLinker(String linker) {
-        this.linker = linker;
+    public void setDisplay(String display) {
+        this.display = display;
     }
 
-    @Column(length = 11)
-    public String getMobile() {
-        return mobile;
+    public String getProbe() {
+        return probe;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setProbe(String probe) {
+        this.probe = probe;
     }
 
-    @Column(length = 200)
-    public String getDescription() {
-        return description;
+    public String getOutfire() {
+        return outfire;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setOutfire(String outfire) {
+        this.outfire = outfire;
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public void setLine(String line) {
+        this.line = line;
+    }
+
+    public String getTransfer() {
+        return transfer;
+    }
+
+    public void setTransfer(String transfer) {
+        this.transfer = transfer;
+    }
+
+    public String getSim() {
+        return sim;
+    }
+
+    public void setSim(String sim) {
+        this.sim = sim;
     }
 
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", supplyName='" + supplyName + '\'' +
-                ", supplyAddress='" + supplyAddress + '\'' +
-                ", linker='" + linker + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", tel='" + tel + '\'' +
-                ", description='" + description + '\'' +
+                "productNum='" + productNum + '\'' +
+                ", vin='" + vin + '\'' +
+                ", busNum='" + busNum + '\'' +
+                ", control='" + control + '\'' +
+                ", display='" + display + '\'' +
+                ", probe='" + probe + '\'' +
+                ", outfire='" + outfire + '\'' +
+                ", line='" + line + '\'' +
+                ", transfer='" + transfer + '\'' +
+                ", sim='" + sim + '\'' +
+                ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", deleteTime=" + deleteTime +
+                ", deleted=" + deleted +
                 '}';
     }
 }

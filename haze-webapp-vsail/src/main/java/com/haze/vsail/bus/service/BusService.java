@@ -32,17 +32,15 @@ public class BusService extends AbstractLogicDeletedService<Bus, Long> {
 
     private DictService dictService;
 
-    private BusModelService busModelService;
 
     private RedisManager redisManager;
 
-    public BusService(BusDao busDao, GroupService groupService, DictService dictService, RedisManager redisManager, BusModelService busModelService) {
+    public BusService(BusDao busDao, GroupService groupService, DictService dictService, RedisManager redisManager) {
         super(busDao);
         this.busDao = busDao;
         this.groupService = groupService;
         this.dictService = dictService;
         this.redisManager = redisManager;
-        this.busModelService = busModelService;
     }
 
     @Transactional(readOnly = true)
@@ -105,27 +103,49 @@ public class BusService extends AbstractLogicDeletedService<Bus, Long> {
     }
 
     /**
-     * 保存车辆信息 同时保存缓信息以及发送车辆信息事件
+     * 保存车辆信息
      * @param bus 车辆信息
      * @return 保存后车辆信息
      * @throws Exception
      */
-    @Override
     @Transactional(rollbackFor=Exception.class)
-    public Bus save(Bus bus) throws Exception {
-        boolean isNew = bus.isNew();
-        BusModel busModel = busModelService.findById(bus.getBusModel().getId());
-        bus.setBusModel(busModel);
+    public Bus saveBusInfo(Bus bus) throws Exception {
         bus =  super.save(bus);
-        Map<String, Object> mapCache = BusInfo.fromBus(bus);
-        BusEventType busEventType = BusEventType.BUS_EVENT_REGISTER;
-        if (isNew) {
+        return bus;
+    }
+
+    /**
+     * 保存运营信息 同时保存缓信息以及发送车辆信息事件
+     * @param bus 车辆信息
+     * @return 保存后车辆信息
+     * @throws Exception
+     */
+    @Transactional(rollbackFor=Exception.class)
+    public Bus saveBus(Bus bus, BusEventType busEventType) throws Exception {
+        bus =  super.save(bus);
+        if (bus.getUsed()) {
+            Map<String, Object> mapCache = BusInfo.fromBus(bus);
             mapCache.put("eventCode", String.valueOf(busEventType.getEventCode()));
+            /*mapCache.put("vin", bus.getVin());
+            mapCache.put("id", bus.getId().toString());
+            mapCache.put("busNum", bus.getBusNum());
+            mapCache.put("drivingNum", bus.getDrivingNum());
+            mapCache.put("modelName", bus.getModelName());
+            mapCache.put("factoryName", bus.getFactoryName());
+            mapCache.put("productNum", bus.getProductNum());
+            mapCache.put("rootGroupId", bus.getRootGroup().getId().toString());
+            mapCache.put("rootGroupName", bus.getRootGroup().getFullName());
+            mapCache.put("branchGroupId", bus.getBranchGroup().getId().toString());
+            mapCache.put("branchGroupName", bus.getBranchGroup().getFullName());
+            mapCache.put("siteGroupId", bus.getSiteGroup().getId().toString());
+            mapCache.put("siteGroupName", bus.getSiteGroup().getFullName());
+            mapCache.put("lineGroupId", bus.getLineGroup().getId().toString());
+            mapCache.put("lineGroupName", bus.getLineGroup().getFullName());*/
+            redisManager.setHash(VsailConstants.BUS_INFO_KEY_PREFFIX + bus.getVin(), mapCache);
+            logger.debug("保存到缓存{}", bus);
+            //发送车辆信息事件
+            SpringContextUtils.publishEvent(new BusEvent(getBusInfoByVin(bus.getVin())));
         }
-        redisManager.setHash(VsailConstants.BUS_INFO_KEY_PREFFIX + bus.getVin(), mapCache);
-        logger.debug("保存到缓存{}", bus);
-        //发送车辆信息事件
-        SpringContextUtils.publishEvent(new BusEvent(getBusInfoByVin(bus.getVin())));
         return bus;
     }
 
@@ -159,13 +179,14 @@ public class BusService extends AbstractLogicDeletedService<Bus, Long> {
         bus.setDeleteTime(new Date());
         logger.info("logic deleting {}", bus);
         this.busDao.save(bus);
-        //删除缓存
-        redisManager.deleteKey(VsailConstants.BUS_INFO_KEY_PREFFIX + bus.getVin());
-
-        logger.debug("删除缓存{}", bus);
-        //发送删除车辆信息事件
-        BusInfo busInfo = new BusInfo(bus, BusEventType.BUS_EVENT_DELETE.getEventCode());
-        SpringContextUtils.publishEvent(new BusEvent(busInfo));
+        //如果车辆已运营则删除缓存
+        if (bus.getUsed()) {
+            redisManager.deleteKey(VsailConstants.BUS_INFO_KEY_PREFFIX + bus.getVin());
+            logger.debug("删除缓存{}", bus);
+            //发送删除车辆信息事件
+            BusInfo busInfo = new BusInfo(bus, BusEventType.BUS_EVENT_DELETE.getEventCode());
+            SpringContextUtils.publishEvent(new BusEvent(busInfo));
+        }
     }
 
     /**

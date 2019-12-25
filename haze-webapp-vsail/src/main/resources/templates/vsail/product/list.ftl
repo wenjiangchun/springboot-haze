@@ -8,7 +8,7 @@
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
 			<ol class="breadcrumb">
-				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
+				<li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">车辆管理</a></li>
 				<li class="active">${cname!}管理</li>
 			</ol>
@@ -24,8 +24,12 @@
 								<form class="form-inline">
 									<div class="box-body">
 										<div class="form-group">
-											<label for="name_like">${cname!}名称</label>
-											<input type="text" name="name_like" class="datatable_query form-control">
+											<label for="vin_like">VIN</label>
+											<input type="text" name="vin_like" class="datatable_query form-control">
+										</div>
+										<div class="form-group">
+											<label for="busNum_like">车辆自编号</label>
+											<input type="text" name="busNum_like" class="datatable_query form-control">
 										</div>
 										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
 											<i class="fa fa-search"></i> 查询
@@ -41,12 +45,16 @@
 								<tr>
 								<tr>
 									<th sName="id">编号</th>
-									<th sName="name">产品名称</th>
-									<th sName="supplyName">供应商名称</th>
-									<th sName="supplyAddress">供应商地址</th>
-									<th sName="linker">联系人</th>
-									<th sName="mobile">电话</th>
-									<th sName="description">描述</th>
+									<th sName="vin">VIN</th>
+									<th sName="busNum">车辆自编号</th>
+									<th sName="control">控制模块</th>
+									<th sName="display">显示模块</th>
+									<th sName="probe">探测启动模块</th>
+									<th sName="outfire">气溶胶灭火装置</th>
+									<th sName="line">感温电缆</th>
+									<th sName="transfer">智能传输模块</th>
+									<th sName="sim">SIM卡</th>
+									<th sName="productNum">主机ID</th>
 									<th sName="operate" columnRender="formatOperator">操作</th>
 								</tr>
 								</tr>

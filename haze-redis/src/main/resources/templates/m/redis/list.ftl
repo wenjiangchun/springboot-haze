@@ -7,10 +7,6 @@
 <body class="hold-transition skin-blue sidebar-mini">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
-			<h1>
-				Redis查看
-				<small>redis信息</small>
-			</h1>
 			<ol class="breadcrumb">
 				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">监控管理</a></li>
@@ -25,10 +21,10 @@
 							<h3 class="box-title">key</h3>
 						</div>
 						<div class="box-body">
-							<ul class="nav nav-pills nav-stacked">
+							<ul class="nav nav-pills nav-stacked"  style="height: 500px;overflow-y:scroll;">
 								<#list keys as key>
 									<li>
-										<a href="#" data-bind="event: {click: getKey.bind($data, '${key}') }"><i class="fa fa-circle-o text-red"></i> ${key}</a>
+										<a href="#" style='color:red' data-bind="event: {click: getKey.bind($data, '${key}') }"><i class="fa fa-circle-o text-red"></i> ${key}</a>
 									</li>
 								</#list>
 							</ul>

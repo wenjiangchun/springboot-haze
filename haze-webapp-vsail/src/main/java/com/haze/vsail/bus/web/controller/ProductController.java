@@ -13,7 +13,7 @@ public class ProductController extends BaseCrudController<Product, Long> {
     private ProductService productService;
 
     public ProductController(ProductService productService) {
-        super("vsail", "product", "供应商", productService);
+        super("vsail", "product", "产品", productService);
         this.productService = productService;
     }
 

@@ -9,14 +9,14 @@
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
 			<ol class="breadcrumb">
-				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
-				<li><a href="#">车辆管理</a></li>
-				<li class="active">${cname!}管理</li>
+				<li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
+				<li><a href="#">基础数据管理</a></li>
+				<li class="active">运营管理</li>
 			</ol>
 		</section>
 		<section class="content">
 			<div class="row">
-				<div class="col-xs-3">
+				<div class="col-xs-2">
 					<div class="box">
 						<div class="box-header">
 							<h3 class="box-title">运营公司</h3>
@@ -27,7 +27,7 @@
 						<!-- /.box-body -->
 					</div>
 				</div>
-				<div class="col-xs-9">
+				<div class="col-xs-10">
 					<div class="box">
 						<div class="box-header">
 							<h3 class="box-title">${cname!}列表<span data-bind="text: groupName"></span></h3>
@@ -37,8 +37,13 @@
 									<input type="hidden" class="datatable_query" name="parent.id" data-bind="value: groupId"/>
 									<div class="box-body">
 										<div class="form-group">
-											<label for="vin_like">vin码</label>
+											<label for="vin_like">VIN</label>
 											<input type="text" name="vin_like" class="datatable_query form-control">
+											<input type="hidden" name="used" class="datatable_query form-control" value="true">
+										</div>
+										<div class="form-group">
+											<label for="busNum_like">车辆自编号</label>
+											<input type="text" name="busNum_like" class="datatable_query form-control">
 										</div>
 										<button type="button" class="btn btn-sm btn-primary" data-bind='click: query' style="margin-left:5px;">
 											<i class="fa fa-search"></i> 查询
@@ -53,10 +58,19 @@
 								<thead>
 								<tr>
 									<th sName="id">编号</th>
-									<th sName="vin">vin</th>
-									<th sName="busModel.name">型号</th>
-									<th sName="rootGroup.fullName">运营公司</th>
-									<th sName="group.fullName" columnRender="formatGroup">所属子公司/线路</th>
+									<th sName="vin" bSortable="true">VIN</th>
+									<th sName="busNum" bSortable="true">车辆自编号</th>
+									<th sName="modelName">车辆型号</th>
+									<th sName="branchGroup.fullName">单位</th>
+									<th sName="siteGroup.name">队别</th>
+									<th sName="lineGroup.fullName">路别</th>
+									<th sName="drivingNum">牌照号</th>
+									<th sName="siteGroup.linker">联系人</th>
+									<th sName="siteGroup.linkerMobile">电话</th>
+									<th sName="siteGroup.address">场站地址</th>
+									<th sName="productNum">主机ID</th>
+									<th sName="productBrand">设备品牌</th>
+									<th sName="productType">设备类型</th>
 									<th sName="operate" columnRender="formatOperator">操作</th>
 								</tr>
 								</thead>
@@ -65,7 +79,7 @@
 						<!-- /.box-body -->
 					</div>
 					<!-- /.box -->
-					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加${cname!}</a>
+					<a href="#" class="btn btn-info" data-bind='click: add'><i class="fa fa-plus-circle"></i>  添加运营信息</a>
 				</div>
 				<!-- /.col -->
 			</div>
@@ -79,12 +93,13 @@
 		viewModel = {
 			groupName: ko.observable(''),
 			groupId: ko.observable('${parentId!}'),
+			groupTypeCode: ko.observable(''),
 			add: function() {
-				if (this.groupId() == null || this.groupId() === '') {
-					layer.alert('请选择所属运营公司')
+				if (this.groupTypeCode() !== 'GROUP_BUS_LINE') {
+					layer.alert('请选择运营线路')
 				} else {
 					let url = "${ctx}/v/${name}/add?parentId=" + this.groupId();
-					showMyModel(url,'添加${cname!}', '900px', '50%', callBackAction);
+					showMyModel(url,'添加运营信息', '900px', '75%', callBackAction);
 				}
 			},
 			reset: function() {
@@ -95,7 +110,7 @@
 			},
 			edit: function(id) {
 				let url = "${ctx}/v/${name}/edit/" + id;
-				showMyModel(url,'编辑${cname!}', '900px', '50%', callBackAction);
+				showMyModel(url,'编辑运营信息', '900px', '75%', callBackAction);
 			},
 			delete: function(id) {
 				if (id == null || id === "") {
@@ -157,16 +172,16 @@
 				$.fn.zTree.init($("#groupTree"), setting, data);
 
 				tree = $.fn.zTree.getZTreeObj("groupTree");
-				var parentId = viewModel.groupId();
+				let parentId = viewModel.groupId();
 				if (parentId != null && parentId != "") {
-					var node = tree.getNodeByParam("id",parentId);
+					let node = tree.getNodeByParam("id",parentId);
 					if(!node.isParent){
 						node = node.getParentNode();
 					}
 					tree.selectNode(node,false);
 					tree.expandNode(node, true, false, true);
 				} else {
-					var node = tree.getNodeByParam("fullName","运营公司");
+					let node = tree.getNodeByParam("fullName","运营公司");
 					tree.expandNode(node, true, false, true);
 				}
 			}
@@ -176,6 +191,10 @@
 	function onClick(event, treeId, treeNode, clickFlag) {
 		tree.expandNode(treeNode, true, false, true);
 		let fullName = treeNode.fullName!= null && treeNode.fullName !== '运营公司' ? '(' + treeNode.fullName + ')': '';
+		console.log(treeNode.groupType.code)
+		if (treeNode.groupType != null) {
+			viewModel.groupTypeCode(treeNode.groupType.code);
+		}
 		viewModel.groupId(treeNode.id);
 		viewModel.groupName(fullName);
 		refreshTable();
@@ -183,8 +202,8 @@
 
 	function formatOperator(data) {
 		let html = "";
-		html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + data.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-		html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + data.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";
+		html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + data.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a>";
+		/*html += "<a href='javascript:void(0)' onclick='viewModel.delete(" + data.id + ")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a>";*/
 		return html;
 	}
 

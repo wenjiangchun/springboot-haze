@@ -9,7 +9,7 @@
 <body class="hold-transition skin-blue sidebar-mini">
 		<section class="content-header">
 			<ol class="breadcrumb">
-				<li><a href="${ctx}/"><i class="fa fa-dashboard"></i> 主页</a></li>
+				<li><a href="javascript:void(0)" onclick="top.location.href='${ctx}/'"><i class="fa fa-dashboard"></i> 主页</a></li>
 				<li><a href="#">系统管理</a></li>
 				<li class="active">资源管理</li>
 			</ol>

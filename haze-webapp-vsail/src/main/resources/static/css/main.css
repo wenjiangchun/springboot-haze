@@ -148,7 +148,7 @@ table tr:nth-child(odd) {
 	font-size: 14px;
 	color: #ffffff;
 	font-weight: 500;
-	text-align: right;
+	/*text-align: right;*/
 	padding-right: 15px;
 }
 
@@ -173,6 +173,7 @@ table tr:nth-child(odd) {
 .form-control {
 	border: solid 1px #3076b5;
 	background: none;
+	color:white
 }
 
 .form-inline .form-control {
@@ -250,4 +251,9 @@ select option {
 .box-footer {
 	background: none;
 	border: none;
+}
+
+
+.form-control select>option{
+	color:white
 }

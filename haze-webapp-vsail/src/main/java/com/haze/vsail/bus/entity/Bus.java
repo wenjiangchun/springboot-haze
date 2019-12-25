@@ -4,6 +4,7 @@ import com.haze.core.jpa.entity.AbstractLoginDeletedEntity;
 import com.haze.system.entity.Group;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 车辆主机厂信息
@@ -14,14 +15,21 @@ public class Bus extends AbstractLoginDeletedEntity<Long> {
 
     private String vin;
     private String busNum;
-    private String registNum;
-    private String engineNum;
     private String drivingNum;
-    private String motorName;
-    private String motorNum;
-    private BusModel busModel;
-    private Group group;
+    private String modelName;
+    private String factoryName;
+    private Date assembleDay;
+    private String assembleAddress;
+    private String productNum;
+    private String productBrand;
+    private String productType;
+    private Boolean used = false;
     private Group rootGroup;
+    private Group branchGroup;
+    private Group siteGroup;
+    private Group lineGroup;
+
+    private Product product;
 
     public Bus() {
     }
@@ -42,22 +50,6 @@ public class Bus extends AbstractLoginDeletedEntity<Long> {
         this.busNum = busNum;
     }
 
-    public String getRegistNum() {
-        return registNum;
-    }
-
-    public void setRegistNum(String registNum) {
-        this.registNum = registNum;
-    }
-
-    public String getEngineNum() {
-        return engineNum;
-    }
-
-    public void setEngineNum(String engineNum) {
-        this.engineNum = engineNum;
-    }
-
     public String getDrivingNum() {
         return drivingNum;
     }
@@ -66,40 +58,68 @@ public class Bus extends AbstractLoginDeletedEntity<Long> {
         this.drivingNum = drivingNum;
     }
 
-    public String getMotorName() {
-        return motorName;
+    public String getModelName() {
+        return modelName;
     }
 
-    public void setMotorName(String motorName) {
-        this.motorName = motorName;
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 
-    public String getMotorNum() {
-        return motorNum;
+    public String getFactoryName() {
+        return factoryName;
     }
 
-    public void setMotorNum(String motorNum) {
-        this.motorNum = motorNum;
+    public void setFactoryName(String factoryName) {
+        this.factoryName = factoryName;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "model_id")
-    public BusModel getBusModel() {
-        return busModel;
+    public Date getAssembleDay() {
+        return assembleDay;
     }
 
-    public void setBusModel(BusModel busModel) {
-        this.busModel = busModel;
+    public void setAssembleDay(Date assembleDay) {
+        this.assembleDay = assembleDay;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    public Group getGroup() {
-        return group;
+    public String getAssembleAddress() {
+        return assembleAddress;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setAssembleAddress(String assembleAddress) {
+        this.assembleAddress = assembleAddress;
+    }
+
+    public String getProductNum() {
+        return productNum;
+    }
+
+    public void setProductNum(String productNum) {
+        this.productNum = productNum;
+    }
+
+    public String getProductBrand() {
+        return productBrand;
+    }
+
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public Boolean getUsed() {
+        return used;
+    }
+
+    public void setUsed(Boolean used) {
+        this.used = used;
     }
 
     @ManyToOne
@@ -112,18 +132,41 @@ public class Bus extends AbstractLoginDeletedEntity<Long> {
         this.rootGroup = rootGroup;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "branch_group_id")
+    public Group getBranchGroup() {
+        return branchGroup;
+    }
+
+    public void setBranchGroup(Group branchGroup) {
+        this.branchGroup = branchGroup;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "site_group_id")
+    public Group getSiteGroup() {
+        return siteGroup;
+    }
+
+    public void setSiteGroup(Group siteGroup) {
+        this.siteGroup = siteGroup;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "line_group_id")
+    public Group getLineGroup() {
+        return lineGroup;
+    }
+
+    public void setLineGroup(Group lineGroup) {
+        this.lineGroup = lineGroup;
+    }
+
     @Override
     public String toString() {
         return "Bus{" +
                 "vin='" + vin + '\'' +
                 ", busNum='" + busNum + '\'' +
-                ", registNum='" + registNum + '\'' +
-                ", engineNum='" + engineNum + '\'' +
-                ", drivingNum='" + drivingNum + '\'' +
-                ", motorName='" + motorName + '\'' +
-                ", motorNum='" + motorNum + '\'' +
-                ", busModel=" + busModel +
-                ", group=" + group +
                 ", rootGroup=" + rootGroup +
                 '}';
     }

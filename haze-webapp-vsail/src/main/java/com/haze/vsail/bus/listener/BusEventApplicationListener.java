@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 车辆消息监听类，由该类统一负责向websocket中发送消息
+ * 车辆消息监听类，在车辆信息变更后(包括车辆增删改以及车辆实时位置信息变化)由该类统一负责向websocket中发送消息, 所有连接到该系统的websocket客户端
+ * 收到车辆变更事件后更新车辆信息
  */
 public class BusEventApplicationListener implements ApplicationListener<BusEvent> {
 
@@ -58,7 +59,7 @@ public class BusEventApplicationListener implements ApplicationListener<BusEvent
             return true;
         }
         Group g = new Group();
-        g.setId(Long.valueOf(busInfo.getGroupId()));
+        g.setId(Long.valueOf(busInfo.getLineGroupId()));
         return user.getGroupList().contains(g);
     }
 }

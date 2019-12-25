@@ -11,12 +11,6 @@
 <link href="${ctx}/res/vsail/css/animate.min.css" rel="stylesheet">
 <link href="${ctx}/res/vsail/css/style.min.css?v=4.0.0" rel="stylesheet">
 <link rel="stylesheet" href="${ctx}/res/vsail/css/model.css" />
-<style>
-    body .demo-class .layui-layer-title{background:#001e30 !important; color:#4abafa; border: none; font-size: 16px}
-    body .demo-class .layui-layer-btn{border-top:1px solid #E9E7E7}
-    body .demo-class .layui-layer-btn a{background:#fff;}
-    body .demo-class .layui-layer-btn .layui-layer-btn1{background:#fff;}
-</style>
 <script src="${ctx}/res/vsail/js/jquery.min.js?v=2.1.4" type="text/javascript"></script>
 <script src="${ctx}/res/vsail/js/bootstrap.min.js?v=3.3.5" type="text/javascript"></script>
 <script src="${ctx}/res/vsail/js/plugins/metisMenu/jquery.metisMenu.js" type="text/javascript"></script>
@@ -32,13 +26,15 @@
     /*layer.config({
         skin: 'demo-class'
     });*/
-    let myModel = {};
+    let myModel = {id: -1};
     function showMyModel(url, title, width, height, callBack) {
         myModel.id = layer.open({
             type: 2,
             title: title,
             shadeClose: true,
-            shade: 0.8,
+            shade: false,
+            scrollbar: false,
+            offset: 'rt',
             area: [width, height],
             content: url
         });
@@ -46,9 +42,11 @@
     }
 
     function hideMyModal() {
-        if (myModel.callBack != null) {
-            myModel.callBack.apply(this, arguments);
+        if (myModel.id !== undefined) {
+            if (myModel.callBack != null) {
+                myModel.callBack.apply(this, arguments);
+            }
+            layer.close(myModel.id);
         }
-        layer.close(myModel.id);
     }
 </script>

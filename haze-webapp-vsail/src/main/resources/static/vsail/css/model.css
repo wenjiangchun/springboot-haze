@@ -163,8 +163,40 @@ li {
 
 .user {
 	float: left;
+	position: relative;
+	height: 64px;
+	cursor: pointer;
 }
-
+.user:hover .user-content{
+	display: block;
+}
+.user-content{
+	position: absolute;
+	top: 60px;
+	background: #012e49;
+	width: 100%;
+	display: none;
+}
+.user-content ul{
+	padding: 0;
+	margin: 0;
+}
+.user-content li{
+	float: left;
+	width: 100%;
+	margin-left: 0px;
+	margin: 0px;
+	text-align: center;
+	border-bottom: 1px solid #054063;
+}
+.user-content li a{
+	padding: 10px 0px;
+	color: #FFFFFF;
+	min-height: initial;
+}
+.user-content li:hover{
+	background: #021e2f;
+}
 .user span {
 	float: left;
 	width: 42px;
@@ -302,19 +334,19 @@ li {
 	word-wrap: break-word;
 }
 
-.agile-list li.warning-element {
+.agile-list li.danger-element {
 	border-left: 7px solid #b53737;
 }
 
-.agile-list li.success-element {
+.agile-list li.warning-element {
 	border-left: 7px solid #e48120;
 }
 
-.agile-list li.info-element {
+.agile-list li.success-element {
 	border-left: 7px solid #39ce80;
 }
 
-.agile-list li.danger-element {
+.agile-list li.info-element {
 	border-left: 7px solid #8c8c8c;
 }
 
@@ -518,7 +550,7 @@ table tr:nth-child(odd) {
 }
 
 /****弹出框样式***/
-.layui-layer-title{
+/*.layui-layer-title{
 	border: none !important;
 	background-color: #001e30 !important;
 	color:#001e30;
@@ -529,7 +561,7 @@ table tr:nth-child(odd) {
 .layui-layer-content{
 	background-color: #001e30;
 	
-}
+}*/
 .echarts-img .ibox-content{
 	background: url(../img/bk2.png) no-repeat;
 	background-size:100% 100% ;
@@ -569,6 +601,7 @@ table tr:nth-child(odd) {
 .ibox-content .echarts{
 	margin-top: 15px;
 }
+/*
 .layui-layer-ico {
     background: url(../img/colse.png) no-repeat !important;
     width: 25px;
@@ -579,3 +612,4 @@ table tr:nth-child(odd) {
     height: 29px !important;
     margin-right: 10px;
 }
+*/

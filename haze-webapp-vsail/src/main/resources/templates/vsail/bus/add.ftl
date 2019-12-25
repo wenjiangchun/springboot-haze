@@ -5,103 +5,70 @@
     <#include "../../common/form.ftl"/>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-
-<#macro buildNode childs>
-    <#if childs?? && childs?size gt 0>
-        <#list childs as child>
-            <option value="${child.id}" <#if parent.id==child.id>selected</#if>>
-                ${child.name}
-            </option>
-            <#assign depth = depth + 1 />
-            <@buildNode childs=child.childs />
-            <#assign depth = depth - 1 />
-        </#list>
-    </#if>
-</#macro>
-
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
                 <div class="box box-info">
                     <div class="box-header with-border">
-                        <h3 class="box-title">${cname!}信息</h3>
+                        <h3 class="box-title">运营信息</h3>
                     </div>
-                    <form id="inputForm" class="form-horizontal" action="${ctx}/v/${name}/save/" method="post">
+                    <form id="inputForm" class="form-horizontal" action="${ctx}/v/${name}/saveBus/" method="post" onsubmit="return viewModel.validator()">
                         <div class="box-body">
-                            <div class="form-group">
-                                <label for="root.id" class="col-sm-2 control-label">所属公司或线路:</label>
-                                <div class="col-sm-10" >
-                                    <#assign depth = 1 />
-                                    <select name="group.id" class="form-control">
-                                        <option value="${root.id}" <#if parent.id==root.id>selected</#if>>
-                                            ${(root.name)}
-                                        </option>
-                                        <#list root.childs as group>
-                                            <option value="${group.id}" <#if parent.id==group.id>selected</#if>>
-                                                ${group.name}
-                                            </option>
-                                            <@buildNode childs=group.childs />
+                            <div class="form-group db">
+                                <label for="vin" class="col-sm-2 control-label">VIN</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="vin" name="vin" required data-bind="event:{change: viewModel.permissionChanged}">
+                                        <option>请选择</option>
+                                        <#list unUsedList as bus>
+                                            <option value="${bus.vin}" busId="${bus.id}" busNum="${bus.busNum}">${bus.vin}</option>
                                         </#list>
                                     </select>
-                                    <input type="hidden" name="rootGroup.id" class="form-control" maxlength="20" value="${root.id}"/>
                                 </div>
                             </div>
                             <div class="form-group db">
-                                <label for="address" class="col-sm-2 control-label">车辆型号</label>
+                                <label for="busNum" class="col-sm-2 control-label">车辆自编号</label>
                                 <div class="col-sm-10">
-                                    <select name="busModel.id" class="form-control" required>
-                                        <#list modelList as engine>
-                                            <option value="${engine.id}">${engine.name}</option>
-                                        </#list>
-                                    </select>
+                                    <p class="form-control-static" data-bind="text: busNum"></p>
+                                    <input type="hidden" name="id" data-bind="value: busId">
+                                    <input type="hidden" name="eventCode" value="4">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="vin" class="col-sm-2 control-label">vin</label>
+                                <label for="lineGroup.fullName" class="col-sm-2 control-label">所属线路:</label>
                                 <div class="col-sm-10">
-                                    <input type="text"  name="vin" class="form-control" maxlength="20" required/>
+                                    <p class="form-control-static">${parent.parent.fullName}->${parent.fullName}</p>
+                                    <input type="hidden" name="lineGroup.id" class="form-control" maxlength="20" value="${parent.id}"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="busNum" class="col-sm-2 control-label">busNum</label>
+                                <label for="drivingNum" class="col-sm-2 control-label">牌照号</label>
                                 <div class="col-sm-10">
-                                    <input type="text"  name="busNum" class="form-control" maxlength="20" required/>
+                                    <input type="text"  name="drivingNum" class="form-control" maxlength="20" required placeholder="牌照号"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="registNum" class="col-sm-2 control-label">registNum</label>
+                                <label for="productNum" class="col-sm-2 control-label">主机ID</label>
                                 <div class="col-sm-10">
-                                    <input type="text"  name="registNum" class="form-control" maxlength="20" required/>
+                                    <input type="text"  name="productNum" class="form-control" maxlength="20" required placeholder="主机ID"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="engineNum" class="col-sm-2 control-label">engineNum</label>
+                                <label for="productBrand" class="col-sm-2 control-label">设备品牌</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="engineNum" class="form-control" maxlength="20" required/>
+                                    <input type="text"  name="productBrand" class="form-control" maxlength="20" required value="福赛尔" placeholder="设备品牌"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="drivingNum" class="col-sm-2 control-label">drivingNum</label>
+                                <label for="productType" class="col-sm-2 control-label">设备类型</label>
                                 <div class="col-sm-10">
-                                    <input type="text" name="drivingNum" class="form-control" maxlength="20" required/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="motorName" class="col-sm-2 control-label">motorName</label>
-                                <div class="col-sm-10">
-                                    <input type="text" name="motorName" class="form-control" maxlength="20" required/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="motorNum" class="col-sm-2 control-label">motorNum</label>
-                                <div class="col-sm-10">
-                                    <input type="text" name="motorNum" class="form-control" maxlength="20" required/>
+                                    <input type="text"  name="productType" class="form-control" maxlength="20" required value="电池监控及抑制" placeholder="设备类型"/>
                                 </div>
                             </div>
                         </div>
                         <div class="box-footer">
                             <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> 提交</button>
                             <button type="reset" class="btn btn-danger">重置</button>
+
                         </div>
                     </form>
                 </div>
@@ -121,6 +88,36 @@
             }
         }
     });
+
+    let viewModel = {
+        busId: ko.observable(),
+        busNum: ko.observable(),
+        permissionChanged: function(obj, event) {
+            const $option = $("#vin option:selected");
+            const vin = $("#vin").val();
+            if (vin !== undefined) {
+                const busId = $option.attr('busId');
+                const busNum = $option.attr('busNum');
+                this.busId(busId);
+                this.busNum(busNum);
+            } else {
+                this.busId('');
+                this.busNum('');
+            }
+        },
+        validator: function() {
+            if (this.busId() === undefined || this.busId === '') {
+                layer.alert('请选择需要运营的车辆信息');
+                return false;
+            }
+            return true;
+        }
+    };
+
+    $(function() {
+        ko.applyBindings(viewModel);
+    });
+
 </script>
 </body>
 </html>
