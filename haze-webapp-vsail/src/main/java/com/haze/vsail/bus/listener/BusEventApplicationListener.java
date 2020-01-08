@@ -6,6 +6,7 @@ import com.haze.shiro.util.ShiroUtils;
 import com.haze.system.entity.Group;
 import com.haze.system.entity.User;
 import com.haze.vsail.bus.event.BusEvent;
+import com.haze.vsail.bus.service.BusService;
 import com.haze.vsail.bus.util.BusInfo;
 import com.haze.websocket.WebSocketServer;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class BusEventApplicationListener implements ApplicationListener<BusEvent
     @Override
     public void onApplicationEvent(@NotNull BusEvent event) {
         WebSocketServer socketServer = SpringContextUtils.getBean(WebSocketServer.class);
+        BusService busService = SpringContextUtils.getBean(BusService.class);
         logger.debug("车辆信息发生变化, event={}", event);
         //获取已连接对象
         Map<String, WebSocketServer> connectedMap = WebSocketServer.getConnectedMap();
@@ -38,7 +40,7 @@ public class BusEventApplicationListener implements ApplicationListener<BusEvent
             //获取用户信息
             ShiroUser user = getShiroUser(onlineList, k);
             //判断该用户是否有对该信息具有查看权限
-            if (Objects.nonNull(user) && checkBus(user, busInfo)) {
+            if (Objects.nonNull(user) && busService.check(busInfo, user)) {
                //发送消息
                 socketServer.sendMessageToName(busInfo.toJson(), k);
             }
@@ -54,12 +56,12 @@ public class BusEventApplicationListener implements ApplicationListener<BusEvent
         return null;
     }
 
-    private boolean checkBus(ShiroUser user, BusInfo busInfo) {
+    /*private boolean checkBus(ShiroUser user, BusInfo busInfo) {
         if (user.getLoginName().equals(User.ADMIN)) {
             return true;
         }
         Group g = new Group();
         g.setId(Long.valueOf(busInfo.getLineGroupId()));
         return user.getGroupList().contains(g);
-    }
+    }*/
 }

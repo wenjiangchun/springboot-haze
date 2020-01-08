@@ -149,8 +149,8 @@
             _.each(data, processData);
             //加载完成后建立websocket链接
             if ('WebSocket' in window) {
-                //websocket = new WebSocket("${config.value!}/websocket/<@shiro.principal/>");
-                websocket = new WebSocket("ws://localhost:8080/websocket/<@shiro.principal/>");
+                websocket = new WebSocket("${config.value!}/websocket/<@shiro.principal/>");
+                //websocket = new WebSocket("ws://localhost:8080/websocket/<@shiro.principal/>");
                 websocket.onopen = function () {
                     console.log("连接成功");
                     viewModel.invokeFrame(-1);
@@ -308,7 +308,9 @@
             toastr.options = {
                 closeButton: true,
                 positionClass: 'toast-bottom-right',
-                timeOut: 5000000,
+                timeOut: 0,
+                extendedTimeOut: 0,
+                hideEasing:'',
                 onclick:function() {
                     viewModel.fireVinData(_.reject(fireVinData, function(vin){ return vin === data.vin; }));
                     if (myframe.initBusData !== undefined) {

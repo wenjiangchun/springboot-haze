@@ -93,7 +93,7 @@ public class UserController extends BaseCrudController<User, Long> {
 	 * @param roleIds 角色ID集合
 	 * @return 返回用户列表页面
 	 */
-	@PostMapping(value = "save1")
+	@PostMapping(value = "saveUser")
     @ResponseBody
 	public WebMessage save(User user, Long[] roleIds) {
 		Set<Role> roles = new HashSet<>();
@@ -196,7 +196,7 @@ public class UserController extends BaseCrudController<User, Long> {
 	 * @return
 	 */
 	@Override
-	@GetMapping(value = "edit1/{id}")
+	@GetMapping(value = "edit/{id}")
 	public String edit(@PathVariable Long id, Model model, HttpServletRequest request) {
 		model.addAttribute("sexs", Sex.values());
 		model.addAttribute("statuss", Status.values());
@@ -205,7 +205,7 @@ public class UserController extends BaseCrudController<User, Long> {
 		model.addAttribute("groupList",groupList);
 		List<Role> roleList = this.roleService.findByEnabled(true); //查找所有启用状态的角色
 		model.addAttribute("roleList", roleList);
-		return "system/user/editUser";
+		return "system/user/edit";
 	}
 	
 	/**

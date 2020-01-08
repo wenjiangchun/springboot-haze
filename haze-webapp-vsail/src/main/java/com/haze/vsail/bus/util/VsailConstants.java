@@ -10,11 +10,13 @@ public class VsailConstants {
     /**
      * vsail公司机构编码
      */
-    public static final String GROUP_VSAIL = "GROUP_VSAIL";
+    public static final String GROUP_VSAIL_CODE = "VSAIL";
     /**
      * 运营公司机构编码
      */
     public static final String GROUP_BUS = "GROUP_BUS";
+
+
 
     /**
      * VSAIL管理员角色 类似于VSAIL部门经理

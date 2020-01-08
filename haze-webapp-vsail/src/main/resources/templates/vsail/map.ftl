@@ -156,7 +156,7 @@
         }
         let pt = new BMap.Point(x, y);
         let iconFile = "${ctx}/res/dot-1.png";
-        if (data.breadDown) {
+        if (data.breakDown) {
             iconFile = "${ctx}/res/dot-b.png";
         }
         if (data.fire) {
@@ -217,8 +217,9 @@
                 },
                 closeIconMargin: "5px 5px 0 0",
                 closeIconUrl:'${ctx}/res/close5.png',
-                align:INFOBOX_AT_BOTTOM,
-                enableAutoPan: false
+                align:INFOBOX_AT_TOP,
+                offset: new BMap.Size(0, 0),
+            enableAutoPan: false
             });
             this.infoBox.open(marker);
         }
@@ -261,27 +262,41 @@
             let showBusDts = [];
             _.each(dts, function(bus) {
                 //根据showCode计算所属样式类 TODO
-                bus.state = '下线';
                 bus.desc = '正常';
                 bus.className = 'info-element';
                 bus.sn = 3;
                 if (bus.online) {
-                    bus.state =  '在线';
+                    //bus.state =  '在线';
                     bus.className = 'success-element';
                     bus.sn = 2;
                 }
 
                 if (bus.breakDown) {
-                    bus.state =  '故障';
+                    //bus.state =  '故障';
                     //TODO
-                    bus.desc = '故障---';
+                    const sensores = bus.sensores;
+                    bus.desc = '';
+                    for (let i = 0; i < sensores.length; i++) {
+                        if (sensores[i].state === 2) {
+                            bus.desc += " #" + sensores[i].sn;
+                        }
+                    }
+                    bus.desc += " 传感器故障";
                     bus.className = 'warning-element';
                     bus.sn = 1;
                 }
                 if (bus.fire) {
-                    bus.state = '火警';
+                    //bus.state = '火警';
                     //TODO
-                    bus.desc = '火警喷发';
+                    //bus.desc = '火警喷发';
+                    const sensores = bus.sensores;
+                    bus.desc = '';
+                    for (let i = 0; i < sensores.length; i++) {
+                        if (sensores[i].state >= 3) {
+                            bus.desc += " #" + sensores[i].sn;
+                        }
+                    }
+                    bus.desc += " 传感器报警";
                     bus.className = 'danger-element';
                     bus.sn = 0;
                 }
@@ -291,7 +306,7 @@
                 } else {
                     bus.show = true;
                     showBusDts.push(bus);
-                    if (bus.state !== '下线') {
+                    if (bus.state !== '离线') {
                         map.addMarker(bus);
                     }
 
@@ -423,19 +438,6 @@
             }
         }
         return null;
-    }
-
-    function getState(bus) {
-        if (bus.isFire) {
-            return '火警';
-        }
-        if (bus.isBreakDown) {
-            return '故障';
-        }
-        if (bus.isOnline) {
-            return '在线'
-        }
-        return '下线';
     }
 
     function showFire(data) {

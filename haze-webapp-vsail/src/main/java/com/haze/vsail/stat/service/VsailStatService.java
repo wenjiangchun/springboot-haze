@@ -4,6 +4,9 @@ import com.haze.common.util.HazeDateUtils;
 import com.haze.common.util.HazeJsonUtils;
 import com.haze.common.util.HazeStringUtils;
 import com.haze.core.jpa.repository.HazeSpecification;
+import com.haze.system.entity.Group;
+import com.haze.system.service.GroupService;
+import com.haze.system.utils.Status;
 import com.haze.vsail.stat.dao.BusBreakDownLogDao;
 import com.haze.vsail.stat.dao.BusFireLogDao;
 import com.haze.vsail.stat.dao.BusOnOffLogDao;
@@ -35,13 +38,16 @@ public class VsailStatService {
 
     private BusBreakDownLogDao busBreakDownLogDao;
 
+    private GroupService groupService;
+
     private EntityManager em;
 
-    public VsailStatService(BusOnOffLogDao busOnOffLogDao, BusFireLogDao busFireLogDao, BusBreakDownLogDao busBreakDownLogDao, EntityManager em) {
+    public VsailStatService(BusOnOffLogDao busOnOffLogDao, BusFireLogDao busFireLogDao, BusBreakDownLogDao busBreakDownLogDao, EntityManager em, GroupService groupService) {
         this.busOnOffLogDao = busOnOffLogDao;
         this.busFireLogDao = busFireLogDao;
         this.busBreakDownLogDao = busBreakDownLogDao;
         this.em = em;
+        this.groupService = groupService;
     }
 
     /**
@@ -132,9 +138,20 @@ public class VsailStatService {
 
     @SuppressWarnings("unchecked")
     private List<Object[]> queryBusStat(StringBuilder sql, String groupBy, Long rootGroupId, Map<String, Object> queryParams) {
-        if (rootGroupId != null) {
+        /*if (rootGroupId != null) {
             sql.append(" and root_Group_Id=:rootGroupId");
             queryParams.put("rootGroupId", rootGroupId);
+        }*/
+        //获取用户所属机构
+        if (rootGroupId != null) {
+            Group group = this.groupService.findById(rootGroupId);
+            List<Long> groupIds = new ArrayList<>();
+            groupIds.add(rootGroupId);
+            for (Group g : group.getChildList(Status.ENABLE)) {
+                groupIds.add(g.getId());
+            }
+            sql.append(" and group_Id in (:groupIds)");
+            queryParams.put("groupIds", groupIds);
         }
         sql.append(" group by ");
         if (HazeStringUtils.isNotBlank(groupBy)) {
@@ -226,7 +243,7 @@ public class VsailStatService {
     public List<Object[]> getSensor(String vin) {
         String sql = "select * from (select vin, upload_time, array_length(sensores,1) ct, bus_data->>'isFire' as isFire,bus_data->>'isError' as isError";
         for (int i = 1; i <=6; i++) {
-            sql += ",sensores["+i+"]->>'sn' as sn"+i+", sensores["+i+"]->>'temp' as temp"+i+", sensores["+i+"]->>'concen' as concen"+i+", sensores["+i+"]->>'fire' as fire"+i+", sensores["+i+"]->>'error' as error"+i;
+            sql += ",sensores["+i+"]->>'sn' as sn"+i+", sensores["+i+"]->>'temp' as temp"+i+", sensores["+i+"]->>'concen' as concen"+i+", sensores["+i+"]->>'fire' as fire"+i+", sensores["+i+"]->>'error' as error"+i +", sensores["+i+"]->>'state' as state"+i;
         }
         sql += " from v_bus_data_log where array_length(sensores,1) is not null  and vin=:vin order by upload_time desc limit 10)b order by upload_time asc";
         Query query = em.createNativeQuery(sql);

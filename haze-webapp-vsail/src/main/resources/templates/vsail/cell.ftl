@@ -23,17 +23,17 @@
                     <div class="m-t m-t1">
                         <div class="img-number">
                             <img src="${ctx}/res/vsail/img/car01.png"/>
-                            <a href="#" class="offline-number" id="number1"><span>1</span></a>
-                            <a href="#" class="offline-number" id="number2"><span>2</span></a>
-                            <a href="#" class="offline-number" id="number3"><span>3</span></a>
-                            <a href="#" class="offline-number" id="number4"><span>4</span></a>
+                            <a href="#" data-bind="click:function(){busViewModel.pickChart(1)}" class="offline-number" id="number1"><span>1</span></a>
+                            <a href="#" data-bind="click:function(){busViewModel.pickChart(2)}" class="offline-number" id="number2"><span>2</span></a>
+                            <a href="#" data-bind="click:function(){busViewModel.pickChart(3)}" class="offline-number" id="number3"><span>3</span></a>
+                            <a href="#" data-bind="click:function(){busViewModel.pickChart(4)}" class="offline-number" id="number4"><span>4</span></a>
                         </div>
                     </div>
                     <div class="m-t m-t1">
                         <div class="img-number img-number1">
                             <img src="${ctx}/res/vsail/img/car02.png"/>
-                            <a href="#" class="offline-number" id="number5"><span>5</span></a>
-                            <a href="#" class="offline-number" id="number6"><span>6</span></a>
+                            <a href="#" data-bind="click:function(){busViewModel.pickChart(5)}" class="offline-number" id="number5"><span>5</span></a>
+                            <a href="#" data-bind="click:function(){busViewModel.pickChart(6)}" class="offline-number" id="number6"><span>6</span></a>
                         </div>
                     </div>
                 </div>
@@ -107,28 +107,28 @@
                 <div class="ibox-content">
                     <span class="tips-title">电池详细信息</span>
                     <div class="ddd" style="height: 670px;overflow: auto;-ms-overflow-style: scrollbar;">
-                        <div class="echarts-text">
-                            <div class="echarts-title"><span>1号电池</span><span class="state state-zt2"><em></em>正常</span></div>
+                        <div class="echarts-text" id="sensor1_chart">
+                            <div class="echarts-title"><span>1号电池</span><span id="span1"><em></em>正常</span></div>
                             <div class="echarts " id="echarts-bar-chart1" style="height: 277px;width: 100%;"></div>
                         </div>
-                        <div class="echarts-text" name="1F">
-                            <div class="echarts-title"><span>2号电池</span><span class="state state-zt3"><em></em>一氧化碳浓度超标</span></div>
+                        <div class="echarts-text" id="sensor2_chart">
+                            <div class="echarts-title"><span>2号电池</span><span id="span2"><em></em>不在线</span></div>
                             <div class="echarts " id="echarts-bar-chart2" style="height: 277px;"></div>
                         </div>
-                        <div class="echarts-text" name="1F">
-                            <div class="echarts-title"><span>3号电池</span><span class="state state-zt3"><em></em>一氧化碳浓度超标</span></div>
+                        <div class="echarts-text" id="sensor3_chart">
+                            <div class="echarts-title"><span>3号电池</span><span id="span3"><em></em>不在线</span></div>
                             <div class="echarts " id="echarts-bar-chart3" style="height: 277px;"></div>
                         </div>
-                        <div class="echarts-text" name="1F">
-                            <div class="echarts-title"><span>4号电池</span><span class="state state-zt3"><em></em>一氧化碳浓度超标</span></div>
+                        <div class="echarts-text" id="sensor4_chart">
+                            <div class="echarts-title"><span>4号电池</span><span id="span4"><em></em>不在线</span></div>
                             <div class="echarts " id="echarts-bar-chart4" style="height: 277px;"></div>
                         </div>
-                        <div class="echarts-text" name="1F">
-                            <div class="echarts-title"><span>5号电池</span><span class="state state-zt3"><em></em>一氧化碳浓度超标</span></div>
+                        <div class="echarts-text" id="sensor5_chart">
+                            <div class="echarts-title"><span>5号电池</span><span id="span5"><em></em>不在线</span></div>
                             <div class="echarts " id="echarts-bar-chart5" style="height: 277px;"></div>
                         </div>
-                        <div class="echarts-text" name="1F">
-                            <div class="echarts-title"><span>6号电池</span><span class="state state-zt3"><em></em>一氧化碳浓度超标</span></div>
+                        <div class="echarts-text" id="sensor6_chart">
+                            <div class="echarts-title"><span>6号电池</span><span id="span6"><em></em>不在线</span></div>
                             <div class="echarts " id="echarts-bar-chart6" style="height: 277px;"></div>
                         </div>
                     </div>
@@ -161,6 +161,18 @@
             this.linker(data.linker);
             this.linkerMobile(data.linkerMobile);
             this.rootGroupName(data.rootGroupName);
+        },
+        pickChart: function(num) {
+           let chart_div = [$('#sensor'+num+'_chart')];
+           for (let i = 1; i <= 6; i++ ) {
+               if (i != num) {
+                   chart_div.push($('#sensor'+i+'_chart'));
+               }
+           };
+            $('.ddd').empty();
+            for (let i = 0; i < chart_div.length; i++) {
+                $('.ddd').append(chart_div[i]);
+            }
         }
     };
     $(function() {
@@ -193,7 +205,7 @@
                linX.push(dataTime);
             });
             let startIndex = 5;
-            let sensorDataLen = 5;
+            let sensorDataLen = 6;
             for (let i = 1; i <= sensorSize; i++) {
                 //循环判断是否有第i个传感器信息
                 //一氧化碳浓度
@@ -225,41 +237,110 @@
                 });
                 //判断最后一条数据的传感器状态 0为不在线 1为正常 2为故障 3为火警
                 let lastState = 0;
+                //最后一条传感器信息描述
+                let lastDesp = '不在线';
                 const lastData = dts[dts.length -1];
                 for (let j = startIndex; j < lastData.length;) {
                     const sn = lastData[j];
                     if (sn != null && i === parseInt(sn)) {
                         //继续往下取
-                        lastFireData = lastData[j + 3];
-                        lastErrorData = lastData[j + 4];
+                        const lastStateData = lastData[j + 5];
+                        const lastFireData = lastData[j + 3];
+                        const lastErrorData = lastData[j + 4];
                         //判断状态
-                        if (lastFireData.indexOf('1') !== -1) {
+                        if (parseInt(lastStateData) >= 3) {
                             lastState = 3;
+                            lastDesp = '';
+                            //判断是第几位报警
+                            const fires = lastFireData.split('');
+                            _.each(fires, function (element, index, list) {
+                                if (element == '1') {
+                                    switch (index) {
+                                       case 0:
+                                           lastDesp += ' 一氧化碳浓度超标';
+                                           break;
+                                        case 1:
+                                            lastDesp += ' 感温电缆报警';
+                                            break;
+                                        case 2:
+                                            lastDesp += ' 环境温度超标';
+                                            break;
+                                        case 3:
+                                            lastDesp += ' 火焰探测报警';
+                                            break;
+                                        default:
+                                            //暂不处理
+                                    }
+                                }
+                            });
                             break;
                         }
-                        if (lastErrorData.indexOf('1') !== -1) {
+                        if (parseInt(lastStateData) === 2) {
                             lastState = 2;
+                            lastDesp = '气溶胶故障';
+                            const errores = lastErrorData.split('');
+
+                            _.each(errores, function (element, index, list) {
+                                if (element == '1') {
+                                    switch (index) {
+                                        case 0:
+                                            lastDesp += ' 一氧化碳故障';
+                                            break;
+                                        case 1:
+                                            lastDesp += ' 感温电缆故障';
+                                            break;
+                                        case 2:
+                                            lastDesp += ' 环境温度故障';
+                                            break;
+                                        case 3:
+                                            lastDesp += ' 火焰探测故障';
+                                            break;
+                                        case 4:
+                                            lastDesp += ' 气溶胶启动故障';
+                                            break;
+                                        case 5:
+                                            lastDesp += ' 气溶胶反馈故障';
+                                            break;
+                                        case 7:
+                                            lastDesp += ' 探测器故障';
+                                            break;
+                                        default:
+                                        //暂不处理
+                                    }
+                                }
+                            });
                             break;
                         }
                         lastState = 1;
+                        lastDesp = '正常';
                         break;
                     } else {
                         j = j + sensorDataLen;
                     }
                 }
+                //设置传感器描述
+                $('#span' + i).html('<em></em>' + lastDesp);
                 //设置状态
+                let backgroudColor = '#2b4658';
                 switch (lastState) {
                     case 1:
+                        backgroudColor = '#02396b';
                         $('#number' + i).removeClass().addClass('online-number');
+                        $('#span' + i).removeClass().addClass('state').addClass('state-zt1');
                         break;
                     case 2:
+                        backgroudColor = '#63622c';
                         $('#number' + i).removeClass().addClass('error-number');
+                        $('#span' + i).removeClass().addClass('state').addClass('state-zt2');
                         break;
                     case 3:
+                        backgroudColor = '#563f52';
                         $('#number' + i).removeClass().addClass('fire-number');
+                       $('#span' + i).removeClass().addClass('state').addClass('state-zt3');
                         break;
                     default:
                         $('#number' + i).removeClass().addClass('offline-number');
+                        $('#span' + i).removeClass().addClass('state').addClass('state-zt0');
                 }
                 let charts = {
                     unit: '户数',
@@ -305,7 +386,7 @@
                 }
                 let myChart = echarts.init(document.getElementById('echarts-bar-chart' + i));
                 var option = {
-                    backgroundColor: '#02396b',
+                    backgroundColor: backgroudColor,
                     tooltip: {
                         trigger: 'axis'
                     },
@@ -393,6 +474,7 @@
             }
         });
     }
+
 </script>
 </body>
 </html>

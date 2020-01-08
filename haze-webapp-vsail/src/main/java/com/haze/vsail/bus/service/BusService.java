@@ -5,6 +5,7 @@ import com.haze.core.service.AbstractLogicDeletedService;
 import com.haze.core.spring.SpringContextUtils;
 import com.haze.redis.manage.RedisManager;
 import com.haze.shiro.ShiroUser;
+import com.haze.shiro.util.ShiroUtils;
 import com.haze.system.entity.Dict;
 import com.haze.system.entity.Group;
 import com.haze.system.service.DictService;
@@ -83,7 +84,7 @@ public class BusService extends AbstractLogicDeletedService<Bus, Long> {
                     return busList;
                 } else {
                     Group rootGroup = shiroUser.getGroup().getRootGroup();
-                    if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL)) { //vsail机构下用户返回所有车辆
+                    if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL_CODE)) { //vsail机构下用户返回所有车辆
                         //TODO 先从缓存中加载
                         busList = this.findAll();
                     } else if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_BUS)) {
@@ -162,7 +163,12 @@ public class BusService extends AbstractLogicDeletedService<Bus, Long> {
         Set<String> keyList = redisManager.listRedis(VsailConstants.BUS_INFO_KEY_PREFFIX + "*");
         List<BusInfo> busList = new ArrayList<>();
         keyList.forEach(key-> {
-            busList.add(getBusInfoByVin(HazeStringUtils.replace(key, VsailConstants.BUS_INFO_KEY_PREFFIX, "")));
+            //判断当前用户是否有该车辆权限
+            BusInfo busInfo = getBusInfoByVin(HazeStringUtils.replace(key, VsailConstants.BUS_INFO_KEY_PREFFIX, ""));
+            if (this.check(busInfo, ShiroUtils.getCurrentUser())) {
+                busList.add(busInfo);
+            }
+            //busList.add(getBusInfoByVin(HazeStringUtils.replace(key, VsailConstants.BUS_INFO_KEY_PREFFIX, "")));
         });
         return busList;
     }
@@ -202,5 +208,42 @@ public class BusService extends AbstractLogicDeletedService<Bus, Long> {
     private BusInfo getBusInfoByVin(String vin) {
         Map<String, Object> info = (Map<String, Object>) redisManager.getKey(VsailConstants.BUS_INFO_KEY_PREFFIX + vin);
         return new BusInfo(info);
+    }
+
+
+    /**
+     * 判断用户是否有车辆数据权限
+     * @param busInfo 车辆数据
+     * @param user 当前登陆用户
+     * @return true or false
+     */
+    public boolean check(BusInfo busInfo, ShiroUser user) {
+        if (user == null) {
+            return false;
+        } else {
+            //判断当前用户 如果是系统管理员 则查看所有数据
+            if (user.isSuperAdmin()) {
+                return true;
+            }
+            if (user.getGroup() != null) {
+                //判断顶级机构是否是福塞尔
+                Group g = user.getGroup();
+                Group rootGroup = g.getRootGroup();
+                if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL_CODE)) {
+                   return true;
+                } else {
+                    //判断当前车辆是否存在运营信息
+                    if (busInfo.getLineGroupId() == null) {
+                        return false;
+                    } else {
+                        Group lineGroup = new Group();
+                        lineGroup.setId(Long.valueOf(busInfo.getLineGroupId()));
+                        return user.getGroupList().contains(lineGroup);
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
     }
 }

@@ -42,9 +42,12 @@ public class VsailStatController {
 
     private BusService busService;
 
-    public VsailStatController(VsailStatService vsailStatService, BusService busService) {
+    private GroupService groupService;
+
+    public VsailStatController(VsailStatService vsailStatService, BusService busService, GroupService groupService) {
         this.vsailStatService = vsailStatService;
         this.busService = busService;
+        this.groupService = groupService;
     }
 
     /**
@@ -108,7 +111,7 @@ public class VsailStatController {
         } else {
             //根据用户机构类型判断
             Group rootGroup = shiroUser.getGroup().getRootGroup();
-            if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL)) { //vsail机构下用户返回所有车辆
+            if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL_CODE)) { //vsail机构下用户返回所有车辆
                 groupList = busService.getBusGroups().stream().filter(group -> group.getParent() == null).collect(Collectors.toList());
             } else if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_BUS)) {
                //其它机构用户返回本机构信息
@@ -133,44 +136,25 @@ public class VsailStatController {
     @ResponseBody
     public List<Group> getTopGroups() {
         Set<Group> newGroup = new HashSet<>();
-        Group root = new Group();
-        root.setFullName("运营公司");
         ShiroUser shiroUser = ShiroUtils.getCurrentUser();
         Objects.requireNonNull(shiroUser);
         List<Group> groupList = new ArrayList<>();
-        if (shiroUser.isSuperAdmin()) {
-            //查询运营公司信息
-            List<Group> groups = busService.getBusGroups();
-            for (Group g : groups) {
-                g.setUsers(null);
-                g.setChilds(null);
-                //g.setGroupType(g.getGroupType().getCode());
-                if (g.getPid() == null) {
-                    g.setParent(root);
-                }
-                newGroup.add(g);
+        List<Group> groups = groupService.getEnabledGroups("BJ_BUS");
+        for (Group g : groups) {
+            g.setUsers(null);
+            g.setChilds(null);
+            if (g.getParent() != null) {
+                g.setPid(g.getParent().getId());
             }
-            newGroup.add(root);
-        } else {
-            //根据用户机构类型判断
-            Group rootGroup = shiroUser.getGroup().getRootGroup();
-            if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_VSAIL)) { //vsail机构下用户返回所有车辆
-                groupList = busService.getBusGroups().stream().filter(group -> group.getParent() == null).collect(Collectors.toList());
-            } else if (rootGroup.getCode().equalsIgnoreCase(VsailConstants.GROUP_BUS)) {
-                //其它机构用户返回本机构信息
-                groupList.add(rootGroup);
-            } else {
-                //TODO 暂不处理
-            }
+            //g.setGroupType(g.getGroupType().getCode());
+            newGroup.add(g);
         }
-
-
         return new ArrayList<>(newGroup);
     }
 
     @PostMapping(value = "getStatCount")
     @ResponseBody
-    public Map<String, List<Object[]>> getStatCount(Long rootGroupId, Date startDay, Date endDay) {
+    public Map<String, List<Object[]>> getStatCount(Long groupId, Date startDay, Date endDay) {
         //计算开始日期和结束日期
         if (startDay == null) {
             startDay = HazeDateUtils.fromLocalDate(LocalDate.ofYearDay(1970, 1));
@@ -179,15 +163,15 @@ public class VsailStatController {
             endDay = HazeDateUtils.fromLocalDate(LocalDate.now());;
         }
         //不同车型火警数量
-        List<Object[]> modelFireCount = vsailStatService.getFireCountByBusModel(rootGroupId, startDay,endDay);
+        List<Object[]> modelFireCount = vsailStatService.getFireCountByBusModel(groupId, startDay,endDay);
         //不同车型故障数量
-        List<Object[]> modelbdCount = vsailStatService.getBreakDownCountByBusModel(rootGroupId, startDay,endDay);
+        List<Object[]> modelbdCount = vsailStatService.getBreakDownCountByBusModel(groupId, startDay,endDay);
         //不同线路火警数量
-        List<Object[]> groupFireCount = vsailStatService.getFireCountByGroup(rootGroupId, startDay,endDay);
+        List<Object[]> groupFireCount = vsailStatService.getFireCountByGroup(groupId, startDay,endDay);
         //不同线路故障数量
-        List<Object[]> groupbdCount = vsailStatService.getBreakDownCountByGroup(rootGroupId, startDay,endDay);
+        List<Object[]> groupbdCount = vsailStatService.getBreakDownCountByGroup(groupId, startDay,endDay);
         Map<String, List<Object[]>> result = new HashMap<>();
-        //模拟数据 TODO 后续删除该代码
+        /*//模拟数据 TODO 后续删除该代码
         String[] model_name = {"model1", "model2"};
         String[] groupName = {"906线路", "315线路"};
         for (int i = 0; i < 100; i++) {
@@ -206,13 +190,13 @@ public class VsailStatController {
                 groupFireCount.add(rs);
                 groupbdCount.add(rs);
             }
-        }
+        }*/
         result.put("modelFireCount", modelFireCount);
         result.put("modelbdCount", modelbdCount);
         result.put("groupFireCount", groupFireCount);
         result.put("groupbdCount", groupbdCount);
 
-        List<Object[]> fireCount = vsailStatService.getFireCount(rootGroupId, startDay,endDay);
+        List<Object[]> fireCount = vsailStatService.getFireCount(groupId, startDay,endDay);
         List<Object[]> statDays = new ArrayList<>();
         //计算共有多少天
         int day = HazeDateUtils.getDiffDay(startDay, endDay);
@@ -220,15 +204,15 @@ public class VsailStatController {
             Date d = HazeDateUtils.addDays(startDay, i);
             String strDay = HazeDateUtils.getYear(d) + "-" + HazeDateUtils.getMonth(d) + "-" +HazeDateUtils.getDay(d);
             //TODO 模拟数据 后续删除
-            int count = new Random().nextInt(10);
+            /*int count = new Random().nextInt(10);
             for (Object[] ct : fireCount) {
                 String dy = ct[0] + "-" + ct[1] + "-" + ct[2];
                 if (strDay.equalsIgnoreCase(dy)) {
                     count = Integer.parseInt(ct[3].toString()) ;
                     break;
                 }
-            }
-            statDays.add(new Object[]{strDay, count});
+            }*//*
+            statDays.add(new Object[]{strDay, count});*/
         }
         result.put("statDays", statDays);
         return result;
@@ -266,4 +250,5 @@ public class VsailStatController {
     public List<Object[]> getSensor(Model model, @PathVariable String vin) {
        return vsailStatService.getSensor(vin);
     }
+
 }

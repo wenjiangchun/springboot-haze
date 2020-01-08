@@ -270,8 +270,8 @@
 	function formatOperator(data) {
 		var html = "";
 		html += "<a href='javascript:void(0)' onclick='viewModel.edit(" + data.id + ")' title='编辑'> <i class='fa fa-edit fa-lg'></i> </a> | ";
-		html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + data.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> | ";
-		html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";
+		html += "<a href='javascript:void(0)' onclick='viewModel.delete(\"" + data.id + "\")' title='删除'> <i class='fa fa-trash-o fa-lg'></i> </a> ";
+	/*	html += "<a href='javascript:void(0)' onclick='addRole(\"" + data.id + "\")' title=''> <i class='fa fa-tag fa-lg'></i> </a>";*/
 		return html;
 	}
 

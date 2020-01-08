@@ -83,11 +83,11 @@
                                     class="fa fa-wrench"></i>运营管理</a>
                     </li>
                     </@shiro.hasPermission>
-                    <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/model/view" id="sys_group_menu"><i
+                    <#--<li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/model/view" id="sys_group_menu"><i
                                     class="fa fa-users"></i>车辆配置管理</a>
                     </li>
                     <li><a class="J_menuItem" href="javascript:void(0)" url="${ctx}/v/engine/view" id="sys_role_menu"><i class="fa fa-gears"></i>主机厂管理</a>
-                    </li>
+                    </li>-->
 
                 </ul>
             </li>

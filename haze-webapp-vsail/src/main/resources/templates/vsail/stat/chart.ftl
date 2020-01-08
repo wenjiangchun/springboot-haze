@@ -10,6 +10,10 @@
             padding: 20px;
             overflow: auto;
         }
+        #testbtn {
+            color:white;
+            font-size: 14px;
+        }
     </style>
     <script src="${ctx}/res/treeSelect/treeSelect.js"></script>
 </head>
@@ -27,7 +31,7 @@
                             <div class="row">
                                 <div class="col-sm-2 m-b-xs">
                                     <div class="form-group">
-                                        <label class="control-label">运营公司</label>
+                                        <label class="control-label">所属机构</label>
                                         <div class="control-div" style="width: 220px">
                                             <#--<select class="form-control m-b" name="rootGroupId" data-bind="value: rootGroupId">
                                                 <#list groupList as group >
@@ -36,6 +40,7 @@
                                             </select>-->
                                             <#--<input class="form-control m-b" value="" id="groupBtn">-->
                                             <div class="treeSelect m-b"></div>
+                                            <input type="hidden" class="form-control" name="" data-bind="value: groupId">
                                         </div>
                                     </div>
                                 </div>
@@ -93,10 +98,11 @@
 <script type="text/javascript">
     let viewModel = {
         rootGroupId: ko.observable(''),
+        groupId: ko.observable(''),
         startDay: ko.observable('${startDay}'),
         endDay:ko.observable('${endDay}'),
         query: function () {
-            $.post('${ctx}/v/stat/getStatCount',{rootGroupId: this.rootGroupId(), startDay: this.startDay(), endDay: this.endDay()}, function(data){
+            $.post('${ctx}/v/stat/getStatCount',{groupId: this.groupId(), startDay: this.startDay(), endDay: this.endDay()}, function(data){
                 //开始绘制图形
                 if (data != null) {
                     const modelFireCount =  data.modelFireCount;
@@ -124,10 +130,16 @@
         ko.applyBindings(viewModel);
         console.log(viewModel.rootGroupId());
         //viewModel.query();
-        $(".treeSelect").treeSelect({
-            data:{},
-            inputId:"groupBtn"
-        })
+        $.post('${ctx}/v/stat/getUserGroups', function(data) {
+            $(".treeSelect").treeSelect({
+                data:data,
+                inputId:"testbtn",
+                zTreeOnClick:function (event, treeId, treeNode) {
+                   $('#testbtn').val(treeNode.name);
+                   viewModel.groupId(treeNode.id);
+                }
+            });
+        });
     });
 
     function createPieChart(divId, data, title) {

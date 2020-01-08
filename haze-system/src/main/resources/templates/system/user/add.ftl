@@ -12,7 +12,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">用户信息</h3>
                     </div>
-                    <form id="inputForm" class="form-horizontal" action="${ctx}/system/user/save" method="post">
+                    <form id="inputForm" class="form-horizontal" action="${ctx}/system/user/saveUser" method="post">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="fullName" class="col-sm-2 control-label">登陆名</label>
@@ -71,12 +71,9 @@
                             <div class="form-group">
                                 <label for="roleIds" class="col-sm-2 control-label">所属角色</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control select2" multiple="multiple" data-placeholder="选择角色"
-                                            style="width: 100%;" name="roleIds">
-                                        <#list roleList as role>
-                                            <option value="${role.id!}">${role.name!}</option>
-                                        </#list>
-                                    </select>
+                                    <#list roleList as role>
+                                    <label class="checkbox-inline"><input type="checkbox" name="roleIds" value="${role.id}"/>${role.name}</label>
+                                    </#list>
                                 </div>
                             </div>
                             <div class="form-group generic">

@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
 
+/**
+ * json工具类 主要用于json字符串和对象之间的转换
+ * <strong>注意：</strong>json字符串中键值不能为单引号（''）应为双引号("")
+ */
 public final class HazeJsonUtils {
 
     private static final ObjectMapper mapper = new ObjectMapper();

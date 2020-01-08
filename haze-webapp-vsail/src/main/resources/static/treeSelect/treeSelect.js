@@ -144,7 +144,7 @@
                     simpleData: {
                         enable: true,
                         idKey: "id",
-                        pIdKey: "pId",
+                        pIdKey: "pid",
                         rootPId: 0
                     }
                 },

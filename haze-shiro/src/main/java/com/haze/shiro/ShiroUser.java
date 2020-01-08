@@ -105,11 +105,12 @@ public class ShiroUser implements Serializable {
 	}
 
 	public List<Group> getGroupList() {
+		List<Group> list = new ArrayList<>();
 		if (group != null) {
-			groupList.add(group);
-			groupList.addAll(group.getChildList(Status.ENABLE));
+			list.add(group);
+			list.addAll(group.getChildList(Status.ENABLE));
 		}
-		return groupList;
+		return list;
 	}
 
 	public Group getGroup() {

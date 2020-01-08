@@ -613,3 +613,11 @@ table tr:nth-child(odd) {
     margin-right: 10px;
 }
 */
+
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+	background-color:
+			#eee;
+	opacity: 1;
+	color:darkred;
+}

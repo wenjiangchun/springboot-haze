@@ -126,14 +126,14 @@
 	display: inline-block;
 	margin-right: 5px;
 }
-.state-zt1 em{
+.state-zt3 em{
 	background: #ec5252;
 }
 .state-zt2 em{
-	background: #5bde55;
+	background: #DEA027;
 }
-.state-zt3 em{
-	background: #ec5252;
+.state-zt1 em{
+	background: #69EC14;
 }
 .state-zt0 em{
 	background: #b7b9bc;

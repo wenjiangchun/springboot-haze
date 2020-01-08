@@ -49,6 +49,8 @@ public class BusInfo implements Serializable {
      */
     private boolean isOnline = false;
 
+    private String state = "离线";
+
     private List<Sensor> sensores = new ArrayList<>();
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -76,19 +78,30 @@ public class BusInfo implements Serializable {
         if (map.containsKey("rootGroupName")) {
             this.setRootGroupName((String) map.get("rootGroupName"));
         }
+        if (map.containsKey("rootGroupId")) {
+            this.setRootGroupId((String) map.get("rootGroupId"));
+        }
 
         if (map.containsKey("lineGroupName")) {
             this.setLineGroupName((String) map.get("lineGroupName"));
+        }
+        if (map.containsKey("lineGroupId")) {
+            this.setLineGroupId((String) map.get("lineGroupId"));
         }
 
         if (map.containsKey("siteGroupName")) {
             this.setSiteGroupName((String) map.get("siteGroupName"));
         }
+        if (map.containsKey("siteGroupId")) {
+            this.setSiteGroupId((String) map.get("siteGroupId"));
+        }
 
         if (map.containsKey("branchGroupName")) {
             this.setBranchGroupName((String) map.get("branchGroupName"));
         }
-
+        if (map.containsKey("branchGroupId")) {
+            this.setBranchGroupId((String) map.get("branchGroupId"));
+        }
         if (map.containsKey("eventCode")) {
             this.eventCode = Integer.parseInt(map.get("eventCode").toString()) ;
         }
@@ -96,8 +109,8 @@ public class BusInfo implements Serializable {
             int fire = Integer.parseInt(map.get("isFire").toString());
             this.isFire = fire == 1;
         }
-        if (map.containsKey("isBreakDown")) {
-            int breakDown = Integer.parseInt(map.get("isBreakDown").toString());
+        if (map.containsKey("isError")) {
+            int breakDown = Integer.parseInt(map.get("isError").toString());
             this.isBreakDown = breakDown == 1;
         }
         if (map.containsKey("stime")) {
@@ -122,6 +135,9 @@ public class BusInfo implements Serializable {
         }
         if (map.containsKey("linkerMobile")) {
             this.linkerMobile = (String)map.get("linkerMobile");
+        }
+        if (map.containsKey("state")) {
+            this.state = (String)map.get("state");
         }
         if (map.containsKey("sensores")) {
             String str = (String)map.get("sensores");
@@ -331,6 +347,14 @@ public class BusInfo implements Serializable {
         this.linkerMobile = linkerMobile;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public boolean isOnline() {
         if (this.eventCode == BusEventType.BUS_EVENT_ON.getEventCode() || this.eventCode == BusEventType.BUS_EVENT_REAL.getEventCode()) {
             return true;
@@ -368,7 +392,7 @@ public class BusInfo implements Serializable {
         private String error;
         private int concen;
         private int temp;
-
+        private String state;
         public int getSn() {
             return sn;
         }
@@ -407,6 +431,14 @@ public class BusInfo implements Serializable {
 
         public void setTemp(int temp) {
             this.temp = temp;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public void setState(String state) {
+            this.state = state;
         }
     }
 }

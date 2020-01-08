@@ -12,7 +12,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">用户信息</h3>
                 </div>
-                <form id="inputForm" class="form-horizontal" action="${ctx}/system/user/save" method="post">
+                <form id="inputForm" class="form-horizontal" action="${ctx}/system/user/saveUser" method="post">
                     <div class="box-body">
                         <div class="form-group">
                             <label for="fullName" class="col-sm-2 control-label">登陆名</label>
