@@ -32,10 +32,7 @@ public class ConfigController extends BaseCrudController<Config, Long> {
 
 	@Override
 	protected void setPageQueryVariables(Map<String, Object> queryVariables, HttpServletRequest request) {
-		if (queryVariables != null && queryVariables.get("configType") != null) {
-			String value = (String) queryVariables.get("configType");
-			queryVariables.put("configType", ConfigType.valueOf(value));
-		}
+		//queryVariables.put("configType", "S");
 	}
 
 	@Override

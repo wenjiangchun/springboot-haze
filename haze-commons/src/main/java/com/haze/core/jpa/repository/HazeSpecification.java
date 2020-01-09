@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
  /**
@@ -78,6 +79,19 @@ public class HazeSpecification<T> implements Specification<T> {
                             break;
                         }
 
+                        if (Objects.nonNull(expression)) {
+                            if (expression.getModel().getBindableJavaType().isAssignableFrom(boolean.class) || expression.getModel().getBindableJavaType().isAssignableFrom(Boolean.class)) {
+                                if (queryValue.getClass().isAssignableFrom(String.class)) {
+                                    queryValue = Boolean.valueOf((String)queryValue);
+                                }
+                            }
+                            if (expression.getModel().getBindableJavaType().isEnum()) {
+                                if (queryValue.getClass().isAssignableFrom(String.class)) {
+                                    //queryValue = Boolean.valueOf((String)queryValue);
+                                    queryValue = Enum.valueOf(expression.getModel().getBindableJavaType(), (String)queryValue);
+                                }
+                            }
+                        }
                         if ("eq".equalsIgnoreCase(operator)) {
                             predicate = cb.equal(expression, queryValue);
                         } else if ("like".equalsIgnoreCase(operator)) {
